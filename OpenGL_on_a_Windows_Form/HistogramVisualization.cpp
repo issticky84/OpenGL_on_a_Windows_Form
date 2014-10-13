@@ -1,0 +1,268 @@
+#include "stdafx.h"
+#include "HistogramVisualization.h"
+
+namespace OpenGLForm{
+
+	HistogramVisualization::HistogramVisualization(Form ^ parentForm,Panel ^ parentPanel, GLsizei iWidth, GLsizei iHeight,ReadCSV read_csv_ref):VisualizationPanel(parentForm,parentPanel,iWidth,iHeight,read_csv_ref){
+			parentPanel->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &HistogramVisualization::HistogramMouseDown);
+			parentPanel->MouseWheel += gcnew System::Windows::Forms::MouseEventHandler( this, &HistogramVisualization::HistogramMouseWheel );
+			parentPanel->MouseMove += gcnew System::Windows::Forms::MouseEventHandler( this, &HistogramVisualization::HistogramMouseMove );
+			parentPanel->MouseUp += gcnew System::Windows::Forms::MouseEventHandler( this, &HistogramVisualization::HistogramMouseUp );
+			time_string();
+			histogram_position_table.resize(read_csv.num_of_five_minutes);
+			//Initialize mouse handler variable
+			scale_x[0] = 0.0; scale_y[0] = 0.0; scale_z[0] = 0.0;
+			scale_size[0] = 0.05;
+			move_x[0] = 0.0; move_y[0] = 80.0; move_z[0] = 0.0;
+			scale_factor[0] = 0.6;
+			//Initialize window size
+			windowWidth[0] = iWidth; 
+			windowHeight[0] = iHeight;
+			counter = 0;
+	}
+
+	System::Void HistogramVisualization::FindPatternByTable(int x,int y)
+	{
+		vector2 pos_2D(x,y);
+		vector3 pos_3D = Unprojection(pos_2D);//screen to 3D coordinate
+		pos_3D.x *= (scale_factor[0] + scale_x[0]);
+		pos_3D.y *= (scale_factor[0] + scale_y[0]);
+		pos_3D.x += move_x[0];
+		pos_3D.y += move_y[0];
+
+		for(int i=0;i<histogram_position_table.size();i++)
+		{
+			if(pos_3D.x >= histogram_position_table[i].x && pos_3D.x <= histogram_position_table[i].z && pos_3D.y >= histogram_position_table[i].y && pos_3D.y <= histogram_position_table[i].w)
+			{
+				//System::Windows::Forms::MessageBox::Show( (i+1).ToString());
+				//System::Windows::Forms::MessageBox::Show( move_x[0].ToString() + " " + move_x[1].ToString());
+				histogram_index.push_back(i*600);
+			}
+		}
+	}
+
+	System::Void HistogramVisualization::Render(System::Void){
+				wglmakecur();
+
+				DrawHistogramVisualization();
+				//let the histogram be flickering
+				counter++;
+				counter%=5;
+				if(counter==0) select_histogram_flag = false;
+
+				SwapOpenGLBuffers();		
+	}
+	
+	System::Void HistogramVisualization::DrawTime_FTGL(int l,int x, int y)
+	{
+		glPushMatrix();
+
+		float font_size = 20*(scale_factor[0]+0.4+scale_x[0]);
+		font.FaceSize(font_size);
+		glColor3f(1.0, 1.0, 1.0);
+		glRasterPos2f(x , y-30.0 + font.LineHeight());
+		font.Render(quote[l]);
+
+		glPopMatrix();
+		
+	}
+
+	vector3 HistogramVisualization::Unprojection(vector2 _2Dpos){
+		float Depth;
+		int viewport[4];
+		double ModelViewMatrix[16];				//Model_view matrix
+		double ProjectionMatrix[16];			//Projection matrix
+
+		glPushMatrix();
+
+
+		glGetIntegerv(GL_VIEWPORT, viewport);
+		glGetDoublev(GL_MODELVIEW_MATRIX, ModelViewMatrix);
+		glGetDoublev(GL_PROJECTION_MATRIX, ProjectionMatrix);
+
+		glPopMatrix();
+
+		glReadPixels((int)_2Dpos.x , viewport[3] - (int)_2Dpos.y , 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &Depth);
+
+		double X = _2Dpos.x;
+		double Y = _2Dpos.y;
+		double wpos[3] = {0.0 , 0.0 , 0.0};
+
+		gluUnProject(X , ((double)viewport[3] - Y) , (double)Depth , ModelViewMatrix , ProjectionMatrix , viewport, &wpos[0] , &wpos[1] , &wpos[2]);
+
+		return vector3(wpos[0] , wpos[1] , wpos[2]);
+	}
+
+	System::Void HistogramVisualization::DrawHistogramVisualization(System::Void){
+			vector<float>  draw_color;	
+			draw_color.resize(3);
+
+
+			glClearColor(0.0, 0.0, 0.0, 0.0);  //Set the cleared screen colour to black
+			glViewport(0, 0, windowWidth[0], windowHeight[0]);   //This sets up the viewport so that the coordinates (0, 0) are at the top left of the window		
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			glOrtho(0, windowWidth[0], windowHeight[0], 0, -10, 10);
+
+			//Back to the modelview so we can draw stuff 
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Clear the screen and depth buffer
+
+			glTranslatef(0.0+move_x[0],0.0+move_y[0],0.0+move_z[0]);
+			glScalef(scale_factor[0]+scale_x[0],scale_factor[0]+scale_y[0],scale_factor[0]+scale_z[0]);
+
+			//RECTANGLE *rect;
+			//RECTANGLE *line;
+
+			int y_coord = 1400;
+			int pixels;
+			int current_hour;
+			int last_hour = -1;
+			int t=0;
+			for(int i=0;i<read_csv.position_data.size()-1;++i)
+			{
+				current_hour = read_csv.hour_data[i][1];
+				if(current_hour!=last_hour)
+				{
+					draw_color[0] = 1; draw_color[1] = 1; draw_color[2] = 1;
+					RECTANGLE *line;
+					line = new RECTANGLE();
+					line->h = 3;
+					line->w = 900;
+					line->x = 0;
+					line->y = y_coord - 5;
+					DrawRectWithOpenGL(line,draw_color);
+					DrawTime_FTGL(current_hour,20,y_coord-10);
+					t++;
+					y_coord-=10;
+					delete(line);
+				}
+				for(int j=1;j<read_csv.position_data[i].size();j++)
+				{		
+					int start = 0;
+					for(int k=0;k<read_csv.histogram_data[i].size()-1;++k)
+					{   
+						if(read_csv.histogram_data[i][k+1]!=0)
+						{
+							pixels = read_csv.histogram_data[i][k+1];
+							draw_color[0] = read_csv.color_data[k][1]; draw_color[1] = read_csv.color_data[k][2]; draw_color[2] = read_csv.color_data[k][3];
+							//if(select_histogram_flag) 
+							if((counter==2 || counter==4) && select_histogram_flag)
+							{
+								if(i==select_histogram_index)
+								{
+									draw_color[0] = 0; draw_color[1] = 0; draw_color[2] = 0;
+								}
+							}
+							for(int u=start;u<start+pixels;++u)
+							{
+								RECTANGLE *rect;
+								rect = new RECTANGLE();
+								rect->h = 3;
+								rect->w = 0.1;
+								rect->x = read_csv.position_data[i][j]/10.0 + (float)u*0.1;
+								rect->y = y_coord;
+								DrawRectWithOpenGL(rect,draw_color);	
+								delete(rect);
+
+							}
+							//table record
+							histogram_position_table[i].x = read_csv.position_data[i][j]/10.0;
+							histogram_position_table[i].y = y_coord;
+							histogram_position_table[i].z = read_csv.position_data[i][j]/10.0 + 60.0;
+							histogram_position_table[i].w = y_coord + 3;
+								
+							histogram_position_table[i].x *= (scale_factor[0] + scale_x[0]);
+							histogram_position_table[i].y *= (scale_factor[0] + scale_y[0]);
+							histogram_position_table[i].z *= (scale_factor[0] + scale_x[0]);
+							histogram_position_table[i].w *= (scale_factor[0] + scale_y[0]);
+							histogram_position_table[i].x += move_x[0];
+							histogram_position_table[i].y += move_y[0];
+							histogram_position_table[i].z += move_x[0];
+							histogram_position_table[i].w += move_y[0];
+
+							start += pixels;
+						}		
+					}
+
+					y_coord-=5;
+				}
+				last_hour = current_hour;
+			}
+
+	}
+
+	System::Void HistogramVisualization::time_string(System::Void)
+	{
+		font.Error();
+		strcpy(quote[0],"00:00");
+		strcpy(quote[1],"01:00");
+		strcpy(quote[2],"02:00");
+		strcpy(quote[3],"03:00");
+		strcpy(quote[4],"04:00");
+		strcpy(quote[5],"05:00");
+		strcpy(quote[6],"06:00");
+		strcpy(quote[7],"07:00");
+		strcpy(quote[8],"08:00");
+		strcpy(quote[9],"09:00");
+		strcpy(quote[10],"10:00");
+		strcpy(quote[11],"11:00");
+		strcpy(quote[12],"12:00");
+		strcpy(quote[13],"13:00");
+		strcpy(quote[14],"14:00");
+		strcpy(quote[15],"15:00");
+		strcpy(quote[16],"16:00");
+		strcpy(quote[17],"17:00");
+		strcpy(quote[18],"18:00");
+		strcpy(quote[19],"19:00");
+		strcpy(quote[20],"20:00");
+		strcpy(quote[21],"21:00");
+		strcpy(quote[22],"22:00");
+		strcpy(quote[23],"23:00");
+	}		 
+	System::Void   HistogramVisualization::HistogramMouseDown( Object^ /*sender*/, System::Windows::Forms::MouseEventArgs^ e ){
+			 //System::::Windows::Forms::MessageBox::Show(e->Location.ToString());
+			 last_X[0] = e->X;
+			 last_Y[0] = e->Y;
+		
+
+			if (e->Button == System::Windows::Forms::MouseButtons::Right)
+			{
+				FindPatternByTable(e->Location.X,e->Location.Y);
+			}
+	}
+	System::Void  HistogramVisualization::HistogramMouseWheel( Object^ /*sender*/, System::Windows::Forms::MouseEventArgs^ e ){
+			//System::Windows::Forms::MessageBox::Show(e->Location.ToString());
+			if (e->Delta < 0){
+				scale_x[0]+=scale_size[0];
+				scale_y[0]+=scale_size[0];
+				scale_z[0]+=scale_size[0];
+			}
+			else{
+				scale_x[0]-=scale_size[0];
+				scale_y[0]-=scale_size[0];
+				scale_z[0]-=scale_size[0];		
+			}
+	}
+
+	System::Void HistogramVisualization::HistogramMouseMove( Object^ /*sender*/, System::Windows::Forms::MouseEventArgs^ e ){
+			if (e->Button == System::Windows::Forms::MouseButtons::Left)
+			{
+				 vector2 Move(e->X - last_X[0] , e->Y - last_Y[0]);
+				 if (Move.length() < 500.0f)
+				 {
+					move_x[0] = Move.x;
+					move_y[0] = Move.y;
+				 }
+			}
+			//if(parentPanel->MousePosition.X>200) parentPanel->Cursor = System::Windows::Forms::Cursors::NoMoveVert;
+			//else parentPanel->Cursor = System::Windows::Forms::Cursors::NoMoveHoriz;
+	}
+
+	System::Void HistogramVisualization::HistogramMouseUp( Object^ /*sender*/, System::Windows::Forms::MouseEventArgs^ e ){
+				 last_X[0] = e->X;
+				 last_Y[0] = e->Y;	
+	}	
+
+}

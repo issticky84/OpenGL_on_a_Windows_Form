@@ -1,0 +1,31 @@
+﻿已經開始建置於 2014/10/13 下午 08:42:49。
+     1>節點 2 (Build 目標) 上的專案 "E:\OpenGL_on_a_Windows_Form (4)\OpenGL_on_a_Windows_Form\OpenGL_on_a_Windows_Form.vcxproj"。
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I..\Include\GL /I..\Include /I..\Include\freetype /AI"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0" /AI"C:\Program Files (x86)\Windows Kits\8.0\References\CommonConfiguration\Neutral" /Zi /clr /nologo /W3 /WX- /O2 /Oy- /GL /D WIN32 /D NDEBUG /D _UNICODE /D UNICODE /D _AFXDLL /EHa /MD /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Release\OpenGL_on_a_Windows_Form.pch" /Fo"Release\\" /Fd"Release\vc110.pdb" /TP /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\mscorlib.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Data.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Drawing.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Windows.Forms.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Xml.dll" /analyze- /errorReport:prompt /clr:nostdlib OpenGL_on_a_Windows_Form.cpp
+         OpenGL_on_a_Windows_Form.cpp
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"E:\OpenGL_on_a_Windows_Form (4)\Release\OpenGL_on_a_Windows_Form.exe" /INCREMENTAL:NO /NOLOGO /LIBPATH:..\lib openGL32.lib glu32.lib gdi32.lib User32.lib freeglut.lib opengl32.lib glew32s.lib glew32.lib libglfw.a libopengl32.a ftgl.lib ftgl_static.lib freetype244.lib /ASSEMBLYRESOURCE:Release\OpenGL_on_a_Windows_Form.Form1.resources /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /manifestinput:"C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\Include\Manifest\dpiaware.manifest" /DEBUG /PDB:"E:\OpenGL_on_a_Windows_Form (4)\Release\OpenGL_on_a_Windows_Form.pdb" /SUBSYSTEM:WINDOWS /LTCG /TLBID:1 /ENTRY:"main" /DYNAMICBASE:NO /FIXED:NO /MACHINE:X86 /SAFESEH Release\app.res
+         Release\AssemblyInfo.obj
+         Release\DetailVisualization.obj
+         Release\HistogramVisualization.obj
+         Release\mtxlib.obj
+         Release\OpenGL_on_a_Windows_Form.obj
+         Release\ReadCSV.obj
+         Release\RawDataVisualization.obj
+         Release\VisulizationPanel.obj
+         Release\stdafx.obj
+         "Release\.NETFramework,Version=v4.0.AssemblyAttributes.obj"
+         正在產生程式碼
+         已完成程式碼產生
+     1>ftgl_static.lib(FTExtrudeGlyph.obj) : warning LNK4099: 找不到 PDB 'vc110.pdb' (有 'ftgl_static.lib(FTExtrudeGlyph.obj)' 或位於 'E:\OpenGL_on_a_Windows_Form (4)\Release\vc110.pdb')，當做沒有偵錯資訊，連結物件
+     1>ftgl_static.lib(FTVectoriser.obj) : warning LNK4099: 找不到 PDB 'vc110.pdb' (有 'ftgl_static.lib(FTVectoriser.obj)' 或位於 'E:\OpenGL_on_a_Windows_Form (4)\Release\vc110.pdb')，當做沒有偵錯資訊，連結物件
+     1>ftgl_static.lib(FTPoint.obj) : warning LNK4099: 找不到 PDB 'vc110.pdb' (有 'ftgl_static.lib(FTPoint.obj)' 或位於 'E:\OpenGL_on_a_Windows_Form (4)\Release\vc110.pdb')，當做沒有偵錯資訊，連結物件
+     1>ftgl_static.lib(FTGlyph.obj) : warning LNK4099: 找不到 PDB 'vc110.pdb' (有 'ftgl_static.lib(FTGlyph.obj)' 或位於 'E:\OpenGL_on_a_Windows_Form (4)\Release\vc110.pdb')，當做沒有偵錯資訊，連結物件
+     1>ftgl_static.lib(FTContour.obj) : warning LNK4099: 找不到 PDB 'vc110.pdb' (有 'ftgl_static.lib(FTContour.obj)' 或位於 'E:\OpenGL_on_a_Windows_Form (4)\Release\vc110.pdb')，當做沒有偵錯資訊，連結物件
+     1>.NETFramework,Version=v4.0.AssemblyAttributes.obj : warning LNK4099: 找不到 PDB 'vc110.pdb' (有 '.NETFramework,Version=v4.0.AssemblyAttributes.obj' 或位於 'E:\OpenGL_on_a_Windows_Form (4)\Release\vc110.pdb')，當做沒有偵錯資訊，連結物件
+         OpenGL_on_a_Windows_Form.vcxproj -> E:\OpenGL_on_a_Windows_Form (4)\Release\OpenGL_on_a_Windows_Form.exe
+     1>專案 "E:\OpenGL_on_a_Windows_Form (4)\OpenGL_on_a_Windows_Form\OpenGL_on_a_Windows_Form.vcxproj" (Build 目標) 建置完成。
+
+建置成功。
+
+經過時間 00:00:02.17

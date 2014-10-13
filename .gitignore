@@ -1,4 +1,12 @@
 # Windows image file caches
+.sdf
+.suo
+.user
+bin/
+obj/
+.tlog
+.opensdf
+
 Thumbs.db
 ehthumbs.db
 
@@ -41,3 +49,9 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# Generate Project
+Debug/
+Release/
+
+

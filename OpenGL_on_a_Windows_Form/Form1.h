@@ -65,8 +65,9 @@ namespace OpenGL_on_a_Windows_Form
 		OpenGLForm2::COpenGL ^ OpenGL_4;*/
 	private: System::Windows::Forms::TrackBar^  trackBar1;
 	
-	private: System::Boolean NoMoveHoriz_flag;
-	private: System::Boolean NoMoveHoriz_move_flag;
+	private: System::Boolean Move_3_21_flag,Down_3_21_flag;
+	private: System::Boolean Move_1_flag,Down_1_flag;
+	private: System::Boolean Move_2_flag,Down_2_flag;
 	private: System::Int32 last_x,last_y;
 
 
@@ -167,6 +168,7 @@ namespace OpenGL_on_a_Windows_Form
 			this->Name = L"Form1";
 			this->Text = L"OpenGL on a Windows Form using Managed C++";
 			this->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &Form1::Form1_MouseDown);
+			this->MouseEnter += gcnew System::EventHandler(this, &Form1::Form1_MouseEnter);
 			this->MouseMove += gcnew System::Windows::Forms::MouseEventHandler(this, &Form1::Form1_MouseMove_1);
 			this->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &Form1::Form1_MouseUp);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->trackBar1))->EndInit();
@@ -183,24 +185,8 @@ namespace OpenGL_on_a_Windows_Form
 					 detail->Render();
 				 if(histogram)
 					 histogram->Render();
-				 /*
-				 OpenGL->wglmakecur();
-				 OpenGL->Render();
-				 OpenGL->SwapOpenGLBuffers();
-                
-                 OpenGL_2->wglmakecur();
-				 OpenGL_2->Render2();
-				 OpenGL_2->SwapOpenGLBuffers();
 
-				 OpenGL_3->wglmakecur();
-				 //OpenGL_3->Render();
-				 OpenGL_3->DrawHistogramVisualization();
-				 OpenGL_3->SwapOpenGLBuffers();
-				 */
-				 //OpenGL_4->wglmakecur();
-				 //OpenGL_4->Render();
-				 //OpenGL_4->SwapOpenGLBuffers();
-				 if(NoMoveHoriz_flag==false) this->Cursor = System::Windows::Forms::Cursors::Default;
+				 if(Move_3_21_flag==false && Move_1_flag==false && Move_2_flag==false) this->Cursor = System::Windows::Forms::Cursors::Default;
 			 }
 
 	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) 
@@ -232,13 +218,19 @@ namespace OpenGL_on_a_Windows_Form
 			 }
 
 	private: System::Void panel3_MouseMove(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
-				 NoMoveHoriz_flag = false;
+				 Move_3_21_flag = false;
+				 Move_1_flag = false;
+				 Move_2_flag = false;
 			}
 	private: System::Void panel1_MouseMove(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
-				 NoMoveHoriz_flag = false;
+				 Move_3_21_flag = false;
+				 Move_1_flag = false;
+				 Move_2_flag = false;
 			 }
 	private: System::Void panel2_MouseMove(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
-				 NoMoveHoriz_flag = false;
+				 Move_3_21_flag = false;
+				 Move_1_flag = false;
+				 Move_2_flag = false;
 			 }
 
 	private: System::Void panel3_CursorChanged(System::Object^  sender, System::EventArgs^  e) {
@@ -248,25 +240,68 @@ namespace OpenGL_on_a_Windows_Form
 
 
 	private: System::Void Form1_MouseMove_1(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
-					 int side_x1 = panel3->Location.X + panel3->Width;
-					 int side_x2 = panel1->Location.X;
-					 //System::Windows::Forms::MessageBox::Show(e->X + " ");
-					 if(e->X > side_x1 && e->X < side_x2)
+					 ///////////////move panel3 vs panel12///////////////
+					 int side_3_21_x1 = panel3->Location.X + panel3->Width;
+					 int side_3_21_x2 = panel1->Location.X;
+					 //System::Windows::Forms::MessageBox::Show(panel3->Width + " " + panel3->Height + " " + panel3->Size);
+					 if(e->X > side_3_21_x1 && e->X < side_3_21_x2)
 					 {
-						 NoMoveHoriz_flag = true;
+						 Move_3_21_flag = true;
 						 this->Cursor = System::Windows::Forms::Cursors::NoMoveHoriz;
 					 }
 
-					 int move_x = e->X-last_x;
-					 int move_y = e->Y-last_y;
-					 if(NoMoveHoriz_move_flag)
+					 int move_3_21_x = e->X - last_x;
+					 if(Down_3_21_flag)
 					 {
-						panel3->Width += move_x;
-						panel1->Location = System::Drawing::Point(panel1->Location.X+move_x, panel1->Location.Y);
-						panel1->Width -= move_x;
-						panel2->Location = System::Drawing::Point(panel2->Location.X+move_x, panel2->Location.Y);
-						panel2->Width -= move_x;	
-						NoMoveHoriz_move_flag = false;
+						panel3->Width += move_3_21_x;
+						panel1->Location = System::Drawing::Point(panel1->Location.X+move_3_21_x, panel1->Location.Y);
+						panel1->Width -= move_3_21_x;
+						panel2->Location = System::Drawing::Point(panel2->Location.X+move_3_21_x, panel2->Location.Y);
+						panel2->Width -= move_3_21_x;	
+						Down_3_21_flag = false;
+					 }
+					 ///////////////////move panel//////////////////////
+					 int side_1_x1 = panel1->Location.X + panel1->Width;
+					 int side_1_x2 = side_1_x1 + 5;
+					 int side_1_y1 = panel1->Location.Y;
+					 int side_1_y2 = panel1->Location.Y + panel1->Height;
+					 if(e->X > side_1_x1 && e->X < side_1_x2 && e->Y > side_1_y1 && e->Y < side_1_y2)
+					 {
+						//System::Windows::Forms::MessageBox::Show("ha");
+						 Move_1_flag = true;
+						 this->Cursor = System::Windows::Forms::Cursors::NoMoveHoriz;
+					 }
+					 else
+					 {
+						Move_1_flag = false;
+					 }
+
+					 int move_1_x = e->X - last_x;
+					 if(Down_1_flag)
+					 {
+						panel1->Width += move_1_x*2;
+						Down_1_flag = false;
+					 }
+					 ///////////////////move pane2//////////////////////
+					 int side_2_x1 = panel2->Location.X + panel2->Width;
+					 int side_2_x2 = side_2_x1 + 5;
+					 int side_2_y1 = panel2->Location.Y;
+					 int side_2_y2 = panel2->Location.Y + panel2->Height;
+					 if(e->X > side_2_x1 && e->X < side_2_x2 && e->Y > side_2_y1 && e->Y < side_2_y2)
+					 {
+						 Move_2_flag = true;
+						 this->Cursor = System::Windows::Forms::Cursors::NoMoveHoriz;						
+					 }
+					 else
+					 {
+						Move_2_flag = false;
+					 }
+
+					 int move_2_x = e->X - last_x;
+					 if(Down_2_flag)
+					 {
+						panel2->Width += move_2_x*2;
+						Down_2_flag = false;
 					 }
 			 }
 
@@ -275,14 +310,19 @@ namespace OpenGL_on_a_Windows_Form
 					last_x = e->X;
 					last_y = e->Y;
 
-					if(NoMoveHoriz_flag)
+					if(Move_3_21_flag)
 					{
-						NoMoveHoriz_move_flag = true;
-						//panel3->Width -= 10;
-						//panel1->Location = System::Drawing::Point(panel1->Location.X-10, panel1->Location.Y);
-						//panel1->Width += 10;
-						//panel2->Location = System::Drawing::Point(panel2->Location.X-10, panel2->Location.Y);
-						//panel2->Width += 10;
+						Down_3_21_flag = true;
+					}
+
+					if(Move_1_flag)
+					{
+						Down_1_flag = true;
+					}
+
+					if(Move_2_flag)
+					{
+						Down_2_flag = true;
 					}
 			 }
 	private: System::Void Form1_MouseUp(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
@@ -290,6 +330,9 @@ namespace OpenGL_on_a_Windows_Form
 					last_y = e->Y;
 			 }
 
+	private: System::Void Form1_MouseEnter(System::Object^  sender, System::EventArgs^  e) {
+					Form::Focus();
+			 }
 };
 }
 

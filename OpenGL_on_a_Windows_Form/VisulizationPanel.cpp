@@ -46,7 +46,7 @@ namespace OpenGLForm{
 			//parentForm->MouseWheel += gcnew System::Windows::Forms::MouseEventHandler( this, &COpenGL::COGL_Scroll );
 			m_hDC = GetDC((HWND)parentPanel->Handle.ToPointer());
 
-			this->parentForm = parentForm;
+			this->parentForm = parentForm;/////////////////////////////
 
 			if(m_hDC)
 			{

@@ -19,7 +19,6 @@ namespace OpenGLForm{
 			windowWidth[0] = iWidth; 
 			windowHeight[0] = iHeight;
 			counter = 0;
-			//parentPanel->Cursor = System::Windows::Forms::Cursors::NoMoveHoriz;
 	}
 
 	System::Void HistogramVisualization::FindPatternByTable(int x,int y)
@@ -223,7 +222,6 @@ namespace OpenGLForm{
 		strcpy(quote[23],"23:00");
 	}		 
 	System::Void   HistogramVisualization::HistogramMouseDown( Object^ /*sender*/, System::Windows::Forms::MouseEventArgs^ e ){
-			 //System::::Windows::Forms::MessageBox::Show(e->Location.ToString());
 			 last_X[0] = e->X;
 			 last_Y[0] = e->Y;
 		
@@ -258,7 +256,6 @@ namespace OpenGLForm{
 					move_y[0] = Move.y;
 				 }
 			}
-
 			
 			//if(parentPanel->MousePosition.X>200) parentPanel->Cursor = System::Windows::Forms::Cursors::NoMoveVert;
 			//else parentPanel->Cursor = System::Windows::Forms::Cursors::NoMoveHoriz;

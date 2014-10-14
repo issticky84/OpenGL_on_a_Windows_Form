@@ -17,6 +17,6 @@ resize panel
 ----
 When the mouse position touch the side of panel, it shows "NoMoveHoriz" cursor,
 which indicates that you can move the panel left and right
-* (1) panel3 vs panel1+panel2 (width)
-* (2) panel1 (width)
-* (3) panel2 (width)
+* panel3 vs panel1+panel2 (width)
+* panel1 (width)
+* panel2 (width)

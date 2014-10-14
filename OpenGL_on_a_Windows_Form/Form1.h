@@ -67,6 +67,7 @@ namespace OpenGL_on_a_Windows_Form
 	
 	private: System::Boolean NoMoveHoriz_flag;
 	private: System::Boolean NoMoveHoriz_move_flag;
+	private: System::Int32 last_x,last_y;
 
 
 #pragma region Windows Form Designer generated code
@@ -101,6 +102,7 @@ namespace OpenGL_on_a_Windows_Form
 			this->panel1->TabIndex = 0;
 			this->panel1->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &Form1::panel1_Paint);
 			this->panel1->MouseEnter += gcnew System::EventHandler(this, &Form1::panel1_MouseEnter);
+			this->panel1->MouseMove += gcnew System::Windows::Forms::MouseEventHandler(this, &Form1::panel1_MouseMove);
 			// 
 			// panel2
 			// 
@@ -109,6 +111,7 @@ namespace OpenGL_on_a_Windows_Form
 			this->panel2->Size = System::Drawing::Size(752, 603);
 			this->panel2->TabIndex = 1;
 			this->panel2->MouseEnter += gcnew System::EventHandler(this, &Form1::panel2_MouseEnter);
+			this->panel2->MouseMove += gcnew System::Windows::Forms::MouseEventHandler(this, &Form1::panel2_MouseMove);
 			// 
 			// panel3
 			// 
@@ -118,7 +121,6 @@ namespace OpenGL_on_a_Windows_Form
 			this->panel3->TabIndex = 2;
 			this->panel3->CursorChanged += gcnew System::EventHandler(this, &Form1::panel3_CursorChanged);
 			this->panel3->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &Form1::panel3_Paint);
-			this->panel3->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &Form1::panel3_MouseDown);
 			this->panel3->MouseEnter += gcnew System::EventHandler(this, &Form1::panel3_MouseEnter);
 			this->panel3->MouseMove += gcnew System::Windows::Forms::MouseEventHandler(this, &Form1::panel3_MouseMove);
 			// 
@@ -164,7 +166,9 @@ namespace OpenGL_on_a_Windows_Form
 			this->Controls->Add(this->panel1);
 			this->Name = L"Form1";
 			this->Text = L"OpenGL on a Windows Form using Managed C++";
+			this->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &Form1::Form1_MouseDown);
 			this->MouseMove += gcnew System::Windows::Forms::MouseEventHandler(this, &Form1::Form1_MouseMove_1);
+			this->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &Form1::Form1_MouseUp);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->trackBar1))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
@@ -225,38 +229,67 @@ namespace OpenGL_on_a_Windows_Form
 			 }
 	private: System::Void panel2_MouseEnter(System::Object^  sender, System::EventArgs^  e) {
 				 this->panel2->Focus();
-				 //this->Cursor = System::Windows::Forms::Cursors::WaitCursor;
-				 //this->Cursor = System::Windows::Forms::Cursors::Default;
-				 //this->Cursor = System::Windows::Forms::Cursors::NoMoveHoriz;
-				 //this->Cursor = System::Windows::Forms::Cursors::NoMoveVert;
 			 }
 
 	private: System::Void panel3_MouseMove(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
-
+				 NoMoveHoriz_flag = false;
 			}
+	private: System::Void panel1_MouseMove(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+				 NoMoveHoriz_flag = false;
+			 }
+	private: System::Void panel2_MouseMove(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+				 NoMoveHoriz_flag = false;
+			 }
 
 	private: System::Void panel3_CursorChanged(System::Object^  sender, System::EventArgs^  e) {
 			 //System::Windows::Forms::MessageBox::Show(sender->GetType() + " ");
 			 }
 
-	private: System::Void panel3_MouseDown(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
 
-			 }
 
 	private: System::Void Form1_MouseMove_1(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
 					 int side_x1 = panel3->Location.X + panel3->Width;
 					 int side_x2 = panel1->Location.X;
-					 System::Windows::Forms::MessageBox::Show(e->X + " " + side_x1 + " " + side_x2);
+					 //System::Windows::Forms::MessageBox::Show(e->X + " ");
 					 if(e->X > side_x1 && e->X < side_x2)
 					 {
 						 NoMoveHoriz_flag = true;
 						 this->Cursor = System::Windows::Forms::Cursors::NoMoveHoriz;
 					 }
-					 else
+
+					 int move_x = e->X-last_x;
+					 int move_y = e->Y-last_y;
+					 if(NoMoveHoriz_move_flag)
 					 {
-						 this->Cursor = System::Windows::Forms::Cursors::Default;
+						panel3->Width += move_x;
+						panel1->Location = System::Drawing::Point(panel1->Location.X+move_x, panel1->Location.Y);
+						panel1->Width -= move_x;
+						panel2->Location = System::Drawing::Point(panel2->Location.X+move_x, panel2->Location.Y);
+						panel2->Width -= move_x;	
+						NoMoveHoriz_move_flag = false;
 					 }
 			 }
+
+
+	private: System::Void Form1_MouseDown(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+					last_x = e->X;
+					last_y = e->Y;
+
+					if(NoMoveHoriz_flag)
+					{
+						NoMoveHoriz_move_flag = true;
+						//panel3->Width -= 10;
+						//panel1->Location = System::Drawing::Point(panel1->Location.X-10, panel1->Location.Y);
+						//panel1->Width += 10;
+						//panel2->Location = System::Drawing::Point(panel2->Location.X-10, panel2->Location.Y);
+						//panel2->Width += 10;
+					}
+			 }
+	private: System::Void Form1_MouseUp(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+					last_x = e->X;
+					last_y = e->Y;
+			 }
+
 };
 }
 

@@ -45,7 +45,6 @@ namespace OpenGLForm{
 			virtual System::Void Render(System::Void){}
 			~VisualizationPanel(System::Void);
 	protected:
-			Form ^ parentForm;
 			HDC m_hDC;
 			HGLRC m_hglrc;
 			GLfloat	rtri;				// Angle for the triangle
@@ -57,6 +56,7 @@ namespace OpenGLForm{
 			System::Void SwapOpenGLBuffers(System::Void);
 			System::Void wglmakecur();
 			double round(double);
+			Form ^ parentForm;
 			//vector3 Unprojection(vector2 _2Dpos);
 	};
 

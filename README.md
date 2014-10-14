@@ -9,6 +9,7 @@ mouse event
 * left button : move
 * wheel button : scale (zoom in or zoom out)
 * right button : select
+
 ####For panel1
 * double click : show the original color bar on the panel3 by a flickering way
 

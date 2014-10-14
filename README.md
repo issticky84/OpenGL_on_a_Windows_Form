@@ -5,11 +5,11 @@ Visualization of sensor data collecting from LG G watch
 
 mouse event
 ----
-<For panel1 & panel3>
+####For panel1 & panel3
 * left button : move
 * wheel button : scale (zoom in or zoom out)
 * right button : select
-<For panel1>
+####For panel1
 * double click : show the original color bar on the panel3 by a flickering way
 
 resize panel

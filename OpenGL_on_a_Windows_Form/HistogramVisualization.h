@@ -8,7 +8,7 @@ namespace OpenGLForm{
 	public ref class HistogramVisualization: public OpenGLForm::VisualizationPanel{
 		public:
 			HistogramVisualization(Form ^ parentForm,Panel ^ parentPanel, GLsizei iWidth, GLsizei iHeight,ReadCSV read_csv_ref);
-			virtual System::Void Render(System::Void) override;
+			virtual System::Void Render(int,int) override;
 			void  HistogramMouseDown( Object^ /*sender*/, System::Windows::Forms::MouseEventArgs^ e);
 			void  HistogramMouseWheel( Object^ /*sender*/, System::Windows::Forms::MouseEventArgs^ e);
 			void  HistogramMouseMove( Object^ /*sender*/, System::Windows::Forms::MouseEventArgs^ e);

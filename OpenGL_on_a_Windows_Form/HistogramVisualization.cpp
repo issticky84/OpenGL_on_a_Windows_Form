@@ -41,9 +41,12 @@ namespace OpenGLForm{
 		}
 	}
 
-	System::Void HistogramVisualization::Render(System::Void){
+	System::Void HistogramVisualization::Render(int histogram_width,int histogram_height){
 				wglmakecur();
 
+				windowWidth[0] = histogram_width;
+				windowHeight[0] = histogram_height;
+				 
 				DrawHistogramVisualization();
 				//let the histogram be flickering
 				counter++;

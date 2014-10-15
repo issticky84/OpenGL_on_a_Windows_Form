@@ -22,9 +22,12 @@ namespace OpenGLForm{
 			select_histogram_flag = false;
 	}
 
-	System::Void RawDataVisualization::Render(System::Void){
+	System::Void RawDataVisualization::Render(int rawdata_width,int rawdata_height){
 			wglmakecur();
 				
+			windowWidth[1] = rawdata_width;
+			windowHeight[1] = rawdata_height;
+
 			glClearColor(0.0, 0.0, 0.0, 0.0);  //Set the cleared screen colour to black
 			glViewport(0, 0, windowWidth[1], windowHeight[1]);   //This sets up the viewport so that the coordinates (0, 0) are at the top left of the window		
 			glMatrixMode(GL_PROJECTION);

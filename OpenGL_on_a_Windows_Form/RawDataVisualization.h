@@ -5,7 +5,7 @@ namespace OpenGLForm{
 	public ref class RawDataVisualization: public OpenGLForm::VisualizationPanel{
 		public:
 			RawDataVisualization(Form ^ parentForm,Panel ^ parentPanel, GLsizei iWidth, GLsizei iHeight,ReadCSV read_csv_ref);
-			virtual System::Void Render(System::Void) override;
+			virtual System::Void Render(int,int) override;
 			void  RawDataMouseDown( Object^ /*sender*/, System::Windows::Forms::MouseEventArgs^ e);
 			void  RawDataMouseWheel( Object^ /*sender*/, System::Windows::Forms::MouseEventArgs^ e);
 			void  RawDataMouseMove( Object^ /*sender*/, System::Windows::Forms::MouseEventArgs^ e);

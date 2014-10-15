@@ -13,11 +13,11 @@ namespace OpenGLForm{
 			windowWidth[2] = iWidth; 
 			windowHeight[2] = iHeight;	
 	}
-	System::Void DetailVisualization::Render(System::Void){
+	System::Void DetailVisualization::Render(int detail_width,int detial_height){
 			wglmakecur();
 
-			//windowWidth[2] = parentForm->Width;
-			//windowHeight[2] = parentForm->Height;
+			windowWidth[2] = detail_width;
+			windowHeight[2] = detial_height;
 
 			glClearColor(0.0, 0.0, 0.0, 0.0);  //Set the cleared screen colour to black
 			glViewport(0, 0, windowWidth[2], windowHeight[2]);   //This sets up the viewport so that the coordinates (0, 0) are at the top left of the window		

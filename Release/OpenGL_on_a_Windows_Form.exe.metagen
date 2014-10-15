@@ -20,18 +20,18 @@ Class OpenGLForm.VisualizationPanel: AutoLayout, AnsiClass, Class, Public, Befor
   Interfaces:
     System.IDisposable
   Methods:
-    Render(): PrivateScope, Public, Virtual, HideBySig, VtableLayoutMask
+    Render(Int32, Int32): PrivateScope, Public, Virtual, HideBySig, VtableLayoutMask
     Dispose(): PrivateScope, Public, Final, Virtual, HideBySig
 Class OpenGLForm.DetailVisualization: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
   :OpenGLForm.VisualizationPanel
     Void .ctor(System.Windows.Forms.Form, System.Windows.Forms.Panel, Int32, Int32, ReadCSV*): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
   Methods:
-    Render(): PrivateScope, Public, Virtual, HideBySig
+    Render(Int32, Int32): PrivateScope, Public, Virtual, HideBySig
 Class OpenGLForm.HistogramVisualization: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
   :OpenGLForm.VisualizationPanel
     Void .ctor(System.Windows.Forms.Form, System.Windows.Forms.Panel, Int32, Int32, ReadCSV*): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
   Methods:
-    Render(): PrivateScope, Public, Virtual, HideBySig
+    Render(Int32, Int32): PrivateScope, Public, Virtual, HideBySig
     HistogramMouseDown(Object, MouseEventArgs): PrivateScope, Public, HideBySig
     HistogramMouseWheel(Object, MouseEventArgs): PrivateScope, Public, HideBySig
     HistogramMouseMove(Object, MouseEventArgs): PrivateScope, Public, HideBySig
@@ -40,7 +40,7 @@ Class OpenGLForm.RawDataVisualization: AutoLayout, AnsiClass, Class, Public, Bef
   :OpenGLForm.VisualizationPanel
     Void .ctor(System.Windows.Forms.Form, System.Windows.Forms.Panel, Int32, Int32, ReadCSV*): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
   Methods:
-    Render(): PrivateScope, Public, Virtual, HideBySig
+    Render(Int32, Int32): PrivateScope, Public, Virtual, HideBySig
     RawDataMouseDown(Object, MouseEventArgs): PrivateScope, Public, HideBySig
     RawDataMouseWheel(Object, MouseEventArgs): PrivateScope, Public, HideBySig
     RawDataMouseMove(Object, MouseEventArgs): PrivateScope, Public, HideBySig

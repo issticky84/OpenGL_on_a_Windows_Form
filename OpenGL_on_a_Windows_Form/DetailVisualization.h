@@ -8,7 +8,7 @@ namespace OpenGLForm{
 	public ref class DetailVisualization: public OpenGLForm::VisualizationPanel{
 		public:
 			DetailVisualization(Form ^ parentForm,Panel ^ parentPanel, GLsizei iWidth, GLsizei iHeight,ReadCSV read_csv_ref);
-			virtual System::Void Render(System::Void) override;
+			virtual System::Void Render(int,int) override;
 	private:
 			System::Void DrawText_FTGL(float n,int x, int y);
 			System::Void DrawTitle_FTGL(int t,int x, int y);

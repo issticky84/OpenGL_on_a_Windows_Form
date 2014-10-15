@@ -42,7 +42,8 @@ namespace OpenGLForm{
 	public ref class VisualizationPanel: public NativeWindow{
 	public:
 			VisualizationPanel(Form ^ parentForm,Panel ^ parentPanel, GLsizei iWidth, GLsizei iHeight,ReadCSV read_csv_ref);
-			virtual System::Void Render(System::Void){}
+			//virtual System::Void Render(System::Void){}
+			virtual System::Void Render(int,int){}
 			~VisualizationPanel(System::Void);
 	protected:
 			HDC m_hDC;
@@ -57,7 +58,6 @@ namespace OpenGLForm{
 			System::Void wglmakecur();
 			double round(double);
 			Form ^ parentForm;
-			//vector3 Unprojection(vector2 _2Dpos);
 	};
 
 }

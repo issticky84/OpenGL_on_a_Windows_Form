@@ -66,11 +66,7 @@ namespace OpenGL_on_a_Windows_Form
 	private: System::Windows::Forms::TrackBar^  trackBar1;
 	
 	private: System::Boolean Move_3_21_flag,Down_3_21_flag;
-	private: System::Boolean Move_1_horiz_flag,Down_1_horiz_flag;
-	private: System::Boolean Move_2_horiz_flag,Down_2_horiz_flag;
 	private: System::Boolean Move_12_horiz_flag,Down_12_horiz_flag;
-	private: System::Boolean Move_1_vert_flag,Down_1_vert_flag;
-	private: System::Boolean Move_2_vert_flag,Down_2_vert_flag;
 	private: System::Boolean Move_12_vert_flag,Down_12_vert_flag;
 	private: System::Int32 last_x,last_y;
 
@@ -189,7 +185,7 @@ namespace OpenGL_on_a_Windows_Form
 				 if(histogram)
 					 histogram->Render(panel3->Width,panel3->Height);
 
-				 if(Move_3_21_flag==false && Move_1_horiz_flag==false && Move_2_horiz_flag==false && Move_1_vert_flag==false && Move_2_vert_flag==false && Move_12_horiz_flag==false && Move_12_vert_flag==false) 
+				 if(Move_3_21_flag==false && Move_12_horiz_flag==false && Move_12_vert_flag==false) 
 					 this->Cursor = System::Windows::Forms::Cursors::Default;
 			 }
 
@@ -222,28 +218,16 @@ namespace OpenGL_on_a_Windows_Form
 
 	private: System::Void panel3_MouseMove(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
 				 Move_3_21_flag = false;
-				 Move_1_horiz_flag = false;
-				 Move_2_horiz_flag = false;
-				 Move_1_vert_flag = false;
-				 Move_2_vert_flag = false;
 				 Move_12_horiz_flag = false;
 				 Move_12_vert_flag = false;
 			}
 	private: System::Void panel1_MouseMove(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
 				 Move_3_21_flag = false;
-				 Move_1_horiz_flag = false;
-				 Move_2_horiz_flag = false;
-				 Move_1_vert_flag = false;
-				 Move_2_vert_flag = false;
 				 Move_12_horiz_flag = false;
 				 Move_12_vert_flag = false;
 			 }
 	private: System::Void panel2_MouseMove(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
 				 Move_3_21_flag = false;
-				 Move_1_horiz_flag = false;
-				 Move_2_horiz_flag = false;
-				 Move_1_vert_flag = false;
-				 Move_2_vert_flag = false;
 				 Move_12_horiz_flag = false;
 				 Move_12_vert_flag = false;
 			 }
@@ -253,7 +237,6 @@ namespace OpenGL_on_a_Windows_Form
 					 ///////////////move panel3 vs panel12 horizontally///////////////
 					 int side_3_21_x1 = panel3->Location.X + panel3->Width;
 					 int side_3_21_x2 = panel1->Location.X;
-					 //System::Windows::Forms::MessageBox::Show(panel3->Width + " " + panel3->Height + " " + panel3->Size);
 					 if(e->X > side_3_21_x1 && e->X < side_3_21_x2)
 					 {
 						 Move_3_21_flag = true;
@@ -268,93 +251,7 @@ namespace OpenGL_on_a_Windows_Form
 						panel1->Width -= move_3_21_x;
 						panel2->Location = System::Drawing::Point(panel2->Location.X+move_3_21_x, panel2->Location.Y);
 						panel2->Width -= move_3_21_x;	
-						//Down_3_21_flag = false;
 					 }
-					 /////////////////////move panel1 horizontally//////////////////////
-					 //int side_1_x1 = panel1->Location.X + panel1->Width;
-					 //int side_1_x2 = side_1_x1 + 5;
-					 //int side_1_y1 = panel1->Location.Y;
-					 //int side_1_y2 = panel1->Location.Y + panel1->Height;
-					 //if(e->X > side_1_x1 && e->X < side_1_x2 && e->Y > side_1_y1 && e->Y < side_1_y2)
-					 //{
-						// Move_1_horiz_flag = true;
-						// this->Cursor = System::Windows::Forms::Cursors::NoMoveHoriz;
-					 //}
-					 //else
-					 //{
-						//Move_1_horiz_flag = false;
-					 //}
-
-					 //int move_1_x = e->X - last_x;
-					 //if(Down_1_horiz_flag)
-					 //{
-						//panel1->Width += move_1_x;
-						////Down_1_flag = false;
-					 //}
-					 /////////////////////move pane2 horizontally//////////////////////
-					 //int side_2_x1 = panel2->Location.X + panel2->Width;
-					 //int side_2_x2 = side_2_x1 + 5;
-					 //int side_2_y1 = panel2->Location.Y;
-					 //int side_2_y2 = panel2->Location.Y + panel2->Height;
-					 //if(e->X > side_2_x1 && e->X < side_2_x2 && e->Y > side_2_y1 && e->Y < side_2_y2)
-					 //{
-						// Move_2_horiz_flag = true;
-						// this->Cursor = System::Windows::Forms::Cursors::NoMoveHoriz;						
-					 //}
-					 //else
-					 //{
-						//Move_2_horiz_flag = false;
-					 //}
-
-					 //int move_2_x = e->X - last_x;
-					 //if(Down_2_horiz_flag)
-					 //{
-						//panel2->Width += move_2_x;
-						////Down_2_flag = false;
-					 //}
-					 /////////////////move panel1 vertically///////////////
-					 //side_1_x1 = panel1->Location.X;
-					 //side_1_x2 = panel1->Location.X + panel2->Width;
-					 //side_1_y1 = panel1->Location.Y + panel1->Height;
-					 //side_1_y2 = side_1_y1 + 5;
-					 //if(e->X > side_1_x1 && e->X < side_1_x2 && e->Y > side_1_y1 && e->Y < side_1_y2)
-					 //{
-						// Move_1_vert_flag = true;
-						// this->Cursor = System::Windows::Forms::Cursors::NoMoveVert;							
-					 //}
-					 //else
-					 //{
-						//Move_1_vert_flag = false;
-					 //}
-
-					 //int move_y = e->Y - last_y;
-					 //if(Down_1_vert_flag)
-					 //{
-						// //panel2->Location = System::Drawing::Point(panel2->Location.X,panel2->Location.Y+move_y);
-						// panel1->Height += move_y;
-					 //}
-					 /////////////////move panel2 vertically///////////////
-					 //side_2_x1 = panel2->Location.X;
-					 //side_2_x2 = panel2->Location.X + panel2->Width;
-					 //side_2_y1 = panel2->Location.Y - 5;
-					 //side_2_y2 = panel2->Location.Y;
-					 //if(e->X > side_2_x1 && e->X < side_2_x2 && e->Y > side_2_y1 && e->Y < side_2_y2)
-					 //{
-						// Move_2_vert_flag = true;
-						// this->Cursor = System::Windows::Forms::Cursors::NoMoveVert;							
-					 //}
-					 //else
-					 //{
-						//Move_2_vert_flag = false;
-					 //}
-
-					 //int move_12_y = e->Y - last_y;
-					 //if(Down_2_vert_flag)
-					 //{
-						// //panel1->Height += move_12_y;
-						// panel2->Location = System::Drawing::Point(panel2->Location.X,panel2->Location.Y+move_12_y);
-						// panel2->Height -= move_12_y;
-					 //}
 					 ///////////////////move pane1 & panel2 horizontally//////////////////////
 					 int side_12_x1 = panel2->Location.X + panel2->Width;
 					 int side_12_x2 = side_12_x1 + 5;
@@ -414,26 +311,6 @@ namespace OpenGL_on_a_Windows_Form
 						Down_3_21_flag = true;
 					}
 
-					if(Move_1_horiz_flag)
-					{
-						Down_1_horiz_flag = true;
-					}
-
-					if(Move_2_horiz_flag)
-					{
-						Down_2_horiz_flag = true;
-					}
-
-					if(Move_1_vert_flag)
-					{
-						Down_1_vert_flag = true;
-					}
-
-					if(Move_2_vert_flag)
-					{
-						Down_2_vert_flag = true;
-					}
-
 					if(Move_12_horiz_flag)
 					{
 						Down_12_horiz_flag = true;
@@ -446,10 +323,6 @@ namespace OpenGL_on_a_Windows_Form
 			 }
 	private: System::Void Form1_MouseUp(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
 					Down_3_21_flag = false;
-					Down_1_horiz_flag = false;
-					Down_2_horiz_flag = false;
-					Down_1_vert_flag = false;
-					Down_2_vert_flag = false;
 					Down_12_horiz_flag = false;
 					Down_12_vert_flag = false;
 			 }

@@ -10,7 +10,7 @@ namespace OpenGLForm{
 			parentPanel->MouseUp += gcnew System::Windows::Forms::MouseEventHandler( this, &RawDataVisualization::RawDataMouseUp );	
 			parentPanel->MouseDoubleClick += gcnew System::Windows::Forms::MouseEventHandler( this, &RawDataVisualization::RawDataMouseDoubleClick );	 
 			//Initialize mouse handler variable
-			scale_x[1] = 0.25; scale_y[1] = 0.0; scale_z[1] = 0.0;
+			scale_x[1] = 0.6; scale_y[1] = 0.0; scale_z[1] = 0.0;
 			scale_size[1] = 0.05;
 			move_x[1] = 0.0; move_y[1] = 0.0; move_z[1] = 0.0;
 			scale_factor[1] = 0.6;
@@ -45,7 +45,7 @@ namespace OpenGLForm{
 			vector<float> color;
 			color.resize(3);
 
-			int y_position = 50;
+			int y_position = 30;
 			if(!histogram_index.empty())
 			{
 				for(int i=0;i<histogram_index.size();i++)

@@ -160,9 +160,10 @@ namespace OpenGLForm{
 					}
 					*/
 					//==========Gyroscope X Y Z==========//
-					DrawTitle_FTGL(3,500, 550);
+					DrawTitle_FTGL(3,500, 450);
 					x_position = 80;
 					y_position = 750;
+					int factor2 = 40;
 					for(int i=10;i<=12;i++)
 					{
 						RECTANGLE *rect;
@@ -170,7 +171,7 @@ namespace OpenGLForm{
 						{
 							index = raw_data_index[j];
 							rect = new RECTANGLE();
-							rect->h = factor*abs(read_csv.raw_data[index][i]);
+							rect->h = factor2*abs(read_csv.raw_data[index][i]);
 							rect->w = 30.0;
 							rect->x = x_position;
 							rect->y = y_position;
@@ -179,7 +180,7 @@ namespace OpenGLForm{
 							color[2] = read_csv.raw_data_3D[index][3];
 							if(read_csv.raw_data[index][i]>0)
 							{
-								rect->y -= factor*abs(read_csv.raw_data[index][i]);
+								rect->y -= factor2*abs(read_csv.raw_data[index][i]);
 								float current_position_y = rect->y;
 								double nearest = round(read_csv.raw_data[index][i]);
 								DrawText_FTGL(nearest,x_position,current_position_y-20);

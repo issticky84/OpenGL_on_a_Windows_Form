@@ -260,8 +260,6 @@ namespace OpenGLForm{
 				 }
 			}
 			
-			//if(parentPanel->MousePosition.X>200) parentPanel->Cursor = System::Windows::Forms::Cursors::NoMoveVert;
-			//else parentPanel->Cursor = System::Windows::Forms::Cursors::NoMoveHoriz;
 	}
 
 	System::Void HistogramVisualization::HistogramMouseUp( Object^ /*sender*/, System::Windows::Forms::MouseEventArgs^ e ){

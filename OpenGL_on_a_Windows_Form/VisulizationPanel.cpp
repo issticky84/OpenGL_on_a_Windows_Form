@@ -7,6 +7,7 @@ namespace OpenGLForm{
 	vector<RECTANGLE*> recycle;
 	char quote[24][80];
 	char title[4][80];
+	char five_minutes[12][80];
 	vector<vector4> histogram_position_table;
 	vector<int> histogram_index;
 	vector< vector<vector4> > raw_data_position_table;

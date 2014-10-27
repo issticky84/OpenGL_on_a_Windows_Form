@@ -172,6 +172,46 @@ void ReadCSV::read_csv_time()
 
 	num_of_five_minutes = hour_data.size()-1;
 
+	for(int i=0;i<hour_data.size();i++)
+	{
+		for(int j=1;j<hour_data[i].size();j++)
+		{
+			hour_map[hour_data[i][j]]++;
+		}
+	}
+
+	map<int,int>::iterator it;
+	int start = 0;
+	int hour_num;
+	for(it = hour_map.begin(); it!=hour_map.end(); ++it)
+	{
+		hour_num = 11;
+		if(it == hour_map.begin())
+		{
+			begin_hour = it->first;
+			num_of_begin_hour = it->second;
+			hour_num = num_of_begin_hour - 1;
+		}
+		else if(next(it,1)==hour_map.end())
+		{
+			end_hour = it->first;
+			num_of_end_hour = it->second;
+			hour_num = num_of_end_hour - 1 - 1;
+		}
+
+		vector2 temp;
+		temp.x = start;
+		temp.y = start + hour_num;
+		//cout << temp.x << " " << temp.y << endl;
+		hour_range.push_back(temp);
+		hour_index.push_back(it->first);
+
+		start += (hour_num+1);
+		
+	}
+
+
+
 	fclose(csv_file);
 }
 

@@ -60,7 +60,7 @@ namespace OpenGLForm{
 	{
 		glPushMatrix();
 
-		float font_size = 20*(scale_factor[0]+0.4+scale_x[0]);
+		float font_size = 20*(scale_factor[0]+0.5+scale_x[0]);
 		font.FaceSize(font_size);
 		glColor3f(1.0, 1.0, 1.0);
 		glRasterPos2f(x , y-30.0 + font.LineHeight());

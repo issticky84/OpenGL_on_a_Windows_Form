@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include <iostream>
 #include <vector>
+#include <map>
+#include "mtxlib.h"
 
 #define LENGTH 1000
 
@@ -17,6 +19,14 @@ public:
 	vector < vector<float> > raw_data_3D;
 	vector < vector<float> > raw_data;
 	
+	map<int,int> hour_map;
+	int num_of_begin_hour;
+	int begin_hour;
+	int num_of_end_hour;
+	int end_hour;
+	vector<vector2> hour_range;
+	vector<int> hour_index;
+
 	int num_of_five_minutes;
 
 	char file_position[100];

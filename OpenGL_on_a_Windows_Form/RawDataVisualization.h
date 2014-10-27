@@ -15,5 +15,7 @@ namespace OpenGLForm{
 			System::Void FindPatternByTable2(int x,int y);
 			vector3 Unprojection(vector2 _2Dpos);
 			System::Void FindHistogram(int x,int y);
+			System::Void DrawTime_FTGL(int index,int x, int y);
+			System::Void time_string();
 	};
 }

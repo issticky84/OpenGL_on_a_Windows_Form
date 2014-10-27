@@ -99,7 +99,7 @@ namespace OpenGL_on_a_Windows_Form
 			// 
 			this->panel1->Location = System::Drawing::Point(671, 12);
 			this->panel1->Name = L"panel1";
-			this->panel1->Size = System::Drawing::Size(752, 447);
+			this->panel1->Size = System::Drawing::Size(813, 447);
 			this->panel1->TabIndex = 0;
 			this->panel1->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &Form1::panel1_Paint);
 			this->panel1->MouseEnter += gcnew System::EventHandler(this, &Form1::panel1_MouseEnter);
@@ -109,7 +109,7 @@ namespace OpenGL_on_a_Windows_Form
 			// 
 			this->panel2->Location = System::Drawing::Point(671, 465);
 			this->panel2->Name = L"panel2";
-			this->panel2->Size = System::Drawing::Size(752, 577);
+			this->panel2->Size = System::Drawing::Size(813, 577);
 			this->panel2->TabIndex = 1;
 			this->panel2->MouseEnter += gcnew System::EventHandler(this, &Form1::panel2_MouseEnter);
 			this->panel2->MouseMove += gcnew System::Windows::Forms::MouseEventHandler(this, &Form1::panel2_MouseMove);

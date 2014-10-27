@@ -9,8 +9,9 @@ namespace OpenGLForm{
 			parentPanel->MouseMove += gcnew System::Windows::Forms::MouseEventHandler( this, &RawDataVisualization::RawDataMouseMove );	
 			parentPanel->MouseUp += gcnew System::Windows::Forms::MouseEventHandler( this, &RawDataVisualization::RawDataMouseUp );	
 			parentPanel->MouseDoubleClick += gcnew System::Windows::Forms::MouseEventHandler( this, &RawDataVisualization::RawDataMouseDoubleClick );	 
+			time_string();
 			//Initialize mouse handler variable
-			scale_x[1] = 0.6; scale_y[1] = 0.0; scale_z[1] = 0.0;
+			scale_x[1] = 0.5; scale_y[1] = 0.0; scale_z[1] = 0.0;
 			scale_size[1] = 0.05;
 			move_x[1] = 0.0; move_y[1] = 0.0; move_z[1] = 0.0;
 			scale_factor[1] = 0.6;
@@ -50,8 +51,9 @@ namespace OpenGLForm{
 			{
 				for(int i=0;i<histogram_index.size();i++)
 				{
-					int p = 10;
+					int p = 100;
 					int index = 0;
+					DrawTime_FTGL(histogram_index[i]/600,10,y_position+5);
 					for(int j=histogram_index[i];j<histogram_index[i]+600;j++)
 					{
 						RECTANGLE *rect;
@@ -141,6 +143,41 @@ namespace OpenGLForm{
 		}		
 	}
 
+	System::Void RawDataVisualization::DrawTime_FTGL(int index,int x, int y)
+	{
+		int hour;
+		int five_minute_index;
+		for(int i=0;i<read_csv.hour_range.size();i++)
+		{
+			if(index>=read_csv.hour_range[i].x && index<= read_csv.hour_range[i].y)
+			{
+				hour = read_csv.hour_index[i];
+				if(hour == read_csv.begin_hour && read_csv.num_of_begin_hour<12)
+					five_minute_index = index - read_csv.hour_range[i].x + (11-read_csv.num_of_begin_hour);
+				else
+					five_minute_index = index - read_csv.hour_range[i].x;
+				
+				break;
+			}
+		}
+		stringstream ss;
+		ss << hour;
+		string str = ss.str();
+		char *hour_text = (char*)str.c_str();		
+
+		strcat(hour_text,five_minutes[five_minute_index]);
+
+		glPushMatrix();
+
+		float font_size = 15*(scale_factor[1]+0.3+scale_x[1]);
+		font.FaceSize(font_size);
+		glColor3f(1.0, 1.0, 1.0);
+		glRasterPos2f(x , y-20.0 + font.LineHeight());
+		font.Render(hour_text);
+
+		glPopMatrix();		
+	}
+
 	vector3 RawDataVisualization::Unprojection(vector2 _2Dpos){
 		float Depth;
 		int viewport[4];
@@ -212,5 +249,21 @@ namespace OpenGLForm{
 				FindHistogram(e->X,e->Y);
 				//System::Windows::Forms::MessageBox::Show("ha");	
 			}
+	}
+
+	System::Void RawDataVisualization::time_string()
+	{
+		strcpy(five_minutes[0],":00-05");
+		strcpy(five_minutes[1],":05-10");
+		strcpy(five_minutes[2],":10-15");
+		strcpy(five_minutes[3],":15-20");
+		strcpy(five_minutes[4],":20-25");
+		strcpy(five_minutes[5],":25-30");
+		strcpy(five_minutes[6],":30-35");
+		strcpy(five_minutes[7],":35-40");
+		strcpy(five_minutes[8],":40-45");
+		strcpy(five_minutes[9],":45-50");
+		strcpy(five_minutes[10],":50-55");
+		strcpy(five_minutes[11],":55-59");
 	}
 }

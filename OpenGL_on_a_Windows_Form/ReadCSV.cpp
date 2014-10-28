@@ -31,7 +31,6 @@ void ReadCSV::read_all_csv()
 void ReadCSV::read_csv_position()
 {
 	FILE *csv_file;
-	//csv_file = fopen("position_BigData_20140328_2356.csv","r");
 	csv_file = fopen(file_position,"r");
 	if(!csv_file) 
 	{
@@ -286,6 +285,7 @@ void ReadCSV::read_csv_raw_data_3D()
 
 	//cout << raw_data.size() - 1;
 	//cout << raw_data[2].size() - 1;	
+	fclose(csv_file);
 }
 
 ////////////////////seperate by ';'////////////////////////
@@ -323,5 +323,6 @@ void ReadCSV::read_csv_raw_data()
 	}
 
 	//cout << raw_data.size() - 1;
-	//cout << raw_data[2].size() - 1;	
+	//cout << raw_data[2].size() - 1;
+	fclose(csv_file);	
 }

@@ -19,7 +19,6 @@ public:
 	vector < vector<float> > raw_data_3D;
 	vector < vector<float> > raw_data;
 	
-	map<int,int> hour_map;
 	int num_of_begin_hour;
 	int begin_hour;
 	int num_of_end_hour;
@@ -47,4 +46,6 @@ private:
 	void read_csv_clustercenter();
 	void read_csv_raw_data_3D();
 	void read_csv_raw_data();
+	
+	map<int,int> hour_map;
 };

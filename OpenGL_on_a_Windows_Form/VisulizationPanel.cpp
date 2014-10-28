@@ -4,7 +4,6 @@
 namespace OpenGLForm{
 	//vector<float> draw_color;
 	ReadCSV read_csv;
-	vector<RECTANGLE*> recycle;
 	char quote[24][80];
 	char title[4][80];
 	char five_minutes[12][80];
@@ -26,7 +25,6 @@ namespace OpenGLForm{
 
 	VisualizationPanel::VisualizationPanel(Form ^ parentForm,Panel ^ parentPanel, GLsizei iWidth, GLsizei iHeight,ReadCSV read_csv_ref){
 			CreateParams^ cp = gcnew CreateParams;	
-			recycle.reserve(0);
 			read_csv = read_csv_ref;
 			// Set the position on the form
 			cp->X = 0;

@@ -46,7 +46,7 @@ namespace OpenGLForm{
 			vector<float> color;
 			color.resize(3);
 
-			int y_position = 30;
+			int y_position = 20;
 			if(!histogram_index.empty())
 			{
 				for(int i=0;i<histogram_index.size();i++)
@@ -253,17 +253,17 @@ namespace OpenGLForm{
 
 	System::Void RawDataVisualization::time_string()
 	{
-		strcpy(five_minutes[0],":00-05");
-		strcpy(five_minutes[1],":05-10");
-		strcpy(five_minutes[2],":10-15");
-		strcpy(five_minutes[3],":15-20");
-		strcpy(five_minutes[4],":20-25");
-		strcpy(five_minutes[5],":25-30");
-		strcpy(five_minutes[6],":30-35");
-		strcpy(five_minutes[7],":35-40");
-		strcpy(five_minutes[8],":40-45");
-		strcpy(five_minutes[9],":45-50");
-		strcpy(five_minutes[10],":50-55");
-		strcpy(five_minutes[11],":55-59");
+		strcpy(five_minutes[0],":00");
+		strcpy(five_minutes[1],":05");
+		strcpy(five_minutes[2],":10");
+		strcpy(five_minutes[3],":15");
+		strcpy(five_minutes[4],":20");
+		strcpy(five_minutes[5],":25");
+		strcpy(five_minutes[6],":30");
+		strcpy(five_minutes[7],":35");
+		strcpy(five_minutes[8],":40");
+		strcpy(five_minutes[9],":45");
+		strcpy(five_minutes[10],":50");
+		strcpy(five_minutes[11],":55");
 	}
 }

@@ -23,8 +23,8 @@ namespace OpenGL_on_a_Windows_Form
 			InitializeComponent();
 			//system("matlab -nodesktop -nosplash -r draw_rect_wear2");
 			ReadCSV read_csv;
-			
 			read_csv.read_all_csv();
+
 			rawData = gcnew RawDataVisualization(this,this->panel1,panel1->Width,panel1->Height,read_csv);
 			detail = gcnew DetailVisualization(this,this->panel2,panel2->Width,panel2->Height,read_csv);
 			histogram = gcnew HistogramVisualization(this,this->panel3,panel3->Width,panel3->Height,read_csv);

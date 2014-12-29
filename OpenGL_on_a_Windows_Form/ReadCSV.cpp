@@ -201,7 +201,6 @@ void ReadCSV::read_csv_time()
 		vector2 temp;
 		temp.x = start;
 		temp.y = start + hour_num;
-		//cout << temp.x << " " << temp.y << endl;
 		hour_range.push_back(temp);
 		hour_index.push_back(it->first);
 

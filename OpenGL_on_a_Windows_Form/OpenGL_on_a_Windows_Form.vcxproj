@@ -80,10 +80,10 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\Include\GL;..\Include;..\Include\freetype;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Include\opencv;..\Include\Eigen;..\Include\GL;..\Include;..\Include\freetype;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>openGL32.lib;glu32.lib;gdi32.lib;User32.lib;freeglut.lib;opengl32.lib;glew32s.lib;glew32.lib;libglfw.a;libopengl32.a;ftgl.lib;ftgl_static.lib;freetype244.lib</AdditionalDependencies>
+      <AdditionalDependencies>openGL32.lib;glu32.lib;gdi32.lib;User32.lib;freeglut.lib;opengl32.lib;glew32s.lib;glew32.lib;libglfw.a;libopengl32.a;ftgl.lib;ftgl_static.lib;freetype244.lib;opencv_calib3d244.lib;opencv_calib3d244d.lib;opencv_contrib244.lib;opencv_contrib244d.lib;opencv_core244.lib;opencv_core244d.lib;opencv_features2d244.lib;opencv_features2d244d.lib;opencv_flann244.lib;opencv_flann244d.lib;opencv_gpu244.lib;opencv_gpu244d.lib;opencv_highgui244.lib;opencv_highgui244d.lib;opencv_imgproc244.lib;opencv_imgproc244d.lib;opencv_legacy244.lib;opencv_legacy244d.lib;opencv_ml244.lib;opencv_ml244d.lib;opencv_nonfree244.lib;opencv_nonfree244d.lib;opencv_objdetect244.lib;opencv_objdetect244d.lib;opencv_photo244.lib;opencv_photo244d.lib;opencv_stitching244.lib;opencv_stitching244d.lib;opencv_ts244.lib;opencv_ts244d.lib;opencv_video244.lib;opencv_video244d.lib;opencv_videostab244.lib;opencv_videostab244d.lib</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <EntryPointSymbol>main</EntryPointSymbol>
@@ -121,6 +121,7 @@
     <ClCompile Include="HistogramVisualization.cpp" />
     <ClCompile Include="mtxlib.cpp" />
     <ClCompile Include="OpenGL_on_a_Windows_Form.cpp" />
+    <ClCompile Include="Preprocessing_Data.cpp" />
     <ClCompile Include="ReadCSV.cpp" />
     <ClCompile Include="RawDataVisualization.cpp" />
     <ClCompile Include="VisulizationPanel.cpp" />
@@ -136,6 +137,7 @@
     <ClInclude Include="DetailVisualization.h" />
     <ClInclude Include="HistogramVisualization.h" />
     <ClInclude Include="mtxlib.h" />
+    <ClInclude Include="Preprocessing_Data.h" />
     <ClInclude Include="RawDataVisualization.h" />
     <ClInclude Include="ReadCSV.h" />
     <ClInclude Include="RECTANGLE.h" />

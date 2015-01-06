@@ -40,11 +40,13 @@ public:
 	void start();
 
 	int num_of_five_minutes;
+	int raw_data_size;
 	vector <int> hour_data;
 	Mat histogram;//int
 	Mat rgb_mat;//float
 	Mat position;//double
 	Mat raw_data_3D;//float
+	Mat raw_data_mat;//float
 	vector<vector2> hour_range;
 	vector<int> hour_index;
 	int num_of_begin_hour,begin_hour;

@@ -7,6 +7,7 @@
 #include "RECTANGLE.h"
 #include "mtxlib.h"
 #include <sstream>
+#include "Preprocessing_Data.h"
 
 
 #define generic GenericFromFreeTypeLibrary
@@ -20,6 +21,7 @@ using namespace System::Windows::Forms;
 namespace OpenGLForm{
 	//extern  vector<float>  draw_color;
 	extern	ReadCSV read_csv;
+	extern Preprocessing_Data preprocessing_data;
 	extern	vector<RECTANGLE*> recycle;
 	extern char quote[24][80];
 	extern char title[4][80];
@@ -42,7 +44,7 @@ namespace OpenGLForm{
 
 	public ref class VisualizationPanel: public NativeWindow{
 	public:
-			VisualizationPanel(Form ^ parentForm,Panel ^ parentPanel, GLsizei iWidth, GLsizei iHeight,ReadCSV read_csv_ref);
+			VisualizationPanel(Form ^ parentForm,Panel ^ parentPanel, GLsizei iWidth, GLsizei iHeight,ReadCSV read_csv_ref,Preprocessing_Data preprocessing_data_ref);
 			//virtual System::Void Render(System::Void){}
 			virtual System::Void Render(int,int){}
 			~VisualizationPanel(System::Void);

@@ -3,13 +3,13 @@
 
 namespace OpenGLForm{
 
-	HistogramVisualization::HistogramVisualization(Form ^ parentForm,Panel ^ parentPanel, GLsizei iWidth, GLsizei iHeight,ReadCSV read_csv_ref):VisualizationPanel(parentForm,parentPanel,iWidth,iHeight,read_csv_ref){
+	HistogramVisualization::HistogramVisualization(Form ^ parentForm,Panel ^ parentPanel, GLsizei iWidth, GLsizei iHeight,ReadCSV read_csv_ref,Preprocessing_Data preprocessing_data_ref):VisualizationPanel(parentForm,parentPanel,iWidth,iHeight,read_csv_ref,preprocessing_data_ref){
 			parentPanel->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &HistogramVisualization::HistogramMouseDown);
 			parentPanel->MouseWheel += gcnew System::Windows::Forms::MouseEventHandler( this, &HistogramVisualization::HistogramMouseWheel );
 			parentPanel->MouseMove += gcnew System::Windows::Forms::MouseEventHandler( this, &HistogramVisualization::HistogramMouseMove );
 			parentPanel->MouseUp += gcnew System::Windows::Forms::MouseEventHandler( this, &HistogramVisualization::HistogramMouseUp );
 			time_string();
-			histogram_position_table.resize(read_csv.num_of_five_minutes);
+			histogram_position_table.resize(preprocessing_data.num_of_five_minutes);
 			//Initialize mouse handler variable
 			scale_x[0] = 0.0; scale_y[0] = 0.0; scale_z[0] = 0.0;
 			scale_size[0] = 0.05;
@@ -115,20 +115,20 @@ namespace OpenGLForm{
 			glTranslatef(0.0+move_x[0],0.0+move_y[0],0.0+move_z[0]);
 			glScalef(scale_factor[0]+scale_x[0],scale_factor[0]+scale_y[0],scale_factor[0]+scale_z[0]);
 
-			//RECTANGLE *rect;
-			//RECTANGLE *line;
 
 			int y_coord = 1400;
 			int pixels;
 			int current_hour;
 			int last_hour = -1;
 			int t=0;
-			for(int i=0;i<read_csv.position_data.size()-1;++i)
+			for(int i=0;i<preprocessing_data.histogram.rows;++i)
 			{
-				current_hour = read_csv.hour_data[i][1];
+				current_hour = preprocessing_data.hour_data[i];
 				if(current_hour!=last_hour)
 				{
-					draw_color[0] = 1; draw_color[1] = 1; draw_color[2] = 1;
+					draw_color[0] = 1; 
+					draw_color[1] = 1; 
+					draw_color[2] = 1;
 					RECTANGLE *line;
 					line = new RECTANGLE();
 					line->h = 3;
@@ -141,16 +141,17 @@ namespace OpenGLForm{
 					y_coord-=10;
 					delete(line);
 				}
-				for(int j=1;j<read_csv.position_data[i].size();j++)
-				{		
+	
 					int start = 0;
-					for(int k=0;k<read_csv.histogram_data[i].size()-1;++k)
+					for(int k=0;k<preprocessing_data.histogram.cols;++k)
 					{   
-						if(read_csv.histogram_data[i][k+1]!=0)
+						if(preprocessing_data.histogram.at<int>(i,k)!=0)
 						{
-							pixels = read_csv.histogram_data[i][k+1];
-							draw_color[0] = read_csv.color_data[k][1]; draw_color[1] = read_csv.color_data[k][2]; draw_color[2] = read_csv.color_data[k][3];
-							//if(select_histogram_flag) 
+							pixels = preprocessing_data.histogram.at<int>(i,k);
+							draw_color[0] = preprocessing_data.rgb_mat.at<float>(k,0); 
+							draw_color[1] = preprocessing_data.rgb_mat.at<float>(k,1); 
+							draw_color[2] = preprocessing_data.rgb_mat.at<float>(k,2);
+
 							if((counter==2 || counter==4) && select_histogram_flag)
 							{
 								if(i==select_histogram_index)
@@ -158,22 +159,23 @@ namespace OpenGLForm{
 									draw_color[0] = 0; draw_color[1] = 0; draw_color[2] = 0;
 								}
 							}
+
 							for(int u=start;u<start+pixels;++u)
 							{
 								RECTANGLE *rect;
 								rect = new RECTANGLE();
 								rect->h = 3;
 								rect->w = 0.1;
-								rect->x = read_csv.position_data[i][j]/10.0 + (float)u*0.1;
+								rect->x = 110 + preprocessing_data.position.at<double>(i,1)/10.0 + (double)u*0.1;
 								rect->y = y_coord;
 								DrawRectWithOpenGL(rect,draw_color);	
 								delete(rect);
 
 							}
 							//table record
-							histogram_position_table[i].x = read_csv.position_data[i][j]/10.0;
+							histogram_position_table[i].x = 110 + preprocessing_data.position.at<double>(i,1)/10.0;
 							histogram_position_table[i].y = y_coord;
-							histogram_position_table[i].z = read_csv.position_data[i][j]/10.0 + 60.0;
+							histogram_position_table[i].z = 110 + preprocessing_data.position.at<double>(i,1)/10.0 + 60.0;
 							histogram_position_table[i].w = y_coord + 3;
 								
 							histogram_position_table[i].x *= (scale_factor[0] + scale_x[0]);
@@ -190,8 +192,7 @@ namespace OpenGLForm{
 					}
 
 					y_coord-=5;
-				}
-				last_hour = current_hour;
+					last_hour = current_hour;
 			}
 
 	}

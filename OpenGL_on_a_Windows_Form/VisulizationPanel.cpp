@@ -2,8 +2,8 @@
 #include "VisualizationPanel.h"
 
 namespace OpenGLForm{
-	//vector<float> draw_color;
 	ReadCSV read_csv;
+	Preprocessing_Data preprocessing_data;
 	char quote[24][80];
 	char title[4][80];
 	char five_minutes[12][80];
@@ -23,9 +23,10 @@ namespace OpenGLForm{
 	bool select_histogram_flag;
 	int counter;
 
-	VisualizationPanel::VisualizationPanel(Form ^ parentForm,Panel ^ parentPanel, GLsizei iWidth, GLsizei iHeight,ReadCSV read_csv_ref){
+	VisualizationPanel::VisualizationPanel(Form ^ parentForm,Panel ^ parentPanel, GLsizei iWidth, GLsizei iHeight,ReadCSV read_csv_ref,Preprocessing_Data preprocessing_data_ref){
 			CreateParams^ cp = gcnew CreateParams;	
 			read_csv = read_csv_ref;
+			preprocessing_data = preprocessing_data_ref;
 			// Set the position on the form
 			cp->X = 0;
 			cp->Y = 0;

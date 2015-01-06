@@ -1,36 +1,49 @@
-#include "stdafx.h"
+#ifndef Preprocessing_DataH
+#define Preprocessing_DataH
+
 #include <iostream>
-#include <vector>
-#include <fstream>
-#include <stdio.h>
-#include <highgui.h>
-#include <vector>
-#include <algorithm>
-#include <cmath>
-#include <ctime>
+#include <cstdio>
+#include <cstdlib>
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/highgui/highgui.hpp"
+#include <highgui.h>
+#include <vector>
 #include "cv.h"
-#include <tapkee/tapkee.hpp>
-#include <tapkee/callbacks/dummy_callbacks.hpp>
-#include <opencv2/core/eigen.hpp> //cv2eigen
-#include "glut.h"
-
-#define generic GenericFromFreeTypeLibrary
-#include <FTGL/ftgl.h>
-#undef generic
-
-using namespace std; 
-using namespace cv;
-using namespace tapkee;
-using namespace Eigen;
 
 #define LENGTH 1000
 
-//char file_csv_data[] = "../../../../csv_data/BigData_20141121_0723_new.csv";
-class Preprocessing_Data{
-public:
-	
+using namespace std; 
+using namespace cv;
+
+class Preprocessing_Data
+{
 private:
-	//char file_csv_data[];
+	char file_csv_data[200];
+	vector < vector<float> > raw_data;
+
+	void output_mat_as_txt_file(char file_name[],Mat);
+	void output_mat_as_csv_file(char file_name[],Mat);
+	void calcCovMat(Mat&, Mat&, Mat&);
+	void reduceDimPCA(Mat&, int, Mat&, Mat&);
+	void read_raw_data();
+	float degtorad(float);
+	float norm_value(float,float,float);
+	float DistanceOfLontitudeAndLatitude(float,float,float,float);
+	void set_hour_data(int time_title[]);
+	Mat Gaussian_filter(int attribute_title[],int);
+	Mat set_matrix(int attribute_title[],int);
+	void voting(int,Mat,int);
+	Mat Position_by_MDS(Mat,int ,float);
+public:
+	void start();
+
+	int num_of_five_minutes;
+	vector <int> hour_data;
+	Mat histogram;//int
+	Mat rgb_mat;//float
+	Mat position;//double
 };
+
+
+
+#endif	

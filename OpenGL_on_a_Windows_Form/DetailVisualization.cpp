@@ -2,7 +2,7 @@
 #include "DetailVisualization.h"
 
 namespace OpenGLForm{
-	DetailVisualization::DetailVisualization(Form ^ parentForm,Panel ^ parentPanel, GLsizei iWidth, GLsizei iHeight,ReadCSV read_csv_ref):VisualizationPanel(parentForm,parentPanel,iWidth,iHeight,read_csv_ref){
+	DetailVisualization::DetailVisualization(Form ^ parentForm,Panel ^ parentPanel, GLsizei iWidth, GLsizei iHeight,ReadCSV read_csv_ref,Preprocessing_Data preprocessing_data_ref):VisualizationPanel(parentForm,parentPanel,iWidth,iHeight,read_csv_ref,preprocessing_data_ref){
 			title_string();
 			//Initialize mouse handler variable
 			scale_x[2] = 0.0; scale_y[2] = 0.0; scale_z[2] = 0.0;

@@ -16,7 +16,7 @@ Assembly System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c5619
 	hash=None, flags=None
 Class OpenGLForm.VisualizationPanel: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
   :System.Windows.Forms.NativeWindow
-    Void .ctor(System.Windows.Forms.Form, System.Windows.Forms.Panel, Int32, Int32, ReadCSV*): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+    Void .ctor(System.Windows.Forms.Form, System.Windows.Forms.Panel, Int32, Int32, ReadCSV*, Preprocessing_Data*): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
   Interfaces:
     System.IDisposable
   Methods:
@@ -24,12 +24,12 @@ Class OpenGLForm.VisualizationPanel: AutoLayout, AnsiClass, Class, Public, Befor
     Dispose(): PrivateScope, Public, Final, Virtual, HideBySig
 Class OpenGLForm.DetailVisualization: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
   :OpenGLForm.VisualizationPanel
-    Void .ctor(System.Windows.Forms.Form, System.Windows.Forms.Panel, Int32, Int32, ReadCSV*): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+    Void .ctor(System.Windows.Forms.Form, System.Windows.Forms.Panel, Int32, Int32, ReadCSV*, Preprocessing_Data*): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
   Methods:
     Render(Int32, Int32): PrivateScope, Public, Virtual, HideBySig
 Class OpenGLForm.HistogramVisualization: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
   :OpenGLForm.VisualizationPanel
-    Void .ctor(System.Windows.Forms.Form, System.Windows.Forms.Panel, Int32, Int32, ReadCSV*): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+    Void .ctor(System.Windows.Forms.Form, System.Windows.Forms.Panel, Int32, Int32, ReadCSV*, Preprocessing_Data*): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
   Methods:
     Render(Int32, Int32): PrivateScope, Public, Virtual, HideBySig
     HistogramMouseDown(Object, MouseEventArgs): PrivateScope, Public, HideBySig
@@ -38,7 +38,7 @@ Class OpenGLForm.HistogramVisualization: AutoLayout, AnsiClass, Class, Public, B
     HistogramMouseUp(Object, MouseEventArgs): PrivateScope, Public, HideBySig
 Class OpenGLForm.RawDataVisualization: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
   :OpenGLForm.VisualizationPanel
-    Void .ctor(System.Windows.Forms.Form, System.Windows.Forms.Panel, Int32, Int32, ReadCSV*): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+    Void .ctor(System.Windows.Forms.Form, System.Windows.Forms.Panel, Int32, Int32, ReadCSV*, Preprocessing_Data*): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
   Methods:
     Render(Int32, Int32): PrivateScope, Public, Virtual, HideBySig
     RawDataMouseDown(Object, MouseEventArgs): PrivateScope, Public, HideBySig

@@ -23,18 +23,20 @@ namespace OpenGL_on_a_Windows_Form
 			InitializeComponent();
 			//system("matlab -nodesktop -nosplash -r draw_rect_wear2");
 			ReadCSV read_csv;
-			read_csv.read_all_csv();
+			//read_csv.read_all_csv();
 
 			Preprocessing_Data preprocessing_data;
 		    preprocessing_data.start();
-			//rawData = gcnew RawDataVisualization(this,this->panel1,panel1->Width,panel1->Height,read_csv,preprocessing_data);
-			//detail = gcnew DetailVisualization(this,this->panel2,panel2->Width,panel2->Height,read_csv,preprocessing_data);
+
 			histogram = gcnew HistogramVisualization(this,this->panel3,panel3->Width,panel3->Height,read_csv,preprocessing_data);
+			rawData = gcnew RawDataVisualization(this,this->panel1,panel1->Width,panel1->Height,read_csv,preprocessing_data);
+			//detail = gcnew DetailVisualization(this,this->panel2,panel2->Width,panel2->Height,read_csv,preprocessing_data);
+	
 			/*OpenGL = gcnew COpenGL(this,this->panel1,panel1->Width,panel1->Height,read_csv);
 			OpenGL_2 = gcnew COpenGL(this,this->panel2,panel2->Width,panel2->Height,read_csv);
 			OpenGL_3 = gcnew COpenGL(this,this->panel3,panel3->Width,panel3->Height,read_csv);
 			*/
-			//OpenGL_4 = gcnew COpenGL(this->panel4,panel4->Width,panel4->Height);
+
 			
 		}
 	protected:

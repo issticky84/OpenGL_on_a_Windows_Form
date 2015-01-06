@@ -9,6 +9,7 @@
 #include <highgui.h>
 #include <vector>
 #include "cv.h"
+#include "mtxlib.h"//vector2
 
 #define LENGTH 1000
 
@@ -19,6 +20,7 @@ class Preprocessing_Data
 {
 private:
 	char file_csv_data[200];
+	map<int,int> hour_map;
 	vector < vector<float> > raw_data;
 
 	void output_mat_as_txt_file(char file_name[],Mat);
@@ -42,6 +44,10 @@ public:
 	Mat histogram;//int
 	Mat rgb_mat;//float
 	Mat position;//double
+	Mat raw_data_3D;//float
+	vector<vector2> hour_range;
+	vector<int> hour_index;
+	int num_of_begin_hour,begin_hour;
 };
 
 

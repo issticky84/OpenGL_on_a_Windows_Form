@@ -8,6 +8,10 @@
 #include "tapkee/tapkee.hpp"
 #include "tapkee/callbacks/dummy_callbacks.hpp"
 #include <opencv2/core/eigen.hpp> //cv2eigen
+#include "mtxlib.h"//vector2
+#include <vector>
+#include <map>
+#include <iostream>
 
 using namespace tapkee;
 using namespace Eigen;
@@ -51,7 +55,6 @@ void Preprocessing_Data::start()
 	
 	voting(k,cluster_tag,model.rows); // Type: int
 	cluster_tag.release();
-	model.release();
 	//===================PCA RGB=======================//
 	Mat components, result;
 	int rDim = 3;
@@ -69,7 +72,12 @@ void Preprocessing_Data::start()
 	clock_t end5 = clock();
 	printf("MDS Position elapsed time: %f\n",double(end5 - begin5) / CLOCKS_PER_SEC);
 	cluster_centers.release();
-	
+	//===================PCA raw data 3 dim=======================//
+	reduceDimPCA(model, rDim, components, result);
+	raw_data_3D = result.clone();
+	for(int i=0;i<result.cols;i++)
+		normalize(result.col(i),raw_data_3D.col(i),0,1,NORM_MINMAX); //normalize to 0-1
+	//model.release();	
 }
 
 void Preprocessing_Data::output_mat_as_txt_file(char file_name[],Mat mat)
@@ -222,16 +230,52 @@ float Preprocessing_Data::DistanceOfLontitudeAndLatitude(float lat1,float lat2,f
 
 void Preprocessing_Data::set_hour_data(int time_title[])
 {
-	int hour_index = time_title[1];
+	int hour_id = time_title[1];
 	int time_step_amount = floor(raw_data.size()/600.0);
 	num_of_five_minutes = time_step_amount;
 	hour_data.resize(time_step_amount);
 	int t = 0;
 	for(int i=0;i<time_step_amount;i++)
 	{
-		hour_data[i] = raw_data[t][hour_index]; 
+		hour_data[i] = raw_data[t][hour_id]; 
 		t += 600;
-	}	
+	}
+	//////////////////////////////////////////////////////////////////
+	num_of_five_minutes = hour_data.size()-1;
+	int num_of_end_hour,end_hour;
+	for(int i=0;i<hour_data.size();i++)
+	{
+		hour_map[hour_data[i]]++;
+	}
+
+	map<int,int>::iterator it;
+	int start = 0;
+	int hour_num;
+	for(it = hour_map.begin(); it!=hour_map.end(); ++it)
+	{
+		hour_num = 11;
+		if(it == hour_map.begin())
+		{
+			begin_hour = it->first;
+			num_of_begin_hour = it->second;
+			hour_num = num_of_begin_hour - 1;
+		}
+		else if(next(it,1)==hour_map.end())
+		{
+			end_hour = it->first;
+			num_of_end_hour = it->second;
+			hour_num = num_of_end_hour - 1 - 1;
+		}
+
+		vector2 temp;
+		temp.x = start;
+		temp.y = start + hour_num;
+		hour_range.push_back(temp);
+		hour_index.push_back(it->first);
+		
+		start += (hour_num+1);
+		
+	}
 }
 
 Mat Preprocessing_Data::Gaussian_filter(int attribute_title[],int MAX_KERNEL_LENGTH)

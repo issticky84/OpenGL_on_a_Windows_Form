@@ -62,9 +62,9 @@ namespace OpenGLForm{
 						rect->w = 1.0;
 						rect->x = p;
 						rect->y = y_position;
-						color[0] = read_csv.raw_data_3D[j][1];
-						color[1] = read_csv.raw_data_3D[j][2];
-						color[2] = read_csv.raw_data_3D[j][3];
+						color[0] = preprocessing_data.raw_data_3D.at<float>(j,0);
+						color[1] = preprocessing_data.raw_data_3D.at<float>(j,1);
+						color[2] = preprocessing_data.raw_data_3D.at<float>(j,2);
 						DrawRectWithOpenGL(rect,color);
 						delete(rect);
 
@@ -104,10 +104,10 @@ namespace OpenGLForm{
 		//System::Windows::Forms::MessageBox::Show( pos_3D.x.ToString() + " " + pos_3D.y.ToString());	
 		for(int i=0;i<raw_data_position_table.size();i++)
 		{
-			if(histogram_index[i] > read_csv.raw_data.size()-1) break; ////////bug//////(index out of scrope)
+			if(histogram_index[i] > preprocessing_data.raw_data.size()-1) break; ////////bug//////(index out of scrope)
 			for(int j=0;j<raw_data_position_table[i].size();j++)
 			{
-				if(histogram_index[i]+j > read_csv.raw_data.size()-1) break;
+				if(histogram_index[i]+j > preprocessing_data.raw_data.size()-1) break;
 				if(pos_3D.x >= raw_data_position_table[i][j].x && pos_3D.x <= raw_data_position_table[i][j].z && pos_3D.y >= raw_data_position_table[i][j].y && pos_3D.y <= raw_data_position_table[i][j].w)
 				{
 					//System::Windows::Forms::MessageBox::Show( (i+1).ToString() + " " + (j+1).ToString());			
@@ -130,10 +130,10 @@ namespace OpenGLForm{
 		pos_3D.y += move_y[1];		
 		for(int i=0;i<raw_data_position_table.size();i++)
 		{
-			if(histogram_index[i] > read_csv.raw_data.size()-1) break; 
+			if(histogram_index[i] > preprocessing_data.raw_data.size()-1) break; 
 			for(int j=0;j<raw_data_position_table[i].size();j++)
 			{
-				if(histogram_index[i]+j > read_csv.raw_data.size()-1) break;
+				if(histogram_index[i]+j > preprocessing_data.raw_data.size()-1) break;
 				if(pos_3D.x >= raw_data_position_table[i][j].x && pos_3D.x <= raw_data_position_table[i][j].z && pos_3D.y >= raw_data_position_table[i][j].y && pos_3D.y <= raw_data_position_table[i][j].w)
 				{
 					select_histogram_index = histogram_index[i]/600;
@@ -147,15 +147,15 @@ namespace OpenGLForm{
 	{
 		int hour;
 		int five_minute_index;
-		for(int i=0;i<read_csv.hour_range.size();i++)
+		for(int i=0;i<preprocessing_data.hour_range.size();i++)
 		{
-			if(index>=read_csv.hour_range[i].x && index<= read_csv.hour_range[i].y)
+			if(index>=preprocessing_data.hour_range[i].x && index<= preprocessing_data.hour_range[i].y)
 			{
-				hour = read_csv.hour_index[i];
-				if(hour == read_csv.begin_hour && read_csv.num_of_begin_hour<12)
-					five_minute_index = index - read_csv.hour_range[i].x + (11-read_csv.num_of_begin_hour);
+				hour = preprocessing_data.hour_index[i];
+				if(hour == preprocessing_data.begin_hour && preprocessing_data.num_of_begin_hour<12)
+					five_minute_index = index - preprocessing_data.hour_range[i].x + (11-preprocessing_data.num_of_begin_hour);
 				else
-					five_minute_index = index - read_csv.hour_range[i].x;
+					five_minute_index = index - preprocessing_data.hour_range[i].x;
 				
 				break;
 			}

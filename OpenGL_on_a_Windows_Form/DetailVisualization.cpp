@@ -40,165 +40,159 @@ namespace OpenGLForm{
 			if(!raw_data_index.empty())
 			{
 					int index = raw_data_index[0];
-					float factor = 10.0;
+					float factor = 50.0;
 					int x_position,y_position;
-					//==========Acceleration X Y Z==========//
-					/*
-					DrawTitle_FTGL(0,70,20);
-					x_position = 70;
-					y_position = 200;	
-					for(int i=1;i<=3;i++)
+					//==========first order of Longitude & Latitude==========//
+					DrawTitle_FTGL(0,600,500);
+					x_position = 550;
+					y_position = 750;	
+						
+					for(int j=0;j<raw_data_index.size();j++)
 					{
 						RECTANGLE *rect;
-						for(int j=0;j<raw_data_index.size();j++)
+						index = raw_data_index[j];
+						rect = new RECTANGLE();
+						rect->h = factor*abs(preprocessing_data.raw_data_mat.at<float>(index,3));
+						rect->w = 50.0;
+						rect->x = x_position;
+						rect->y = y_position;
+						color[0] = preprocessing_data.raw_data_3D.at<float>(index,0);
+						color[1] = preprocessing_data.raw_data_3D.at<float>(index,1);
+						color[2] = preprocessing_data.raw_data_3D.at<float>(index,2);
+						if(preprocessing_data.raw_data_mat.at<float>(index,3)>0)
 						{
-							index = raw_data_index[j];
-							rect = new RECTANGLE();
-							rect->h = factor*abs(read_csv.raw_data[index][i]);
-							rect->w = 6.0;
-							rect->x = x_position;
-							rect->y = y_position;
-							color[0] = read_csv.raw_data_3D[index][1];
-							color[1] = read_csv.raw_data_3D[index][2];
-							color[2] = read_csv.raw_data_3D[index][3];
-							if(read_csv.raw_data[index][i]>0)
-							{
-								rect->y -= factor*abs(read_csv.raw_data[index][i]);
-								float current_position_y = rect->y;
-								DrawText_FTGL(read_csv.raw_data[index][i],x_position,current_position_y-20);
-							}
-							else
-							{
-								float current_position_y = rect->y + rect->h;
-								DrawText_FTGL(read_csv.raw_data[index][i],x_position,current_position_y+5);
-							}
-
-							DrawRectWithOpenGL(rect,color);
-							delete(rect);
-
-							x_position+=6;
+							rect->y -= factor*abs(preprocessing_data.raw_data_mat.at<float>(index,3));
+							float current_position_y = rect->y;
+							double nearest = round(preprocessing_data.raw_data_mat.at<float>(index,3));
+							DrawText_FTGL(nearest,x_position,current_position_y-20);
 						}
-						x_position+=70;
-					}
-					*/
-					//==========Linear Acceleration X Y Z==========//
-					DrawTitle_FTGL(1,450, 20);
-					x_position = 50;
-					y_position = 250;
-					for(int i=4;i<=6;i++)
-					{
-						RECTANGLE *rect;
-						for(int j=0;j<raw_data_index.size();j++)
+						else if(preprocessing_data.raw_data_mat.at<float>(index,3)==0)
 						{
-							index = raw_data_index[j];
-							rect = new RECTANGLE();
-							rect->h = factor*abs(read_csv.raw_data[index][i]);
-							rect->w = 30.0;
-							rect->x = x_position;
-							rect->y = y_position;
-							color[0] = read_csv.raw_data_3D[index][1];
-							color[1] = read_csv.raw_data_3D[index][2];
-							color[2] = read_csv.raw_data_3D[index][3];
-							if(read_csv.raw_data[index][i]>0)
-							{
-								rect->y -= factor*abs(read_csv.raw_data[index][i]);
-								float current_position_y = rect->y;
-								double nearest = round(read_csv.raw_data[index][i]);
-								DrawText_FTGL(nearest,x_position-10,current_position_y-20);
-							} 
-							else
-							{
-								float current_position_y = rect->y + rect->h;
-								double nearest = round(read_csv.raw_data[index][i]);
-								DrawText_FTGL(nearest,x_position-10,current_position_y+5);
-							}
-
-							DrawRectWithOpenGL(rect,color);
-							delete(rect);
-
-							x_position+=30;
+							float current_position_y = rect->y;
+							DrawText_FTGL(0,x_position,current_position_y-20);
 						}
-						x_position+=100;
+						else
+						{
+							float current_position_y = rect->y + rect->h;
+							double nearest = round(preprocessing_data.raw_data_mat.at<float>(index,3));
+							DrawText_FTGL(nearest,x_position,current_position_y+5);
+						}
+
+						DrawRectWithOpenGL(rect,color);
+						delete(rect);
+
+						x_position+=50;
 					}
+					x_position+=70;		
 					//==========Gravity X Y Z==========//
-					/*
-					DrawTitle_FTGL(2,70,450);
+					DrawTitle_FTGL(2,70,100);
 					x_position = 70;
-					y_position = 650;
-					for(int i=7;i<=9;i++)
+					y_position = 250;
+					for(int j=0;j<raw_data_index.size();j++)
 					{
 						RECTANGLE *rect;
-						for(int j=0;j<raw_data_index.size();j++)
+						index = raw_data_index[j];
+						rect = new RECTANGLE();
+						rect->h = factor*abs(preprocessing_data.raw_data_mat.at<float>(index,0));
+						rect->w = 50.0;
+						rect->x = x_position;
+						rect->y = y_position;
+						color[0] = preprocessing_data.raw_data_3D.at<float>(index,0);
+						color[1] = preprocessing_data.raw_data_3D.at<float>(index,1);
+						color[2] = preprocessing_data.raw_data_3D.at<float>(index,2);
+						if(preprocessing_data.raw_data_mat.at<float>(index,0)>0)
 						{
-							index = raw_data_index[j];
-							rect = new RECTANGLE();
-							rect->h = factor*abs(read_csv.raw_data[index][i]);
-							rect->w = 6.0;
-							rect->x = x_position;
-							rect->y = y_position;
-							color[0] = read_csv.raw_data_3D[index][1];
-							color[1] = read_csv.raw_data_3D[index][2];
-							color[2] = read_csv.raw_data_3D[index][3];
-							if(read_csv.raw_data[index][i]>0)
-							{
-								rect->y -= factor*abs(read_csv.raw_data[index][i]);
-								float current_position_y = rect->y;
-								DrawText_FTGL(read_csv.raw_data[index][i],x_position,current_position_y-20);
-							}
-							else
-							{
-								float current_position_y = rect->y + rect->h;
-								DrawText_FTGL(read_csv.raw_data[index][i],x_position,current_position_y+5);
-							}
-
-							DrawRectWithOpenGL(rect,color);
-							delete(rect);
-
-							x_position+=6;
+							rect->y -= factor*abs(preprocessing_data.raw_data_mat.at<float>(index,0));
+							float current_position_y = rect->y;
+							double nearest = round(preprocessing_data.raw_data_mat.at<float>(index,0));
+							DrawText_FTGL(nearest,x_position,current_position_y-20);
 						}
-						x_position+=70;
+						else
+						{
+							float current_position_y = rect->y + rect->h;
+							double nearest = round(preprocessing_data.raw_data_mat.at<float>(index,0));
+							DrawText_FTGL(nearest,x_position,current_position_y+5);
+						}
+
+						DrawRectWithOpenGL(rect,color);
+						delete(rect);
+
+						x_position+=50;
 					}
-					*/
-					//==========Gyroscope X Y Z==========//
-					DrawTitle_FTGL(3,500, 450);
-					x_position = 80;
-					y_position = 750;
-					int factor2 = 40;
-					for(int i=10;i<=12;i++)
+					x_position+=70;
+					//==========Linear Acceleration X Y Z==========//
+					DrawTitle_FTGL(1,600,100);
+					x_position = 550;
+					y_position = 250;
+					for(int j=0;j<raw_data_index.size();j++)
 					{
+						index = raw_data_index[j];
 						RECTANGLE *rect;
-						for(int j=0;j<raw_data_index.size();j++)
+						rect = new RECTANGLE();
+						rect->h = factor*abs(preprocessing_data.raw_data_mat.at<float>(index,1));
+						rect->w = 50.0;
+						rect->x = x_position;
+						rect->y = y_position;
+						color[0] = preprocessing_data.raw_data_3D.at<float>(index,0);
+						color[1] = preprocessing_data.raw_data_3D.at<float>(index,1);
+						color[2] = preprocessing_data.raw_data_3D.at<float>(index,2);
+						if(preprocessing_data.raw_data_mat.at<float>(index,1)>0)
 						{
-							index = raw_data_index[j];
-							rect = new RECTANGLE();
-							rect->h = factor2*abs(read_csv.raw_data[index][i]);
-							rect->w = 30.0;
-							rect->x = x_position;
-							rect->y = y_position;
-							color[0] = read_csv.raw_data_3D[index][1];
-							color[1] = read_csv.raw_data_3D[index][2];
-							color[2] = read_csv.raw_data_3D[index][3];
-							if(read_csv.raw_data[index][i]>0)
-							{
-								rect->y -= factor2*abs(read_csv.raw_data[index][i]);
-								float current_position_y = rect->y;
-								double nearest = round(read_csv.raw_data[index][i]);
-								DrawText_FTGL(nearest,x_position,current_position_y-20);
-							}
-							else
-							{
-								float current_position_y = rect->y + rect->h;
-								double nearest = round(read_csv.raw_data[index][i]);
-								DrawText_FTGL(nearest,x_position,current_position_y+5);
-							}
-
-							DrawRectWithOpenGL(rect,color);
-							delete(rect);
-
-							x_position+=30.0;
+							rect->y -= factor*abs(preprocessing_data.raw_data_mat.at<float>(index,1));
+							float current_position_y = rect->y;
+							double nearest = round(preprocessing_data.raw_data_mat.at<float>(index,1));
+							DrawText_FTGL(nearest,x_position-10,current_position_y-20);
+						} 
+						else
+						{
+							float current_position_y = rect->y + rect->h;
+							double nearest = round(preprocessing_data.raw_data_mat.at<float>(index,1));
+							DrawText_FTGL(nearest,x_position-10,current_position_y+5);
 						}
-						x_position+=100;
-					}		
+
+						DrawRectWithOpenGL(rect,color);
+						delete(rect);
+
+						x_position+=50;
+					}
+					x_position+=100;
+					//==========Gyroscope X Y Z==========//
+					DrawTitle_FTGL(3,70, 500);
+					x_position = 70;
+					y_position = 750;
+					int factor2 = 100;
+					for(int j=0;j<raw_data_index.size();j++)
+					{
+						index = raw_data_index[j];
+						RECTANGLE *rect;
+						rect = new RECTANGLE();
+						rect->h = factor2*abs(preprocessing_data.raw_data_mat.at<float>(index,2));
+						rect->w = 50.0;
+						rect->x = x_position;
+						rect->y = y_position;
+						color[0] = preprocessing_data.raw_data_3D.at<float>(index,0);
+						color[1] = preprocessing_data.raw_data_3D.at<float>(index,1);
+						color[2] = preprocessing_data.raw_data_3D.at<float>(index,2);
+						if(preprocessing_data.raw_data_mat.at<float>(index,2)>0)
+						{
+							rect->y -= factor2*abs(preprocessing_data.raw_data_mat.at<float>(index,2));
+							float current_position_y = rect->y;
+							double nearest = round(preprocessing_data.raw_data_mat.at<float>(index,2));
+							DrawText_FTGL(nearest,x_position,current_position_y-20);
+						}
+						else
+						{
+							float current_position_y = rect->y + rect->h;
+							double nearest = round(preprocessing_data.raw_data_mat.at<float>(index,2));
+							DrawText_FTGL(nearest,x_position,current_position_y+5);
+						}
+
+						DrawRectWithOpenGL(rect,color);
+						delete(rect);
+
+						x_position+=50.0;
+					}
+					x_position+=100;		
 			}
 		
 			SwapOpenGLBuffers();
@@ -238,8 +232,8 @@ namespace OpenGLForm{
 
 		System::Void DetailVisualization::title_string()
 		{
-			strcpy(title[0],"Acceleration");
-			strcpy(title[1],"Linear acceleration");
+			strcpy(title[0],"First Order of Distance");
+			strcpy(title[1],"Linear Acceleration");
 			strcpy(title[2],"Gravity");
 			strcpy(title[3],"Gyroscope");
 		}

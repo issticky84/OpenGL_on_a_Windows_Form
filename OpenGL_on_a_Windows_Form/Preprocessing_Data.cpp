@@ -197,8 +197,6 @@ void Preprocessing_Data::read_raw_data()
 	cout << "Csv Data Size: " << raw_data.size() <<endl;
 	//cout << raw_data[0].size() << endl;
 
-	raw_data_size = raw_data.size();
-
 	fclose(csv_file);
 }
 
@@ -334,8 +332,6 @@ Mat Preprocessing_Data::set_matrix(int attribute_title[],int attribute_title_siz
 			handle_mat.at<float>(i,3) = DistanceOfLontitudeAndLatitude(raw_data[i-1][lat_index],raw_data[i][lat_index],raw_data[i-1][lon_index],raw_data[i][lon_index]);
 		}
 	}
-
-	raw_data_mat = handle_mat;
 
 	//cout << handle_mat << endl;
 	Mat normalize_mat = handle_mat;

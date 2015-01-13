@@ -104,10 +104,10 @@ namespace OpenGLForm{
 		//System::Windows::Forms::MessageBox::Show( pos_3D.x.ToString() + " " + pos_3D.y.ToString());	
 		for(int i=0;i<raw_data_position_table.size();i++)
 		{
-			if(histogram_index[i] > preprocessing_data.raw_data_size-1) break; ////////bug//////(index out of scrope)
+			if(histogram_index[i] > read_csv.raw_data_size-1) break; ////////bug//////(index out of scrope)
 			for(int j=0;j<raw_data_position_table[i].size();j++)
 			{
-				if(histogram_index[i]+j > preprocessing_data.raw_data_size-1) break;
+				if(histogram_index[i]+j > read_csv.raw_data_size-1) break;
 				if(pos_3D.x >= raw_data_position_table[i][j].x && pos_3D.x <= raw_data_position_table[i][j].z && pos_3D.y >= raw_data_position_table[i][j].y && pos_3D.y <= raw_data_position_table[i][j].w)
 				{
 					//System::Windows::Forms::MessageBox::Show( (i+1).ToString() + " " + (j+1).ToString());			
@@ -130,10 +130,10 @@ namespace OpenGLForm{
 		pos_3D.y += move_y[1];		
 		for(int i=0;i<raw_data_position_table.size();i++)
 		{
-			if(histogram_index[i] > preprocessing_data.raw_data_size-1) break; 
+			if(histogram_index[i] > read_csv.raw_data_size-1) break; 
 			for(int j=0;j<raw_data_position_table[i].size();j++)
 			{
-				if(histogram_index[i]+j > preprocessing_data.raw_data_size-1) break;
+				if(histogram_index[i]+j > read_csv.raw_data_size-1) break;
 				if(pos_3D.x >= raw_data_position_table[i][j].x && pos_3D.x <= raw_data_position_table[i][j].z && pos_3D.y >= raw_data_position_table[i][j].y && pos_3D.y <= raw_data_position_table[i][j].w)
 				{
 					select_histogram_index = histogram_index[i]/600;

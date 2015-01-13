@@ -16,15 +16,15 @@
 using namespace tapkee;
 using namespace Eigen;
 
-void Preprocessing_Data::start()
+void Preprocessing_Data::start(vector < vector<float> > raw_data)
 {
 	
 	//=================Read CSV file====================//
-	clock_t begin = clock();
-	strcpy(file_csv_data,"../../csv_data/BigData_20141121_0723_new.csv");
-	read_raw_data();
-	clock_t end = clock();
-	printf("Read csv elapsed time: %f\n",double(end - begin) / CLOCKS_PER_SEC);
+	//clock_t begin = clock();
+	//strcpy(file_csv_data,"../../csv_data/BigData_20141121_0723_new.csv");
+	//read_raw_data();
+	//clock_t end = clock();
+	//printf("Read csv elapsed time: %f\n",double(end - begin) / CLOCKS_PER_SEC);
 	//==================================================//
 
 	int attribute_title_size = 11;
@@ -33,8 +33,8 @@ void Preprocessing_Data::start()
 	
 	//============Setting matrix for K-means============//
 	clock_t begin2 = clock();
-	set_hour_data(time_title);
-	Mat model = set_matrix(attribute_title,attribute_title_size).clone();
+	set_hour_data(raw_data,time_title);
+	Mat model = set_matrix(raw_data,attribute_title,attribute_title_size).clone();
 	clock_t end2 = clock();
 	printf("Setting matrix elapsed time: %f\n",double(end2 - begin2) / CLOCKS_PER_SEC);
 	//==================================================//
@@ -159,48 +159,48 @@ void Preprocessing_Data::reduceDimPCA(Mat& data, int rDim, Mat& components, Mat&
 	}
 }
 
-void Preprocessing_Data::read_raw_data()
-{
-	FILE *csv_file;
-	csv_file = fopen(file_csv_data,"r");
-	if(!csv_file) 
-	{
-		cout << "Can't open config file!" << endl;
-		exit(1);
-	}
-
-	char line[LENGTH];
-	char *token;
-	int i,j;
-	i = j = 0;
-	fgets(line,LENGTH,csv_file); //ignore sep=
-	fgets(line,LENGTH,csv_file); //ignore title
-
-	while(!feof(csv_file))
-	{
-		fgets(line,LENGTH,csv_file);
-		//token = strtok(line,";");
-		token = strtok(line,";");
-		raw_data.push_back(vector<float> (1));
-		//printf("%s ",token);
-		while(token!=NULL)
-		{
-			raw_data.back().push_back(atof(token));
-			//token = strtok(NULL," ;:");
-			token = strtok(NULL," ;:/");
-		}
-	}
-
-	//cout << raw_data[0][1] << " " << raw_data[0][29] << " " << raw_data[0][30] << " " << raw_data[0][31] << " " << raw_data[0][32]  << " " << raw_data[0][33] << endl;
-	//29:Year,30:Hour,31:Minute,32:second,33:millisecond
-
-	cout << "Csv Data Size: " << raw_data.size() <<endl;
-	//cout << raw_data[0].size() << endl;
-
-	raw_data_size = raw_data.size();
-
-	fclose(csv_file);
-}
+//void Preprocessing_Data::read_raw_data()
+//{
+//	FILE *csv_file;
+//	csv_file = fopen(file_csv_data,"r");
+//	if(!csv_file) 
+//	{
+//		cout << "Can't open config file!" << endl;
+//		exit(1);
+//	}
+//
+//	char line[LENGTH];
+//	char *token;
+//	int i,j;
+//	i = j = 0;
+//	fgets(line,LENGTH,csv_file); //ignore sep=
+//	fgets(line,LENGTH,csv_file); //ignore title
+//
+//	while(!feof(csv_file))
+//	{
+//		fgets(line,LENGTH,csv_file);
+//		//token = strtok(line,";");
+//		token = strtok(line,";");
+//		raw_data.push_back(vector<float> (1));
+//		//printf("%s ",token);
+//		while(token!=NULL)
+//		{
+//			raw_data.back().push_back(atof(token));
+//			//token = strtok(NULL," ;:");
+//			token = strtok(NULL," ;:/");
+//		}
+//	}
+//
+//	//cout << raw_data[0][1] << " " << raw_data[0][29] << " " << raw_data[0][30] << " " << raw_data[0][31] << " " << raw_data[0][32]  << " " << raw_data[0][33] << endl;
+//	//29:Year,30:Hour,31:Minute,32:second,33:millisecond
+//
+//	cout << "Csv Data Size: " << raw_data.size() <<endl;
+//	//cout << raw_data[0].size() << endl;
+//
+//	raw_data_size = raw_data.size();
+//
+//	fclose(csv_file);
+//}
 
 float Preprocessing_Data::degtorad(float deg)
 {
@@ -230,7 +230,7 @@ float Preprocessing_Data::DistanceOfLontitudeAndLatitude(float lat1,float lat2,f
 		return d;
 }
 
-void Preprocessing_Data::set_hour_data(int time_title[])
+void Preprocessing_Data::set_hour_data(vector < vector<float> > raw_data,int time_title[])
 {
 	int hour_id = time_title[1];
 	int time_step_amount = floor(raw_data.size()/600.0);
@@ -280,7 +280,7 @@ void Preprocessing_Data::set_hour_data(int time_title[])
 	}
 }
 
-Mat Preprocessing_Data::Gaussian_filter(int attribute_title[],int MAX_KERNEL_LENGTH)
+Mat Preprocessing_Data::Gaussian_filter(vector < vector<float> > raw_data,int attribute_title[],int MAX_KERNEL_LENGTH)
 {
 	Mat Gaussian_filter_mat(raw_data.size(),9, CV_32F);
 
@@ -302,11 +302,11 @@ Mat Preprocessing_Data::Gaussian_filter(int attribute_title[],int MAX_KERNEL_LEN
 	return Gaussian_filter_mat;
 }
 
-Mat Preprocessing_Data::set_matrix(int attribute_title[],int attribute_title_size)
+Mat Preprocessing_Data::set_matrix(vector < vector<float> > raw_data,int attribute_title[],int attribute_title_size)
 {
 	Mat handle_mat(raw_data.size(),4, CV_32F);
 
-	Mat Gaussian_filter_mat = Gaussian_filter(attribute_title,20).clone();
+	Mat Gaussian_filter_mat = Gaussian_filter(raw_data,attribute_title,20).clone();
 
 	//Compute norm
 	for(int i=0;i<raw_data.size();i++)

@@ -21,26 +21,26 @@ class Preprocessing_Data
 private:
 	char file_csv_data[200];
 	map<int,int> hour_map;
-	vector < vector<float> > raw_data;
+	//vector < vector<float> > raw_data;
 
 	void output_mat_as_txt_file(char file_name[],Mat);
 	void output_mat_as_csv_file(char file_name[],Mat);
 	void calcCovMat(Mat&, Mat&, Mat&);
 	void reduceDimPCA(Mat&, int, Mat&, Mat&);
-	void read_raw_data();
+	//void read_raw_data();
 	float degtorad(float);
 	float norm_value(float,float,float);
 	float DistanceOfLontitudeAndLatitude(float,float,float,float);
-	void set_hour_data(int time_title[]);
-	Mat Gaussian_filter(int attribute_title[],int);
-	Mat set_matrix(int attribute_title[],int);
+	void set_hour_data(vector < vector<float> > ,int time_title[]);
+	Mat Gaussian_filter(vector < vector<float> >,int attribute_title[],int);
+	Mat set_matrix(vector < vector<float> >,int attribute_title[],int);
 	void voting(int,Mat,int);
 	Mat Position_by_MDS(Mat,int ,float);
 public:
-	void start();
+	void start(vector < vector<float> >);
 
 	int num_of_five_minutes;
-	int raw_data_size;
+	//int raw_data_size;
 	vector <int> hour_data;
 	Mat histogram;//int
 	Mat rgb_mat;//float

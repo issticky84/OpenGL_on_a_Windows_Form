@@ -250,4 +250,8 @@ namespace OpenGLForm{
 			glPopMatrix();	
 		}
 
+		System::Void DetailVisualization::clear()
+		{
+			raw_data_index.clear();
+		}
 }

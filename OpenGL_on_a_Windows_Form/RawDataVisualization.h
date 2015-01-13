@@ -11,6 +11,7 @@ namespace OpenGLForm{
 			void  RawDataMouseMove( Object^ /*sender*/, System::Windows::Forms::MouseEventArgs^ e);
 			void  RawDataMouseUp( Object^ /*sender*/, System::Windows::Forms::MouseEventArgs^ e);
 			void  RawDataMouseDoubleClick( Object^ /*sender*/, System::Windows::Forms::MouseEventArgs^ e);
+			System::Void clear();
 	private:
 			System::Void FindPatternByTable2(int x,int y);
 			vector3 Unprojection(vector2 _2Dpos);

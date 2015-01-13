@@ -27,7 +27,10 @@ namespace OpenGL_on_a_Windows_Form
 			read_csv.read_raw_data();
 
 			Preprocessing_Data preprocessing_data;
-			preprocessing_data.start(read_csv.raw_data);
+			preprocessing_data.start(read_csv.raw_data,trackBar1->Value);
+
+			//waiting_flag = true;
+			start_flag = false;
 
 			histogram = gcnew HistogramVisualization(this,this->panel3,panel3->Width,panel3->Height,read_csv,preprocessing_data);
 			rawData = gcnew RawDataVisualization(this,this->panel1,panel1->Width,panel1->Height,read_csv,preprocessing_data);
@@ -55,8 +58,9 @@ namespace OpenGL_on_a_Windows_Form
 	private: System::Windows::Forms::Panel^  panel1;
 	private: System::Windows::Forms::Panel^  panel2;
 	private: System::Windows::Forms::Panel^  panel3;
+	private: System::Windows::Forms::Button^  start;
 
-	private: System::Windows::Forms::Button^  button1;
+
 	private: System::Windows::Forms::Button^  button2;
 
 	private:
@@ -74,7 +78,10 @@ namespace OpenGL_on_a_Windows_Form
 	private: System::Boolean Move_12_horiz_flag,Down_12_horiz_flag;
 	private: System::Boolean Move_12_vert_flag,Down_12_vert_flag;
 	private: System::Int32 last_x,last_y;
-
+	private: System::Windows::Forms::Button^  Detail_Clear;
+	private: System::Windows::Forms::TextBox^  textBox1;
+	private: System::Boolean waiting_flag;
+	private: System::Boolean start_flag;
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -88,9 +95,11 @@ namespace OpenGL_on_a_Windows_Form
 			this->panel1 = (gcnew System::Windows::Forms::Panel());
 			this->panel2 = (gcnew System::Windows::Forms::Panel());
 			this->panel3 = (gcnew System::Windows::Forms::Panel());
-			this->button1 = (gcnew System::Windows::Forms::Button());
+			this->start = (gcnew System::Windows::Forms::Button());
 			this->button2 = (gcnew System::Windows::Forms::Button());
 			this->trackBar1 = (gcnew System::Windows::Forms::TrackBar());
+			this->Detail_Clear = (gcnew System::Windows::Forms::Button());
+			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->trackBar1))->BeginInit();
 			this->SuspendLayout();
 			// 
@@ -129,43 +138,67 @@ namespace OpenGL_on_a_Windows_Form
 			this->panel3->MouseEnter += gcnew System::EventHandler(this, &Form1::panel3_MouseEnter);
 			this->panel3->MouseMove += gcnew System::Windows::Forms::MouseEventHandler(this, &Form1::panel3_MouseMove);
 			// 
-			// button1
+			// start
 			// 
-			this->button1->Location = System::Drawing::Point(1798, 723);
-			this->button1->Name = L"button1";
-			this->button1->Size = System::Drawing::Size(50, 24);
-			this->button1->TabIndex = 4;
-			this->button1->Text = L"<";
-			this->button1->UseVisualStyleBackColor = true;
-			this->button1->Click += gcnew System::EventHandler(this, &Form1::button1_Click);
+			this->start->Location = System::Drawing::Point(1553, 842);
+			this->start->Name = L"start";
+			this->start->Size = System::Drawing::Size(134, 67);
+			this->start->TabIndex = 4;
+			this->start->Text = L"Start";
+			this->start->UseVisualStyleBackColor = true;
+			this->start->Click += gcnew System::EventHandler(this, &Form1::start_Click);
 			// 
 			// button2
 			// 
-			this->button2->Location = System::Drawing::Point(1854, 723);
+			this->button2->Location = System::Drawing::Point(1502, 12);
 			this->button2->Name = L"button2";
-			this->button2->Size = System::Drawing::Size(50, 24);
+			this->button2->Size = System::Drawing::Size(83, 50);
 			this->button2->TabIndex = 5;
-			this->button2->Text = L">";
+			this->button2->Text = L"Clear";
 			this->button2->UseVisualStyleBackColor = true;
 			this->button2->Click += gcnew System::EventHandler(this, &Form1::button2_Click);
 			// 
 			// trackBar1
 			// 
-			this->trackBar1->Location = System::Drawing::Point(1844, 529);
-			this->trackBar1->Maximum = 20;
+			this->trackBar1->Location = System::Drawing::Point(1682, 135);
+			this->trackBar1->Maximum = 100;
 			this->trackBar1->Name = L"trackBar1";
 			this->trackBar1->Orientation = System::Windows::Forms::Orientation::Vertical;
 			this->trackBar1->Size = System::Drawing::Size(45, 188);
-			this->trackBar1->TabIndex = 6;
+			this->trackBar1->TabIndex = 50;
+			this->trackBar1->Value = 50;
+			this->trackBar1->TickFrequency = 5;
+			this->trackBar1->Scroll += gcnew System::EventHandler(this, &Form1::trackBar1_Scroll);
+			// 
+			// Detail_Clear
+			// 
+			this->Detail_Clear->Location = System::Drawing::Point(1502, 465);
+			this->Detail_Clear->Name = L"Detail_Clear";
+			this->Detail_Clear->Size = System::Drawing::Size(83, 50);
+			this->Detail_Clear->TabIndex = 7;
+			this->Detail_Clear->Text = L"Clear";
+			this->Detail_Clear->UseVisualStyleBackColor = true;
+			this->Detail_Clear->Click += gcnew System::EventHandler(this, &Form1::Detail_Clear_Click);
+			// 
+			// textBox1
+			// 
+			this->textBox1->Location = System::Drawing::Point(1682, 320);
+			this->textBox1->Name = L"textBox1";
+			this->textBox1->Size = System::Drawing::Size(24, 22);
+			this->textBox1->TabIndex = 51;
+			this->textBox1->Text = L"50";
+			//this->textBox1->TextChanged += gcnew System::EventHandler(this, &Form1::textBox1_TextChanged);
 			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(1916, 1054);
+			this->Controls->Add(this->textBox1);
+			this->Controls->Add(this->Detail_Clear);
 			this->Controls->Add(this->trackBar1);
 			this->Controls->Add(this->button2);
-			this->Controls->Add(this->button1);
+			this->Controls->Add(this->start);
 			this->Controls->Add(this->panel3);
 			this->Controls->Add(this->panel2);
 			this->Controls->Add(this->panel1);
@@ -194,14 +227,32 @@ namespace OpenGL_on_a_Windows_Form
 					 this->Cursor = System::Windows::Forms::Cursors::Default;
 			 }
 
-	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) 
+	private: System::Void start_Click(System::Object^  sender, System::EventArgs^  e) 
 			 {
-				 //OpenGL_4->rtri-=trackBar1->Value;
+				 //waiting_flag = false;
+				 histogram->clear();
+				 rawData->clear();
+				 detail->clear();
+				 preprocessing_data.start(read_csv.raw_data,trackBar1->Value);
+				 System::Windows::Forms::MessageBox::Show(trackBar1->Value.ToString());
+				 //waiting_flag = true;
 			 }
 
     private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e) 
 			 {
 				//OpenGL_4->rtri+=trackBar1->Value;
+				 rawData->clear();
+			 }
+
+	private: System::Void Detail_Clear_Click(System::Object^  sender, System::EventArgs^  e)
+			 {
+				 detail->clear();
+			 }
+
+	private: System::Void trackBar1_Scroll(System::Object^  sender, System::EventArgs^  e) 
+			 {
+				 textBox1->Text = "" + trackBar1->Value;
+				 //System::Windows::Forms::MessageBox::Show(trackBar1->Value.ToString());		
 			 }
 
 	private: System::Void panel1_Paint(System::Object^  sender, System::Windows::Forms::PaintEventArgs^  e)
@@ -235,6 +286,7 @@ namespace OpenGL_on_a_Windows_Form
 				 Move_3_21_flag = false;
 				 Move_12_horiz_flag = false;
 				 Move_12_vert_flag = false;
+				
 			 }
 
 	private: System::Void Form1_MouseMove_1(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
@@ -334,6 +386,7 @@ namespace OpenGL_on_a_Windows_Form
 	private: System::Void Form1_MouseEnter(System::Object^  sender, System::EventArgs^  e) {
 					Form::Focus();
 			 }
+
 };
 }
 

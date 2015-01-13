@@ -16,9 +16,12 @@
 using namespace tapkee;
 using namespace Eigen;
 
-void Preprocessing_Data::start(vector < vector<float> > raw_data)
+void Preprocessing_Data::start(vector < vector<float> > raw_data,int k)
 {
-	
+	select_gravity = true;
+	select_linear_acc = true;
+	select_gyro = true;
+	select_distance = true;
 	//=================Read CSV file====================//
 	//clock_t begin = clock();
 	//strcpy(file_csv_data,"../../csv_data/BigData_20141121_0723_new.csv");
@@ -28,7 +31,7 @@ void Preprocessing_Data::start(vector < vector<float> > raw_data)
 	//==================================================//
 
 	int attribute_title_size = 11;
-	int attribute_title[] = {4,5,6,7,8,9,10,11,12,22,23};//(gravity_x,gravity_y,gravity_z,linear_acc_x),(linear_acc_x,linear_acc_y,linear_acc_z),(gyro_x,gyro_y,gyro_z),(latitude,longitude)
+	int attribute_title[] = {4,5,6,7,8,9,10,11,12,22,23};//(gravity_x,gravity_y,gravity_z),(linear_acc_x,linear_acc_y,linear_acc_z),(gyro_x,gyro_y,gyro_z),(latitude,longitude)
 	int time_title[] = {29,30,31,32,33};//hour(30),minute(31)
 	
 	//============Setting matrix for K-means============//
@@ -39,7 +42,7 @@ void Preprocessing_Data::start(vector < vector<float> > raw_data)
 	printf("Setting matrix elapsed time: %f\n",double(end2 - begin2) / CLOCKS_PER_SEC);
 	//==================================================//
 	//output_mat_as_txt_file("model.txt",model);
-    int k = 50; 
+    //int k = 50; 
     Mat cluster_tag; //Tag:0~k-1
     int attempts = 2;//應該是執行次數
 	Mat cluster_centers;
@@ -304,17 +307,31 @@ Mat Preprocessing_Data::Gaussian_filter(vector < vector<float> > raw_data,int at
 
 Mat Preprocessing_Data::set_matrix(vector < vector<float> > raw_data,int attribute_title[],int attribute_title_size)
 {
-	Mat handle_mat(raw_data.size(),4, CV_32F);
+	Mat handle_mat;
 
 	Mat Gaussian_filter_mat = Gaussian_filter(raw_data,attribute_title,20).clone();
 
+	Mat norm_gravity(1, raw_data.size(), CV_32F);
+	Mat norm_linear_acc(1, raw_data.size(), CV_32F);
+	Mat norm_gyro(1, raw_data.size(), CV_32F);
 	//Compute norm
 	for(int i=0;i<raw_data.size();i++)
 	{
-		handle_mat.at<float>(i,0) = norm_value(Gaussian_filter_mat.at<float>(i,attribute_title[0]),Gaussian_filter_mat.at<float>(i,attribute_title[1]),Gaussian_filter_mat.at<float>(i,attribute_title[2]));
-		handle_mat.at<float>(i,1) = norm_value(Gaussian_filter_mat.at<float>(i,attribute_title[3]),Gaussian_filter_mat.at<float>(i,attribute_title[4]),Gaussian_filter_mat.at<float>(i,attribute_title[5]));
-		handle_mat.at<float>(i,2) = norm_value(Gaussian_filter_mat.at<float>(i,attribute_title[6]),Gaussian_filter_mat.at<float>(i,attribute_title[7]),Gaussian_filter_mat.at<float>(i,attribute_title[8]));
+		norm_gravity.at<float>(0,i) = norm_value(Gaussian_filter_mat.at<float>(i,attribute_title[0]),Gaussian_filter_mat.at<float>(i,attribute_title[1]),Gaussian_filter_mat.at<float>(i,attribute_title[2]));
+		norm_linear_acc.at<float>(0,i) = norm_value(Gaussian_filter_mat.at<float>(i,attribute_title[3]),Gaussian_filter_mat.at<float>(i,attribute_title[4]),Gaussian_filter_mat.at<float>(i,attribute_title[5]));
+		norm_gyro.at<float>(0,i) = norm_value(Gaussian_filter_mat.at<float>(i,attribute_title[6]),Gaussian_filter_mat.at<float>(i,attribute_title[7]),Gaussian_filter_mat.at<float>(i,attribute_title[8]));
 	}
+
+	if(select_gravity) handle_mat.push_back(norm_gravity);
+	if(select_linear_acc) handle_mat.push_back(norm_linear_acc);
+	if(select_gyro) handle_mat.push_back(norm_gyro);
+	//for(int i=0;i<raw_data.size();i++)
+	//{
+	//	handle_mat.at<float>(i,0) = norm_value(Gaussian_filter_mat.at<float>(i,attribute_title[0]),Gaussian_filter_mat.at<float>(i,attribute_title[1]),Gaussian_filter_mat.at<float>(i,attribute_title[2]));
+	//	handle_mat.at<float>(i,1) = norm_value(Gaussian_filter_mat.at<float>(i,attribute_title[3]),Gaussian_filter_mat.at<float>(i,attribute_title[4]),Gaussian_filter_mat.at<float>(i,attribute_title[5]));
+	//	handle_mat.at<float>(i,2) = norm_value(Gaussian_filter_mat.at<float>(i,attribute_title[6]),Gaussian_filter_mat.at<float>(i,attribute_title[7]),Gaussian_filter_mat.at<float>(i,attribute_title[8]));
+	//}
+
 	//for(int i=0;i<raw_data.size();i++)
 	//{
 	//	handle_mat.at<float>(i,0) = norm_value(raw_data[i][attribute_title[0]],raw_data[i][attribute_title[1]],raw_data[i][attribute_title[2]]);
@@ -325,22 +342,26 @@ Mat Preprocessing_Data::set_matrix(vector < vector<float> > raw_data,int attribu
 	//Compute latitude & longitude
 	int lat_index = attribute_title[9];
 	int lon_index = attribute_title[10];
+	Mat first_order_distance_mat(1, raw_data.size(), CV_32F);
 	for(int i=0;i<raw_data.size();i++)
 	{
 		if(i==0)
-			handle_mat.at<float>(i,3) = 0.0;
+			first_order_distance_mat.at<float>(0,i) = 0.0;
 		else
 		{
-			handle_mat.at<float>(i,3) = DistanceOfLontitudeAndLatitude(raw_data[i-1][lat_index],raw_data[i][lat_index],raw_data[i-1][lon_index],raw_data[i][lon_index]);
+			first_order_distance_mat.at<float>(0,i) = DistanceOfLontitudeAndLatitude(raw_data[i-1][lat_index],raw_data[i][lat_index],raw_data[i-1][lon_index],raw_data[i][lon_index]);
 		}
 	}
 
-	raw_data_mat = handle_mat;
+	if(select_distance) handle_mat.push_back(first_order_distance_mat);
+	Mat handle_mat2 = handle_mat.t();
+
+	raw_data_mat = handle_mat2;
 
 	//cout << handle_mat << endl;
-	Mat normalize_mat = handle_mat;
-	for(int i=0;i<handle_mat.cols;i++)
-		normalize(handle_mat.col(i),normalize_mat.col(i),0,1,NORM_MINMAX);
+	Mat normalize_mat = handle_mat2;
+	for(int i=0;i<handle_mat2.cols;i++)
+		normalize(handle_mat2.col(i),normalize_mat.col(i),0,1,NORM_MINMAX);
 	//cout << normalize_mat << endl;
 
 	//output_mat_as_csv_file("normalize_mat.csv",normalize_mat);

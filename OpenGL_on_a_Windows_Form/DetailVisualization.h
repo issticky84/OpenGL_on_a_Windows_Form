@@ -9,6 +9,7 @@ namespace OpenGLForm{
 		public:
 			DetailVisualization(Form ^ parentForm,Panel ^ parentPanel, GLsizei iWidth, GLsizei iHeight,ReadCSV read_csv_ref,Preprocessing_Data preprocessing_data_ref);
 			virtual System::Void Render(int,int) override;
+			System::Void clear();
 	private:
 			System::Void DrawText_FTGL(float n,int x, int y);
 			System::Void DrawTitle_FTGL(int t,int x, int y);

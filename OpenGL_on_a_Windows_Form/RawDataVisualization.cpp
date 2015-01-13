@@ -266,4 +266,9 @@ namespace OpenGLForm{
 		strcpy(five_minutes[10],":50");
 		strcpy(five_minutes[11],":55");
 	}
+
+	System::Void RawDataVisualization::clear()
+	{
+		histogram_index.clear();
+	}
 }

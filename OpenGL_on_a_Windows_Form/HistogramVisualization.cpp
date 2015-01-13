@@ -116,83 +116,86 @@ namespace OpenGLForm{
 			glScalef(scale_factor[0]+scale_x[0],scale_factor[0]+scale_y[0],scale_factor[0]+scale_z[0]);
 
 
-			int y_coord = 1400;
-			int pixels;
-			int current_hour;
-			int last_hour = -1;
-			int t=0;
-			for(int i=0;i<preprocessing_data.histogram.rows;++i)
+			if(!preprocessing_data.histogram.empty())
 			{
-				current_hour = preprocessing_data.hour_data[i];
-				if(current_hour!=last_hour)
+				int y_coord = 1400;
+				int pixels;
+				int current_hour;
+				int last_hour = -1;
+				int t=0;
+				for(int i=0;i<preprocessing_data.histogram.rows;++i)
 				{
-					draw_color[0] = 1; 
-					draw_color[1] = 1; 
-					draw_color[2] = 1;
-					RECTANGLE *line;
-					line = new RECTANGLE();
-					line->h = 3;
-					line->w = 900;
-					line->x = 0;
-					line->y = y_coord - 5;
-					DrawRectWithOpenGL(line,draw_color);
-					DrawTime_FTGL(current_hour,20,y_coord-10);
-					t++;
-					y_coord-=10;
-					delete(line);
-				}
-	
-					int start = 0;
-					for(int k=0;k<preprocessing_data.histogram.cols;++k)
-					{   
-						if(preprocessing_data.histogram.at<int>(i,k)!=0)
-						{
-							pixels = preprocessing_data.histogram.at<int>(i,k);
-							draw_color[0] = preprocessing_data.rgb_mat.at<float>(k,0); 
-							draw_color[1] = preprocessing_data.rgb_mat.at<float>(k,1); 
-							draw_color[2] = preprocessing_data.rgb_mat.at<float>(k,2);
-
-							if((counter==2 || counter==4) && select_histogram_flag)
-							{
-								if(i==select_histogram_index)
-								{
-									draw_color[0] = 0; draw_color[1] = 0; draw_color[2] = 0;
-								}
-							}
-
-							for(int u=start;u<start+pixels;++u)
-							{
-								RECTANGLE *rect;
-								rect = new RECTANGLE();
-								rect->h = 3;
-								rect->w = 0.1;
-								rect->x = 110 + preprocessing_data.position.at<double>(i,1)/10.0 + (double)u*0.1;
-								rect->y = y_coord;
-								DrawRectWithOpenGL(rect,draw_color);	
-								delete(rect);
-
-							}
-							//table record
-							histogram_position_table[i].x = 110 + preprocessing_data.position.at<double>(i,1)/10.0;
-							histogram_position_table[i].y = y_coord;
-							histogram_position_table[i].z = 110 + preprocessing_data.position.at<double>(i,1)/10.0 + 60.0;
-							histogram_position_table[i].w = y_coord + 3;
-								
-							histogram_position_table[i].x *= (scale_factor[0] + scale_x[0]);
-							histogram_position_table[i].y *= (scale_factor[0] + scale_y[0]);
-							histogram_position_table[i].z *= (scale_factor[0] + scale_x[0]);
-							histogram_position_table[i].w *= (scale_factor[0] + scale_y[0]);
-							histogram_position_table[i].x += move_x[0];
-							histogram_position_table[i].y += move_y[0];
-							histogram_position_table[i].z += move_x[0];
-							histogram_position_table[i].w += move_y[0];
-
-							start += pixels;
-						}		
+					current_hour = preprocessing_data.hour_data[i];
+					if(current_hour!=last_hour)
+					{
+						draw_color[0] = 1; 
+						draw_color[1] = 1; 
+						draw_color[2] = 1;
+						RECTANGLE *line;
+						line = new RECTANGLE();
+						line->h = 3;
+						line->w = 900;
+						line->x = 0;
+						line->y = y_coord - 5;
+						DrawRectWithOpenGL(line,draw_color);
+						DrawTime_FTGL(current_hour,20,y_coord-10);
+						t++;
+						y_coord-=10;
+						delete(line);
 					}
+	
+						int start = 0;
+						for(int k=0;k<preprocessing_data.histogram.cols;++k)
+						{   
+							if(preprocessing_data.histogram.at<int>(i,k)!=0)
+							{
+								pixels = preprocessing_data.histogram.at<int>(i,k);
+								draw_color[0] = preprocessing_data.rgb_mat.at<float>(k,0); 
+								draw_color[1] = preprocessing_data.rgb_mat.at<float>(k,1); 
+								draw_color[2] = preprocessing_data.rgb_mat.at<float>(k,2);
 
-					y_coord-=5;
-					last_hour = current_hour;
+								if((counter==2 || counter==4) && select_histogram_flag)
+								{
+									if(i==select_histogram_index)
+									{
+										draw_color[0] = 0; draw_color[1] = 0; draw_color[2] = 0;
+									}
+								}
+
+								for(int u=start;u<start+pixels;++u)
+								{
+									RECTANGLE *rect;
+									rect = new RECTANGLE();
+									rect->h = 3;
+									rect->w = 0.1;
+									rect->x = 110 + preprocessing_data.position.at<double>(i,1)/10.0 + (double)u*0.1;
+									rect->y = y_coord;
+									DrawRectWithOpenGL(rect,draw_color);	
+									delete(rect);
+
+								}
+								//table record
+								histogram_position_table[i].x = 110 + preprocessing_data.position.at<double>(i,1)/10.0;
+								histogram_position_table[i].y = y_coord;
+								histogram_position_table[i].z = 110 + preprocessing_data.position.at<double>(i,1)/10.0 + 60.0;
+								histogram_position_table[i].w = y_coord + 3;
+								
+								histogram_position_table[i].x *= (scale_factor[0] + scale_x[0]);
+								histogram_position_table[i].y *= (scale_factor[0] + scale_y[0]);
+								histogram_position_table[i].z *= (scale_factor[0] + scale_x[0]);
+								histogram_position_table[i].w *= (scale_factor[0] + scale_y[0]);
+								histogram_position_table[i].x += move_x[0];
+								histogram_position_table[i].y += move_y[0];
+								histogram_position_table[i].z += move_x[0];
+								histogram_position_table[i].w += move_y[0];
+
+								start += pixels;
+							}		
+						}
+
+						y_coord-=5;
+						last_hour = current_hour;
+				}
 			}
 
 	}
@@ -266,6 +269,11 @@ namespace OpenGLForm{
 	System::Void HistogramVisualization::HistogramMouseUp( Object^ /*sender*/, System::Windows::Forms::MouseEventArgs^ e ){
 				 last_X[0] = e->X;
 				 last_Y[0] = e->Y;	
-	}	
+	}
+
+	System::Void HistogramVisualization::clear()
+	{
+		preprocessing_data.histogram.release();
+	}
 
 }

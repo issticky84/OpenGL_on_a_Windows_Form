@@ -13,7 +13,7 @@ namespace OpenGLForm{
 			void  HistogramMouseWheel( Object^ /*sender*/, System::Windows::Forms::MouseEventArgs^ e);
 			void  HistogramMouseMove( Object^ /*sender*/, System::Windows::Forms::MouseEventArgs^ e);
 			void  HistogramMouseUp( Object^ /*sender*/, System::Windows::Forms::MouseEventArgs^ e);
-
+			System::Void clear();
 		private:
 			System::Void DrawHistogramVisualization(System::Void);
 			System::Void DrawTime_FTGL(int l,int x, int y);

@@ -27,6 +27,7 @@ Class OpenGLForm.DetailVisualization: AutoLayout, AnsiClass, Class, Public, Befo
     Void .ctor(System.Windows.Forms.Form, System.Windows.Forms.Panel, Int32, Int32, ReadCSV*, Preprocessing_Data*): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
   Methods:
     Render(Int32, Int32): PrivateScope, Public, Virtual, HideBySig
+    clear(): PrivateScope, Public, HideBySig
 Class OpenGLForm.HistogramVisualization: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
   :OpenGLForm.VisualizationPanel
     Void .ctor(System.Windows.Forms.Form, System.Windows.Forms.Panel, Int32, Int32, ReadCSV*, Preprocessing_Data*): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
@@ -36,6 +37,7 @@ Class OpenGLForm.HistogramVisualization: AutoLayout, AnsiClass, Class, Public, B
     HistogramMouseWheel(Object, MouseEventArgs): PrivateScope, Public, HideBySig
     HistogramMouseMove(Object, MouseEventArgs): PrivateScope, Public, HideBySig
     HistogramMouseUp(Object, MouseEventArgs): PrivateScope, Public, HideBySig
+    clear(): PrivateScope, Public, HideBySig
 Class OpenGLForm.RawDataVisualization: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
   :OpenGLForm.VisualizationPanel
     Void .ctor(System.Windows.Forms.Form, System.Windows.Forms.Panel, Int32, Int32, ReadCSV*, Preprocessing_Data*): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
@@ -46,6 +48,7 @@ Class OpenGLForm.RawDataVisualization: AutoLayout, AnsiClass, Class, Public, Bef
     RawDataMouseMove(Object, MouseEventArgs): PrivateScope, Public, HideBySig
     RawDataMouseUp(Object, MouseEventArgs): PrivateScope, Public, HideBySig
     RawDataMouseDoubleClick(Object, MouseEventArgs): PrivateScope, Public, HideBySig
+    clear(): PrivateScope, Public, HideBySig
 Class OpenGL_on_a_Windows_Form.Form1: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
   :System.Windows.Forms.Form
     Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName

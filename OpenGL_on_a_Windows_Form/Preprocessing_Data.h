@@ -38,6 +38,7 @@ private:
 	Mat Position_by_MDS(Mat,int ,float);
 public:
 	void start(vector < vector<float> >,int);
+	void Initial_selection_flag(bool,bool,bool,bool);
 
 	int num_of_five_minutes;
 	//int raw_data_size;
@@ -52,7 +53,6 @@ public:
 	int num_of_begin_hour,begin_hour;
 	bool waiting_flag;
 	bool select_gravity,select_linear_acc,select_gyro,select_distance;
-	bool *select;
 };
 
 

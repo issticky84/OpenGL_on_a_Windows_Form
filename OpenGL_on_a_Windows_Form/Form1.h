@@ -27,6 +27,8 @@ namespace OpenGL_on_a_Windows_Form
 			read_csv.read_raw_data();
 
 			Preprocessing_Data preprocessing_data;
+			preprocessing_data.Initial_selection_flag(this->Gravity_Norm->Checked,this->Linear_Acceleration_Norm->Checked,
+													  this->Gyroscope_Norm->Checked,this->First_Order_of_Distance->Checked);
 			preprocessing_data.start(read_csv.raw_data,trackBar1->Value);
 
 			//waiting_flag = true;
@@ -81,6 +83,14 @@ namespace OpenGL_on_a_Windows_Form
 	private: System::Windows::Forms::Button^  Detail_Clear;
 	private: System::Windows::Forms::TextBox^  textBox1;
 	private: System::Boolean waiting_flag;
+	private: System::Windows::Forms::CheckBox^  Gravity_Norm;
+	private: System::Windows::Forms::CheckBox^  Linear_Acceleration_Norm;
+
+	private: System::Windows::Forms::Label^  feature_selection_label;
+	private: System::Windows::Forms::CheckBox^  Gyroscope_Norm;
+	private: System::Windows::Forms::CheckBox^  First_Order_of_Distance;
+	private: System::Windows::Forms::Label^  cluster_label;
+
 	private: System::Boolean start_flag;
 
 #pragma region Windows Form Designer generated code
@@ -100,6 +110,12 @@ namespace OpenGL_on_a_Windows_Form
 			this->trackBar1 = (gcnew System::Windows::Forms::TrackBar());
 			this->Detail_Clear = (gcnew System::Windows::Forms::Button());
 			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
+			this->Gravity_Norm = (gcnew System::Windows::Forms::CheckBox());
+			this->Linear_Acceleration_Norm = (gcnew System::Windows::Forms::CheckBox());
+			this->feature_selection_label = (gcnew System::Windows::Forms::Label());
+			this->Gyroscope_Norm = (gcnew System::Windows::Forms::CheckBox());
+			this->First_Order_of_Distance = (gcnew System::Windows::Forms::CheckBox());
+			this->cluster_label = (gcnew System::Windows::Forms::Label());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->trackBar1))->BeginInit();
 			this->SuspendLayout();
 			// 
@@ -140,7 +156,7 @@ namespace OpenGL_on_a_Windows_Form
 			// 
 			// start
 			// 
-			this->start->Location = System::Drawing::Point(1553, 842);
+			this->start->Location = System::Drawing::Point(1687, 325);
 			this->start->Name = L"start";
 			this->start->Size = System::Drawing::Size(134, 67);
 			this->start->TabIndex = 4;
@@ -150,7 +166,7 @@ namespace OpenGL_on_a_Windows_Form
 			// 
 			// button2
 			// 
-			this->button2->Location = System::Drawing::Point(1502, 12);
+			this->button2->Location = System::Drawing::Point(1502, 409);
 			this->button2->Name = L"button2";
 			this->button2->Size = System::Drawing::Size(83, 50);
 			this->button2->TabIndex = 5;
@@ -160,19 +176,19 @@ namespace OpenGL_on_a_Windows_Form
 			// 
 			// trackBar1
 			// 
-			this->trackBar1->Location = System::Drawing::Point(1682, 135);
+			this->trackBar1->Location = System::Drawing::Point(1678, 249);
 			this->trackBar1->Maximum = 100;
 			this->trackBar1->Name = L"trackBar1";
-			this->trackBar1->Orientation = System::Windows::Forms::Orientation::Vertical;
-			this->trackBar1->Size = System::Drawing::Size(45, 188);
-			this->trackBar1->TabIndex = 50;
-			this->trackBar1->Value = 50;
+			this->trackBar1->Size = System::Drawing::Size(196, 45);
+			this->trackBar1->TabIndex = 6;
 			this->trackBar1->TickFrequency = 5;
+			this->trackBar1->SmallChange = 5;
+			this->trackBar1->Value = 50;
 			this->trackBar1->Scroll += gcnew System::EventHandler(this, &Form1::trackBar1_Scroll);
 			// 
 			// Detail_Clear
 			// 
-			this->Detail_Clear->Location = System::Drawing::Point(1502, 465);
+			this->Detail_Clear->Location = System::Drawing::Point(1502, 922);
 			this->Detail_Clear->Name = L"Detail_Clear";
 			this->Detail_Clear->Size = System::Drawing::Size(83, 50);
 			this->Detail_Clear->TabIndex = 7;
@@ -182,18 +198,93 @@ namespace OpenGL_on_a_Windows_Form
 			// 
 			// textBox1
 			// 
-			this->textBox1->Location = System::Drawing::Point(1682, 320);
+			this->textBox1->Location = System::Drawing::Point(1869, 249);
 			this->textBox1->Name = L"textBox1";
 			this->textBox1->Size = System::Drawing::Size(24, 22);
-			this->textBox1->TabIndex = 51;
+			this->textBox1->TabIndex = 8;
 			this->textBox1->Text = L"50";
-			//this->textBox1->TextChanged += gcnew System::EventHandler(this, &Form1::textBox1_TextChanged);
+			// 
+			// Gravity_Norm
+			// 
+			this->Gravity_Norm->AutoSize = true;
+			this->Gravity_Norm->Checked = true;
+			this->Gravity_Norm->CheckState = System::Windows::Forms::CheckState::Checked;
+			this->Gravity_Norm->Location = System::Drawing::Point(1685, 55);
+			this->Gravity_Norm->Name = L"Gravity_Norm";
+			this->Gravity_Norm->Size = System::Drawing::Size(89, 16);
+			this->Gravity_Norm->TabIndex = 9;
+			this->Gravity_Norm->Text = L"Gravity Norm";
+			this->Gravity_Norm->UseVisualStyleBackColor = true;
+			this->Gravity_Norm->CheckedChanged += gcnew System::EventHandler(this, &Form1::Gravity_Norm_CheckedChanged);
+			// 
+			// Linear_Acceleration_Norm
+			// 
+			this->Linear_Acceleration_Norm->AutoSize = true;
+			this->Linear_Acceleration_Norm->Checked = true;
+			this->Linear_Acceleration_Norm->CheckState = System::Windows::Forms::CheckState::Checked;
+			this->Linear_Acceleration_Norm->Location = System::Drawing::Point(1685, 94);
+			this->Linear_Acceleration_Norm->Name = L"Linear_Acceleration_Norm";
+			this->Linear_Acceleration_Norm->Size = System::Drawing::Size(145, 16);
+			this->Linear_Acceleration_Norm->TabIndex = 10;
+			this->Linear_Acceleration_Norm->Text = L"Linear Acceleration Norm";
+			this->Linear_Acceleration_Norm->UseVisualStyleBackColor = true;
+			this->Linear_Acceleration_Norm->CheckedChanged += gcnew System::EventHandler(this, &Form1::Linear_Acceleration_Norm_CheckedChanged);
+			// 
+			// feature_selection_label
+			// 
+			this->feature_selection_label->AutoSize = true;
+			this->feature_selection_label->Location = System::Drawing::Point(1683, 21);
+			this->feature_selection_label->Name = L"feature_selection_label";
+			this->feature_selection_label->Size = System::Drawing::Size(84, 12);
+			this->feature_selection_label->TabIndex = 11;
+			this->feature_selection_label->Text = L"Feature Selection";
+			// 
+			// Gyroscope_Norm
+			// 
+			this->Gyroscope_Norm->AutoSize = true;
+			this->Gyroscope_Norm->Checked = true;
+			this->Gyroscope_Norm->CheckState = System::Windows::Forms::CheckState::Checked;
+			this->Gyroscope_Norm->Location = System::Drawing::Point(1685, 132);
+			this->Gyroscope_Norm->Name = L"Gyroscope_Norm";
+			this->Gyroscope_Norm->Size = System::Drawing::Size(104, 16);
+			this->Gyroscope_Norm->TabIndex = 12;
+			this->Gyroscope_Norm->Text = L"Gyroscope Norm";
+			this->Gyroscope_Norm->UseVisualStyleBackColor = true;
+			this->Gyroscope_Norm->CheckedChanged += gcnew System::EventHandler(this, &Form1::Gyroscope_Norm_CheckedChanged);
+			// 
+			// First_Order_of_Distance
+			// 
+			this->First_Order_of_Distance->AutoSize = true;
+			this->First_Order_of_Distance->Checked = true;
+			this->First_Order_of_Distance->CheckState = System::Windows::Forms::CheckState::Checked;
+			this->First_Order_of_Distance->Location = System::Drawing::Point(1685, 173);
+			this->First_Order_of_Distance->Name = L"First_Order_of_Distance";
+			this->First_Order_of_Distance->Size = System::Drawing::Size(129, 16);
+			this->First_Order_of_Distance->TabIndex = 13;
+			this->First_Order_of_Distance->Text = L"First Order of Distance";
+			this->First_Order_of_Distance->UseVisualStyleBackColor = true;
+			this->First_Order_of_Distance->CheckedChanged += gcnew System::EventHandler(this, &Form1::First_Order_of_Distance_CheckedChanged);
+			// 
+			// cluster_label
+			// 
+			this->cluster_label->AutoSize = true;
+			this->cluster_label->Location = System::Drawing::Point(1685, 224);
+			this->cluster_label->Name = L"cluster_label";
+			this->cluster_label->Size = System::Drawing::Size(129, 12);
+			this->cluster_label->TabIndex = 14;
+			this->cluster_label->Text = L"Cluster Number (k-means)";
 			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(1916, 1054);
+			this->Controls->Add(this->cluster_label);
+			this->Controls->Add(this->First_Order_of_Distance);
+			this->Controls->Add(this->Gyroscope_Norm);
+			this->Controls->Add(this->feature_selection_label);
+			this->Controls->Add(this->Linear_Acceleration_Norm);
+			this->Controls->Add(this->Gravity_Norm);
 			this->Controls->Add(this->textBox1);
 			this->Controls->Add(this->Detail_Clear);
 			this->Controls->Add(this->trackBar1);
@@ -387,6 +478,30 @@ namespace OpenGL_on_a_Windows_Form
 					Form::Focus();
 			 }
 
+	private: System::Void Gravity_Norm_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+				 if(Gravity_Norm->Checked)
+					 preprocessing_data.select_gravity = true;
+				 else
+					 preprocessing_data.select_gravity = false;
+			 }
+	private: System::Void Linear_Acceleration_Norm_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+				 if(Linear_Acceleration_Norm->Checked)
+					 preprocessing_data.select_linear_acc = true;
+				 else
+					 preprocessing_data.select_linear_acc = false;
+			 }
+	private: System::Void Gyroscope_Norm_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+				 if(Gyroscope_Norm->Checked)
+					 preprocessing_data.select_gyro = true;
+				 else
+					 preprocessing_data.select_gyro = false;
+			 }
+	private: System::Void First_Order_of_Distance_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+				 if(First_Order_of_Distance->Checked)
+					 preprocessing_data.select_distance = true;
+				 else
+					 preprocessing_data.select_distance = false;
+			 }
 };
 }
 

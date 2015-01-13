@@ -16,12 +16,17 @@
 using namespace tapkee;
 using namespace Eigen;
 
+void Preprocessing_Data::Initial_selection_flag(bool f1,bool f2,bool f3,bool f4)
+{
+	select_gravity = f1;
+	select_linear_acc = f2;
+	select_gyro = f3;
+	select_distance = f4;	
+}
+
 void Preprocessing_Data::start(vector < vector<float> > raw_data,int k)
 {
-	select_gravity = true;
-	select_linear_acc = true;
-	select_gyro = true;
-	select_distance = true;
+
 	//=================Read CSV file====================//
 	//clock_t begin = clock();
 	//strcpy(file_csv_data,"../../csv_data/BigData_20141121_0723_new.csv");

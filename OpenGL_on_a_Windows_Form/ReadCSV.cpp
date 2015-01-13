@@ -4,11 +4,10 @@
 #include <fstream>
 
 
-void ReadCSV::read_raw_data()
+void ReadCSV::read_raw_data(char file_name[])
 {
-	strcpy(file_csv_data,"../../csv_data/BigData_20141121_0723_new.csv");
 	FILE *csv_file;
-	csv_file = fopen(file_csv_data,"r");
+	csv_file = fopen(file_name,"r");
 	if(!csv_file) 
 	{
 		cout << "Can't open config file!" << endl;

@@ -24,7 +24,11 @@ namespace OpenGL_on_a_Windows_Form
 			//system("matlab -nodesktop -nosplash -r draw_rect_wear2");
 			ReadCSV read_csv;
 			//read_csv.read_all_csv();
-			read_csv.read_raw_data();
+
+			char file_name[200] = "../../csv_data/BigData_20141121_0723_new.csv";
+			file_string = gcnew System::String(file_name); 
+			//string file_name = "../../csv_data/BigData_20141121_0723_new.csv";
+			read_csv.read_raw_data(file_name);
 
 			Preprocessing_Data preprocessing_data;
 			preprocessing_data.Initial_selection_flag(this->Gravity_Norm->Checked,this->Linear_Acceleration_Norm->Checked,
@@ -90,8 +94,13 @@ namespace OpenGL_on_a_Windows_Form
 	private: System::Windows::Forms::CheckBox^  Gyroscope_Norm;
 	private: System::Windows::Forms::CheckBox^  First_Order_of_Distance;
 	private: System::Windows::Forms::Label^  cluster_label;
-
 	private: System::Boolean start_flag;
+	private: System::Windows::Forms::ProgressBar^  progressBar1;
+	private: System::Windows::Forms::Button^  load_csv;
+	private: System::Windows::Forms::Label^  file_directory;
+
+	public:  System::Windows::Forms::OpenFileDialog ofdOpen;
+	private: System::String^ file_string;
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -116,6 +125,9 @@ namespace OpenGL_on_a_Windows_Form
 			this->Gyroscope_Norm = (gcnew System::Windows::Forms::CheckBox());
 			this->First_Order_of_Distance = (gcnew System::Windows::Forms::CheckBox());
 			this->cluster_label = (gcnew System::Windows::Forms::Label());
+			this->progressBar1 = (gcnew System::Windows::Forms::ProgressBar());
+			this->load_csv = (gcnew System::Windows::Forms::Button());
+			this->file_directory = (gcnew System::Windows::Forms::Label());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->trackBar1))->BeginInit();
 			this->SuspendLayout();
 			// 
@@ -156,7 +168,7 @@ namespace OpenGL_on_a_Windows_Form
 			// 
 			// start
 			// 
-			this->start->Location = System::Drawing::Point(1687, 325);
+			this->start->Location = System::Drawing::Point(1716, 309);
 			this->start->Name = L"start";
 			this->start->Size = System::Drawing::Size(134, 67);
 			this->start->TabIndex = 4;
@@ -176,13 +188,13 @@ namespace OpenGL_on_a_Windows_Form
 			// 
 			// trackBar1
 			// 
-			this->trackBar1->Location = System::Drawing::Point(1678, 249);
+			this->trackBar1->Location = System::Drawing::Point(1682, 249);
 			this->trackBar1->Maximum = 100;
 			this->trackBar1->Name = L"trackBar1";
 			this->trackBar1->Size = System::Drawing::Size(196, 45);
+			this->trackBar1->SmallChange = 5;
 			this->trackBar1->TabIndex = 6;
 			this->trackBar1->TickFrequency = 5;
-			this->trackBar1->SmallChange = 5;
 			this->trackBar1->Value = 50;
 			this->trackBar1->Scroll += gcnew System::EventHandler(this, &Form1::trackBar1_Scroll);
 			// 
@@ -198,7 +210,7 @@ namespace OpenGL_on_a_Windows_Form
 			// 
 			// textBox1
 			// 
-			this->textBox1->Location = System::Drawing::Point(1869, 249);
+			this->textBox1->Location = System::Drawing::Point(1873, 249);
 			this->textBox1->Name = L"textBox1";
 			this->textBox1->Size = System::Drawing::Size(24, 22);
 			this->textBox1->TabIndex = 8;
@@ -209,7 +221,7 @@ namespace OpenGL_on_a_Windows_Form
 			this->Gravity_Norm->AutoSize = true;
 			this->Gravity_Norm->Checked = true;
 			this->Gravity_Norm->CheckState = System::Windows::Forms::CheckState::Checked;
-			this->Gravity_Norm->Location = System::Drawing::Point(1685, 55);
+			this->Gravity_Norm->Location = System::Drawing::Point(1691, 61);
 			this->Gravity_Norm->Name = L"Gravity_Norm";
 			this->Gravity_Norm->Size = System::Drawing::Size(89, 16);
 			this->Gravity_Norm->TabIndex = 9;
@@ -222,7 +234,7 @@ namespace OpenGL_on_a_Windows_Form
 			this->Linear_Acceleration_Norm->AutoSize = true;
 			this->Linear_Acceleration_Norm->Checked = true;
 			this->Linear_Acceleration_Norm->CheckState = System::Windows::Forms::CheckState::Checked;
-			this->Linear_Acceleration_Norm->Location = System::Drawing::Point(1685, 94);
+			this->Linear_Acceleration_Norm->Location = System::Drawing::Point(1691, 100);
 			this->Linear_Acceleration_Norm->Name = L"Linear_Acceleration_Norm";
 			this->Linear_Acceleration_Norm->Size = System::Drawing::Size(145, 16);
 			this->Linear_Acceleration_Norm->TabIndex = 10;
@@ -233,7 +245,7 @@ namespace OpenGL_on_a_Windows_Form
 			// feature_selection_label
 			// 
 			this->feature_selection_label->AutoSize = true;
-			this->feature_selection_label->Location = System::Drawing::Point(1683, 21);
+			this->feature_selection_label->Location = System::Drawing::Point(1689, 27);
 			this->feature_selection_label->Name = L"feature_selection_label";
 			this->feature_selection_label->Size = System::Drawing::Size(84, 12);
 			this->feature_selection_label->TabIndex = 11;
@@ -244,7 +256,7 @@ namespace OpenGL_on_a_Windows_Form
 			this->Gyroscope_Norm->AutoSize = true;
 			this->Gyroscope_Norm->Checked = true;
 			this->Gyroscope_Norm->CheckState = System::Windows::Forms::CheckState::Checked;
-			this->Gyroscope_Norm->Location = System::Drawing::Point(1685, 132);
+			this->Gyroscope_Norm->Location = System::Drawing::Point(1691, 138);
 			this->Gyroscope_Norm->Name = L"Gyroscope_Norm";
 			this->Gyroscope_Norm->Size = System::Drawing::Size(104, 16);
 			this->Gyroscope_Norm->TabIndex = 12;
@@ -257,7 +269,7 @@ namespace OpenGL_on_a_Windows_Form
 			this->First_Order_of_Distance->AutoSize = true;
 			this->First_Order_of_Distance->Checked = true;
 			this->First_Order_of_Distance->CheckState = System::Windows::Forms::CheckState::Checked;
-			this->First_Order_of_Distance->Location = System::Drawing::Point(1685, 173);
+			this->First_Order_of_Distance->Location = System::Drawing::Point(1691, 179);
 			this->First_Order_of_Distance->Name = L"First_Order_of_Distance";
 			this->First_Order_of_Distance->Size = System::Drawing::Size(129, 16);
 			this->First_Order_of_Distance->TabIndex = 13;
@@ -268,17 +280,47 @@ namespace OpenGL_on_a_Windows_Form
 			// cluster_label
 			// 
 			this->cluster_label->AutoSize = true;
-			this->cluster_label->Location = System::Drawing::Point(1685, 224);
+			this->cluster_label->Location = System::Drawing::Point(1689, 224);
 			this->cluster_label->Name = L"cluster_label";
 			this->cluster_label->Size = System::Drawing::Size(129, 12);
 			this->cluster_label->TabIndex = 14;
 			this->cluster_label->Text = L"Cluster Number (k-means)";
+			// 
+			// progressBar1
+			// 
+			this->progressBar1->Location = System::Drawing::Point(1682, 436);
+			this->progressBar1->Maximum = 50;
+			this->progressBar1->Name = L"progressBar1";
+			this->progressBar1->Size = System::Drawing::Size(196, 23);
+			this->progressBar1->TabIndex = 15;
+			// 
+			// load_csv
+			// 
+			this->load_csv->Location = System::Drawing::Point(1721, 538);
+			this->load_csv->Name = L"load_csv";
+			this->load_csv->Size = System::Drawing::Size(115, 32);
+			this->load_csv->TabIndex = 16;
+			this->load_csv->Text = L"Load csv File";
+			this->load_csv->UseVisualStyleBackColor = true;
+			this->load_csv->Click += gcnew System::EventHandler(this, &Form1::load_csv_Click);
+			// 
+			// file_directory
+			// 
+			this->file_directory->AutoSize = true;
+			this->file_directory->Location = System::Drawing::Point(1669, 600);
+			this->file_directory->Name = L"file_directory";
+			this->file_directory->Size = System::Drawing::Size(0, 12);
+			this->file_directory->TabIndex = 17;
+			this->file_directory->Text = "" + file_string;
 			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(1916, 1054);
+			this->Controls->Add(this->file_directory);
+			this->Controls->Add(this->load_csv);
+			this->Controls->Add(this->progressBar1);
 			this->Controls->Add(this->cluster_label);
 			this->Controls->Add(this->First_Order_of_Distance);
 			this->Controls->Add(this->Gyroscope_Norm);
@@ -304,6 +346,13 @@ namespace OpenGL_on_a_Windows_Form
 			this->PerformLayout();
 
 		}
+		void MarshalString ( System::String ^ s, string& os ) {
+		   using namespace Runtime::InteropServices;
+		   const char* chars = 
+			  (const char*)(Marshal::StringToHGlobalAnsi(s)).ToPointer();
+		   os = chars;
+		   Marshal::FreeHGlobal(IntPtr((void*)chars));
+		}
 #pragma endregion
 	private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e)
 			 {
@@ -316,28 +365,90 @@ namespace OpenGL_on_a_Windows_Form
 
 				 if(Move_3_21_flag==false && Move_12_horiz_flag==false && Move_12_vert_flag==false) 
 					 this->Cursor = System::Windows::Forms::Cursors::Default;
+
+				 //this->progressBar1->Value = preprocessing_data.progress_value;
+				 //if(start_flag) progressBar1->Value += 1;
+				 //if(progressBar1->Value==progressBar1->Maximum)
+				 //{
+					//start_flag = false;
+					//progressBar1->Value = 0;
+				 //}
 			 }
 
 	private: System::Void start_Click(System::Object^  sender, System::EventArgs^  e) 
 			 {
+				 start_flag = true;
 				 //waiting_flag = false;
 				 histogram->clear();
 				 rawData->clear();
 				 detail->clear();
+				 //progressBar1->Style = ProgressBarStyle::Continuous;
+				 //progressBar1->MarqueeAnimationSpeed = 30;
 				 preprocessing_data.start(read_csv.raw_data,trackBar1->Value);
-				 System::Windows::Forms::MessageBox::Show(trackBar1->Value.ToString());
+				 //System::Windows::Forms::MessageBox::Show(trackBar1->Value.ToString());
+				 //progressBar1->Style = ProgressBarStyle::Marquee;
+				 //progressBar1->MarqueeAnimationSpeed = 0;
 				 //waiting_flag = true;
 			 }
 
     private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e) 
 			 {
-				//OpenGL_4->rtri+=trackBar1->Value;
 				 rawData->clear();
 			 }
 
 	private: System::Void Detail_Clear_Click(System::Object^  sender, System::EventArgs^  e)
 			 {
 				 detail->clear();
+			 }
+
+	private: System::Void load_csv_Click(System::Object^  sender, System::EventArgs^  e) {
+				 System::Windows::Forms::OpenFileDialog^ ofdOpen=gcnew System::Windows::Forms::OpenFileDialog();
+
+
+				 if ((ofdOpen->InitialDirectory == NULL.ToString())) 
+				 {
+					ofdOpen->InitialDirectory = "E:Github/csv_data/"; // 語音檔預設開啟目錄
+				 }
+
+				 ofdOpen->Filter = 
+						//"Audio files (*.wav; *.mpa; *.mp2; *.mp3; *.au; *.aif; *.aiff; *.snd; *.wma)|*.wav; *.mpa; *.mp2; *.mp3; *.au; *.aif; *.aiff; *.snd; *.wma|" +
+						//"Video Files (*.avi; *.qt; *.mov; *.mpg; *.mpeg; *.m1v; *.wmv)|*.avi; *.qt; *.mov; *.mpg; *.mpeg; *.m1v; *.wmv|" +
+						//"MIDI Files (*.mid, *.midi, *.rmKKTimeri)|*.mid; *.midi; *.rmi|" +
+						//"Image Files (*.jpg, *.bmp, *.gif, *.tga)|*.jpg; *.bmp; *.gif; *.tga|" +
+						"CSV Files (*.csv)|*.csv|" +
+						"All Files (*.*)|*.*";
+						ofdOpen->Title = "Open CSV file";
+						ofdOpen->Multiselect = true; // 允許選取多檔案
+
+				 if (ofdOpen->ShowDialog(this) == System::Windows::Forms::DialogResult::Cancel) 
+				 {
+				 		// 使用者沒有選檔案
+						return;
+				 }
+		 
+				 System::String^ Filename = ofdOpen->FileName; // 選擇的完整路徑
+
+				 file_directory->Text = "" + Filename;
+				 //System::Windows::Forms::MessageBox::Show(Filename);
+
+				 //System::String to string, string to char*
+				 string file;
+				 MarshalString(Filename, file);
+				 char file_char[200];
+				 strcpy(file_char,file.c_str());
+				 read_csv.read_raw_data(file_char);
+
+				 //clear the mat & reset the flag & start
+				 histogram->clear();
+				 rawData->clear();
+				 detail->clear();
+				 preprocessing_data.Initial_selection_flag(this->Gravity_Norm->Checked,this->Linear_Acceleration_Norm->Checked,
+															this->Gyroscope_Norm->Checked,this->First_Order_of_Distance->Checked);
+				 Gravity_Norm->Checked = true;
+				 Linear_Acceleration_Norm->Checked = true;
+				 Gyroscope_Norm->Checked = true;
+				 First_Order_of_Distance->Checked = true;
+				 preprocessing_data.start(read_csv.raw_data,trackBar1->Value);
 			 }
 
 	private: System::Void trackBar1_Scroll(System::Object^  sender, System::EventArgs^  e) 
@@ -502,6 +613,7 @@ namespace OpenGL_on_a_Windows_Form
 				 else
 					 preprocessing_data.select_distance = false;
 			 }
+
 };
 }
 

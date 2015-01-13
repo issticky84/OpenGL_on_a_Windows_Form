@@ -53,6 +53,7 @@ public:
 	int num_of_begin_hour,begin_hour;
 	bool waiting_flag;
 	bool select_gravity,select_linear_acc,select_gyro,select_distance;
+	int progress_value;
 };
 
 

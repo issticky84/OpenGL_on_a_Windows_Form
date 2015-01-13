@@ -26,7 +26,7 @@ void Preprocessing_Data::Initial_selection_flag(bool f1,bool f2,bool f3,bool f4)
 
 void Preprocessing_Data::start(vector < vector<float> > raw_data,int k)
 {
-
+	progress_value = 0;
 	//=================Read CSV file====================//
 	//clock_t begin = clock();
 	//strcpy(file_csv_data,"../../csv_data/BigData_20141121_0723_new.csv");
@@ -45,6 +45,7 @@ void Preprocessing_Data::start(vector < vector<float> > raw_data,int k)
 	Mat model = set_matrix(raw_data,attribute_title,attribute_title_size).clone();
 	clock_t end2 = clock();
 	printf("Setting matrix elapsed time: %f\n",double(end2 - begin2) / CLOCKS_PER_SEC);
+	progress_value = 5;
 	//==================================================//
 	//output_mat_as_txt_file("model.txt",model);
     //int k = 50; 
@@ -59,6 +60,7 @@ void Preprocessing_Data::start(vector < vector<float> > raw_data,int k)
 	clock_t end3 = clock();
     //TermCriteria(CV_TERMCRIT_ITER|CV_TERMCRIT_EPS, 10, 1),  硂柑Τ把计∕﹚k-means挡材把计琌程Ω计材把计琌弘絋ぶ材把计琌ㄌ酚玡ㄢ把计非絛ㄒい碞琌ㄢ常把酚 or よΑ∕﹚
 	printf("Kmeans (K = %d) elapsed time: %f\n",k,double(end3 - begin3) / CLOCKS_PER_SEC);
+	progress_value = 10;
 	//==================================================//
 	
 	voting(k,cluster_tag,model.rows); // Type: int
@@ -86,6 +88,7 @@ void Preprocessing_Data::start(vector < vector<float> > raw_data,int k)
 	for(int i=0;i<result.cols;i++)
 		normalize(result.col(i),raw_data_3D.col(i),0,1,NORM_MINMAX); //normalize to 0-1
 	//model.release();	
+	progress_value = 20;
 }
 
 void Preprocessing_Data::output_mat_as_txt_file(char file_name[],Mat mat)

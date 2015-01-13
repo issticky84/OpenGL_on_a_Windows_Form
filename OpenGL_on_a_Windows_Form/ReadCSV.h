@@ -12,7 +12,7 @@ class ReadCSV
 {
 public:
 	vector < vector<float> > raw_data;
-	void read_raw_data();
+	void read_raw_data(char file_name[]);
 	int raw_data_size;
 	//vector < vector<float> > position_data;
 	//vector < vector<float> > histogram_data;

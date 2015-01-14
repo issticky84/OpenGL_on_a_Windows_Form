@@ -22,7 +22,7 @@ namespace OpenGLForm{
 	}
 
 	System::Void HistogramVisualization::FindPatternByTable(int x,int y)
-	{
+	{  
 		vector2 pos_2D(x,y);
 		vector3 pos_3D = Unprojection(pos_2D);//screen to 3D coordinate
 		pos_3D.x *= (scale_factor[0] + scale_x[0]);
@@ -168,16 +168,16 @@ namespace OpenGLForm{
 									rect = new RECTANGLE();
 									rect->h = 3;
 									rect->w = 0.1;
-									rect->x = 110 + preprocessing_data.position.at<double>(i,1)/10.0 + (double)u*0.1;
+									rect->x = 110 + preprocessing_data.position.at<double>(i,0)/10.0 + (double)u*0.1;
 									rect->y = y_coord;
 									DrawRectWithOpenGL(rect,draw_color);	
 									delete(rect);
 
 								}
 								//table record
-								histogram_position_table[i].x = 110 + preprocessing_data.position.at<double>(i,1)/10.0;
+								histogram_position_table[i].x = 110 + preprocessing_data.position.at<double>(i,0)/10.0;
 								histogram_position_table[i].y = y_coord;
-								histogram_position_table[i].z = 110 + preprocessing_data.position.at<double>(i,1)/10.0 + 60.0;
+								histogram_position_table[i].z = 110 + preprocessing_data.position.at<double>(i,0)/10.0 + 60.0;
 								histogram_position_table[i].w = y_coord + 3;
 								
 								histogram_position_table[i].x *= (scale_factor[0] + scale_x[0]);
@@ -273,7 +273,13 @@ namespace OpenGLForm{
 
 	System::Void HistogramVisualization::clear()
 	{
+		//histogram_position_table.clear();
 		preprocessing_data.histogram.release();
+	}
+
+	System::Void HistogramVisualization::resize()
+	{
+		histogram_position_table.resize(preprocessing_data.num_of_five_minutes);
 	}
 
 }

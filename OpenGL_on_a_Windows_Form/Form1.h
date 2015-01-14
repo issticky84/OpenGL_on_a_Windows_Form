@@ -26,7 +26,7 @@ namespace OpenGL_on_a_Windows_Form
 			//read_csv.read_all_csv();
 
 			char file_name[200] = "../../csv_data/BigData_20141121_0723_new.csv";
-			file_string = gcnew System::String(file_name); 
+			//file_string = gcnew System::String(file_name); 
 			//string file_name = "../../csv_data/BigData_20141121_0723_new.csv";
 			read_csv.read_raw_data(file_name);
 
@@ -98,9 +98,10 @@ namespace OpenGL_on_a_Windows_Form
 	private: System::Windows::Forms::ProgressBar^  progressBar1;
 	private: System::Windows::Forms::Button^  load_csv;
 	private: System::Windows::Forms::Label^  file_directory;
+	private: System::ComponentModel::BackgroundWorker^  backgroundWorker1;
 
 	public:  System::Windows::Forms::OpenFileDialog ofdOpen;
-	private: System::String^ file_string;
+	//private: System::String^ file_string;
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -128,6 +129,7 @@ namespace OpenGL_on_a_Windows_Form
 			this->progressBar1 = (gcnew System::Windows::Forms::ProgressBar());
 			this->load_csv = (gcnew System::Windows::Forms::Button());
 			this->file_directory = (gcnew System::Windows::Forms::Label());
+			this->backgroundWorker1 = (gcnew System::ComponentModel::BackgroundWorker());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->trackBar1))->BeginInit();
 			this->SuspendLayout();
 			// 
@@ -289,7 +291,7 @@ namespace OpenGL_on_a_Windows_Form
 			// progressBar1
 			// 
 			this->progressBar1->Location = System::Drawing::Point(1682, 436);
-			this->progressBar1->Maximum = 50;
+			this->progressBar1->Maximum = 100;
 			this->progressBar1->Name = L"progressBar1";
 			this->progressBar1->Size = System::Drawing::Size(196, 23);
 			this->progressBar1->TabIndex = 15;
@@ -309,9 +311,16 @@ namespace OpenGL_on_a_Windows_Form
 			this->file_directory->AutoSize = true;
 			this->file_directory->Location = System::Drawing::Point(1669, 600);
 			this->file_directory->Name = L"file_directory";
-			this->file_directory->Size = System::Drawing::Size(0, 12);
+			this->file_directory->Size = System::Drawing::Size(8, 12);
 			this->file_directory->TabIndex = 17;
-			this->file_directory->Text = "" + file_string;
+			this->file_directory->Text = L" ";
+			// 
+			// backgroundWorker1
+			// 
+			this->backgroundWorker1->WorkerReportsProgress = true;
+			this->backgroundWorker1->DoWork += gcnew System::ComponentModel::DoWorkEventHandler(this, &Form1::backgroundWorker1_DoWork);
+			this->backgroundWorker1->ProgressChanged += gcnew System::ComponentModel::ProgressChangedEventHandler(this, &Form1::backgroundWorker1_ProgressChanged);
+			this->backgroundWorker1->RunWorkerCompleted += gcnew System::ComponentModel::RunWorkerCompletedEventHandler(this, &Form1::backgroundWorker1_RunWorkerCompleted);
 			// 
 			// Form1
 			// 
@@ -377,8 +386,8 @@ namespace OpenGL_on_a_Windows_Form
 
 	private: System::Void start_Click(System::Object^  sender, System::EventArgs^  e) 
 			 {
-				 start_flag = true;
-				 //waiting_flag = false;
+				 backgroundWorker1->RunWorkerAsync();
+
 				 histogram->clear();
 				 rawData->clear();
 				 detail->clear();
@@ -388,7 +397,6 @@ namespace OpenGL_on_a_Windows_Form
 				 //System::Windows::Forms::MessageBox::Show(trackBar1->Value.ToString());
 				 //progressBar1->Style = ProgressBarStyle::Marquee;
 				 //progressBar1->MarqueeAnimationSpeed = 0;
-				 //waiting_flag = true;
 			 }
 
     private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e) 
@@ -431,6 +439,7 @@ namespace OpenGL_on_a_Windows_Form
 				 file_directory->Text = "" + Filename;
 				 //System::Windows::Forms::MessageBox::Show(Filename);
 
+				 read_csv.raw_data.clear();
 				 //System::String to string, string to char*
 				 string file;
 				 MarshalString(Filename, file);
@@ -439,16 +448,21 @@ namespace OpenGL_on_a_Windows_Form
 				 read_csv.read_raw_data(file_char);
 
 				 //clear the mat & reset the flag & start
-				 histogram->clear();
-				 rawData->clear();
 				 detail->clear();
+				 rawData->clear();
+				 histogram->clear();
+				 histogram_position_table.clear();
 				 preprocessing_data.Initial_selection_flag(this->Gravity_Norm->Checked,this->Linear_Acceleration_Norm->Checked,
 															this->Gyroscope_Norm->Checked,this->First_Order_of_Distance->Checked);
 				 Gravity_Norm->Checked = true;
 				 Linear_Acceleration_Norm->Checked = true;
 				 Gyroscope_Norm->Checked = true;
 				 First_Order_of_Distance->Checked = true;
+				 
 				 preprocessing_data.start(read_csv.raw_data,trackBar1->Value);
+				 //System::Windows::Forms::MessageBox::Show(preprocessing_data.num_of_five_minutes.ToString() + " " + histogram_position_table.size());
+				 histogram->resize();
+				 //System::Windows::Forms::MessageBox::Show(preprocessing_data.num_of_five_minutes.ToString() + " " + histogram_position_table.size());
 			 }
 
 	private: System::Void trackBar1_Scroll(System::Object^  sender, System::EventArgs^  e) 
@@ -614,6 +628,20 @@ namespace OpenGL_on_a_Windows_Form
 					 preprocessing_data.select_distance = false;
 			 }
 
+	private: System::Void backgroundWorker1_ProgressChanged(System::Object^  sender, System::ComponentModel::ProgressChangedEventArgs^  e) {
+				 progressBar1->Value = e->ProgressPercentage;
+			 }
+
+	private: System::Void backgroundWorker1_RunWorkerCompleted(System::Object^  sender, System::ComponentModel::RunWorkerCompletedEventArgs^  e) {
+				 //System::Windows::Forms::MessageBox::Show("Processing was completed");
+			 }
+	private: System::Void backgroundWorker1_DoWork(System::Object^  sender, System::ComponentModel::DoWorkEventArgs^  e) {
+				for (int i = 0; i < 100; i++)
+				{
+					//System::Threading::Thread::Sleep(10);
+					backgroundWorker1->ReportProgress(i);
+				}    
+			 }
 };
 }
 

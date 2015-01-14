@@ -26,7 +26,7 @@ void Preprocessing_Data::Initial_selection_flag(bool f1,bool f2,bool f3,bool f4)
 
 void Preprocessing_Data::start(vector < vector<float> > raw_data,int k)
 {
-	progress_value = 0;
+	//progress_value = 0;
 	//=================Read CSV file====================//
 	//clock_t begin = clock();
 	//strcpy(file_csv_data,"../../csv_data/BigData_20141121_0723_new.csv");
@@ -88,7 +88,7 @@ void Preprocessing_Data::start(vector < vector<float> > raw_data,int k)
 	for(int i=0;i<result.cols;i++)
 		normalize(result.col(i),raw_data_3D.col(i),0,1,NORM_MINMAX); //normalize to 0-1
 	//model.release();	
-	progress_value = 20;
+	//progress_value = 20;
 }
 
 void Preprocessing_Data::output_mat_as_txt_file(char file_name[],Mat mat)
@@ -254,7 +254,7 @@ void Preprocessing_Data::set_hour_data(vector < vector<float> > raw_data,int tim
 		t += 600;
 	}
 	//////////////////////////////////////////////////////////////////
-	num_of_five_minutes = hour_data.size()-1;
+	//num_of_five_minutes = hour_data.size()-1;
 	int num_of_end_hour,end_hour;
 	for(int i=0;i<hour_data.size();i++)
 	{

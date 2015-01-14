@@ -40,6 +40,7 @@ Class OpenGLForm.HistogramVisualization: AutoLayout, AnsiClass, Class, Public, B
     HistogramMouseMove(Object, MouseEventArgs): PrivateScope, Public, HideBySig
     HistogramMouseUp(Object, MouseEventArgs): PrivateScope, Public, HideBySig
     clear(): PrivateScope, Public, HideBySig
+    resize(): PrivateScope, Public, HideBySig
 Class OpenGLForm.RawDataVisualization: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
   :OpenGLForm.VisualizationPanel
     Void .ctor(System.Windows.Forms.Form, System.Windows.Forms.Panel, Int32, Int32, ReadCSV*, Preprocessing_Data*): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
@@ -56,3 +57,6 @@ Class OpenGL_on_a_Windows_Form.Form1: AutoLayout, AnsiClass, Class, Public, Befo
     Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
   Fields:
     System.Windows.Forms.OpenFileDialog ofdOpen IsByValue : Public, InitOnly
+  Methods:
+    InitializeComponent(): PrivateScope, Public, HideBySig
+    MarshalString(String, basic_string<char\,std::char_traits<char>\,std::allocator<char> >* IsImplicitlyDereferenced): PrivateScope, Public, HideBySig

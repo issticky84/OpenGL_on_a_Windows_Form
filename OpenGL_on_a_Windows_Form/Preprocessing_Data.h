@@ -22,6 +22,7 @@ private:
 	char file_csv_data[200];
 	map<int,int> hour_map;
 	//vector < vector<float> > raw_data;
+	vector < vector<float> > lab_vertices;
 
 	void output_mat_as_txt_file(char file_name[],Mat);
 	void output_mat_as_csv_file(char file_name[],Mat);
@@ -36,7 +37,13 @@ private:
 	Mat set_matrix(vector < vector<float> >,int attribute_title[],int);
 	void voting(int,Mat,int);
 	Mat Position_by_MDS(Mat,int ,float);
+	Mat lab_alignment(Mat);
+	void read_lab_csv();
+	bool lab_boundary_test(float,float,float);
+	Mat LAB2RGB(Mat);
+	Mat compute_centroid(Mat);
 public:
+	Preprocessing_Data();
 	void start(vector < vector<float> >,int);
 	void Initial_selection_flag(bool,bool,bool,bool);
 
@@ -45,6 +52,7 @@ public:
 	vector <int> hour_data;
 	Mat histogram;//int
 	Mat rgb_mat;//float
+	Mat rgb_mat3;//float
 	Mat position;//double
 	Mat raw_data_3D;//float
 	Mat raw_data_mat;//float

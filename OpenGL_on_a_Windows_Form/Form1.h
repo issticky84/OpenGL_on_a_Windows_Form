@@ -22,6 +22,7 @@ namespace OpenGL_on_a_Windows_Form
 		{
 			InitializeComponent();
 			//system("matlab -nodesktop -nosplash -r draw_rect_wear2");
+
 			ReadCSV read_csv;
 			//read_csv.read_all_csv();
 
@@ -197,7 +198,7 @@ namespace OpenGL_on_a_Windows_Form
 			this->trackBar1->SmallChange = 5;
 			this->trackBar1->TabIndex = 6;
 			this->trackBar1->TickFrequency = 5;
-			this->trackBar1->Value = 50;
+			this->trackBar1->Value = 25;
 			this->trackBar1->Scroll += gcnew System::EventHandler(this, &Form1::trackBar1_Scroll);
 			// 
 			// Detail_Clear
@@ -216,7 +217,7 @@ namespace OpenGL_on_a_Windows_Form
 			this->textBox1->Name = L"textBox1";
 			this->textBox1->Size = System::Drawing::Size(24, 22);
 			this->textBox1->TabIndex = 8;
-			this->textBox1->Text = L"50";
+			this->textBox1->Text = L"25";
 			// 
 			// Gravity_Norm
 			// 
@@ -291,7 +292,6 @@ namespace OpenGL_on_a_Windows_Form
 			// progressBar1
 			// 
 			this->progressBar1->Location = System::Drawing::Point(1682, 436);
-			this->progressBar1->Maximum = 100;
 			this->progressBar1->Name = L"progressBar1";
 			this->progressBar1->Size = System::Drawing::Size(196, 23);
 			this->progressBar1->TabIndex = 15;

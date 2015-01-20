@@ -31,71 +31,54 @@ void Preprocessing_Data::Initial_selection_flag(bool f1,bool f2,bool f3,bool f4)
 
 void Preprocessing_Data::start(vector < vector<float> > raw_data,int k)
 {
-	//progress_value = 0;
-	//=================Read CSV file====================//
-	//clock_t begin = clock();
-	//strcpy(file_csv_data,"../../csv_data/BigData_20141121_0723_new.csv");
-	//read_raw_data();
-	//clock_t end = clock();
-	//printf("Read csv elapsed time: %f\n",double(end - begin) / CLOCKS_PER_SEC);
-	//==================================================//
-
 	int attribute_title_size = 11;
 	int attribute_title[] = {4,5,6,7,8,9,10,11,12,22,23};//(gravity_x,gravity_y,gravity_z),(linear_acc_x,linear_acc_y,linear_acc_z),(gyro_x,gyro_y,gyro_z),(latitude,longitude)
 	int time_title[] = {29,30,31,32,33};//hour(30),minute(31)
 	
 	//============Setting matrix for K-means============//
-	clock_t begin2 = clock();
 	set_hour_data(raw_data,time_title);
 	Mat model = set_matrix(raw_data,attribute_title,attribute_title_size).clone();
-	clock_t end2 = clock();
-	printf("Setting matrix elapsed time: %f\n",double(end2 - begin2) / CLOCKS_PER_SEC);
-	
 	//==================================================//
-	//output_mat_as_txt_file("model.txt",model);
-    //int k = 50; 
     Mat cluster_tag; //Tag:0~k-1
     int attempts = 2;//莱赣琌磅︽Ω计
 	Mat cluster_centers;
 	//==============K means clustering==================//
-    
 	//ㄏノk meansだ竤
-	clock_t begin3 = clock();
 	kmeans(model, k, cluster_tag,TermCriteria(CV_TERMCRIT_ITER|CV_TERMCRIT_EPS, 10, 0.0001), attempts,KMEANS_PP_CENTERS,cluster_centers);
-	clock_t end3 = clock();
     //TermCriteria(CV_TERMCRIT_ITER|CV_TERMCRIT_EPS, 10, 1),  硂柑Τ把计∕﹚k-means挡材把计琌程Ω计材把计琌弘絋ぶ材把计琌ㄌ酚玡ㄢ把计非絛ㄒい碞琌ㄢ常把酚 or よΑ∕﹚
-	printf("Kmeans (K = %d) elapsed time: %f\n",k,double(end3 - begin3) / CLOCKS_PER_SEC);
-	
 	//==================================================//
-	
 	voting(k,cluster_tag,model.rows); // Type: int
 	cluster_tag.release();
 	//===================PCA RGB=======================//
+	/*
 	Mat components, result;
 	int rDim = 3;
-	clock_t begin4 = clock();
 	reduceDimPCA(cluster_centers, rDim, components, result);
-	clock_t end4 = clock();
-	printf("PCA RGB elapsed time: %f\n",double(end4 - begin4) / CLOCKS_PER_SEC);
 	rgb_mat = result.clone();
 	for(int i=0;i<result.cols;i++)
 		normalize(result.col(i),rgb_mat.col(i),0,1,NORM_MINMAX); //normalize to 0-1
+	*/
 	//===============LAB alignment======================//
-	rgb_mat3 = lab_alignment(cluster_centers);
+	if(model.cols>=3) rgb_mat3 = lab_alignment(cluster_centers);
+	else if(model.cols==2) rgb_mat3 = lab_alignment_dim2(cluster_centers);
+	else if(model.cols==1) rgb_mat3 = lab_alignment_dim1(cluster_centers);
 	//===============Position (MDS)=====================//
-	clock_t begin5 = clock();
 	position = Position_by_MDS(cluster_centers,k,20).clone(); //Type:double
-	clock_t end5 = clock();
-	printf("MDS Position elapsed time: %f\n",double(end5 - begin5) / CLOCKS_PER_SEC);
+
 	cluster_centers.release();
 	//===================PCA raw data 3 dim=======================//
-	//Mat components, result;
-	//int rDim = 3;
+	if(model.cols>=3) raw_data_3D = lab_alignment(model);
+	else if(model.cols==2) raw_data_3D = lab_alignment_dim2(model);
+	else if(model.cols==1) raw_data_3D = lab_alignment_dim1(model);
+	/*
+	Mat components, result;
+	int rDim = 3;
 	reduceDimPCA(model, rDim, components, result);
 	raw_data_3D = result.clone();
 	for(int i=0;i<result.cols;i++)
 		normalize(result.col(i),raw_data_3D.col(i),0,1,NORM_MINMAX); //normalize to 0-1
-	//model.release();	
+	*/
+	model.release();	
 }
           
 
@@ -474,17 +457,13 @@ Mat Preprocessing_Data::lab_alignment(Mat cluster_center)
 		}
 	}
 	Mat cluster_center_component,cluster_center_PCA;
+	Mat garbage;
 	int rDim = 3;
-	reduceDimPCA(cluster_center_alignment_mat, rDim, cluster_center_component, cluster_center_PCA);
+	reduceDimPCA(cluster_center_alignment_mat, rDim, cluster_center_component, cluster_center_PCA); //PCA 4dim->3dim (for dimension reduction)
+	reduceDimPCA(cluster_center_PCA, rDim, cluster_center_component, garbage); //PCA 3dim->3dim (for principal component)
 	//cluster center 3 axis of PCA
 	Mat cluster_center_axis = Mat::zeros(3,3,CV_32F);
-	for(int i=0;i<3;i++)
-	{
-		for(int j=0;j<3;j++)
-		{
-			cluster_center_axis.at<float>(i,j) = cluster_center_component.at<float>(j,i);
-		}
-	}
+	cluster_center_axis = cluster_center_component;
 
 	//compute centroid of LAB
 	Mat lab_centroid = compute_centroid(lab_mat);
@@ -492,15 +471,9 @@ Mat Preprocessing_Data::lab_alignment(Mat cluster_center)
 	//lab vertices 3 axis of PCA
 	Mat lab_components,lab_PCA;
 	rDim = 3;
-	reduceDimPCA(lab_mat, rDim, lab_components, lab_PCA);
+	reduceDimPCA(lab_mat, rDim, lab_components, lab_PCA); //PCA 3dim->3dim (for principal component)
 	Mat lab_axis = Mat::zeros(3,3,CV_32F);
-	for(int i=0;i<3;i++)
-	{
-		for(int j=0;j<3;j++)
-		{
-			lab_axis.at<float>(i,j) = lab_components.at<float>(j,i);
-		}
-	}
+	lab_axis = lab_components;
 	
 	//////////////////////////////////////////////////////////////////
 	Mat cluster_center_PCA_const = cluster_center_PCA;
@@ -529,14 +502,11 @@ Mat Preprocessing_Data::lab_alignment(Mat cluster_center)
 			Mat cluster_center_PCA_temp,cluster_center_PCA_weight,cluster_center_axis_invert;
 			add(cluster_center_PCA_const,move_vector[t],cluster_center_PCA_temp); //move
 			cluster_center_PCA_temp = cluster_center_PCA_temp.mul(mid); //scale
-			//cout << "inverse " << cluster_center_axis.inv() << endl;
 			cluster_center_axis_invert = cluster_center_axis.inv();
-			//cluster_center_axis_invert = cluster_center_axis_invert.mul(0.1);
 			cluster_center_PCA_weight = cluster_center_PCA_temp * cluster_center_axis_invert;
-			//cout << "cluster_center_PCA_weight " << cluster_center_PCA_weight << endl;
-			//cout << "cluster_center_axis_invert" << cluster_center_axis_invert << endl;
+
 			align_mat = cluster_center_PCA_weight*lab_axis;
-			//cout << "align_mat " << align_mat << endl;
+
 			//рみキ簿
 			for(int i=0;i<align_mat.rows;i++)
 			{
@@ -545,8 +515,6 @@ Mat Preprocessing_Data::lab_alignment(Mat cluster_center)
 					align_mat.at<float>(i,j) += lab_centroid.at<float>(0,j);
 				}
 			}
-
-			//cout << "align_mat " << align_mat << endl;
 	
 			bool flag = true;
 			for(int i=0;i<align_mat.rows;i++)
@@ -562,7 +530,7 @@ Mat Preprocessing_Data::lab_alignment(Mat cluster_center)
 			{
 				for(int i=0;i<align_mat.rows;i++)
 				{
-					if(lab_boundary_test(align_mat.at<float>(i,0),align_mat.at<float>(i,0),align_mat.at<float>(i,2))==false)
+					if(lab_boundary_test(align_mat.at<float>(i,0),align_mat.at<float>(i,1),align_mat.at<float>(i,2))==false)
 					{
 						flag = false;
 						break;
@@ -601,9 +569,8 @@ Mat Preprocessing_Data::lab_alignment(Mat cluster_center)
 		}
 	}
 
-	//output_mat_as_txt_file("max_align_mat.txt",max_align_mat);
 	printf("max_move : %f max_scale : %f\n",max_move,max_scale);
-	//System::Windows::Forms::MessageBox::Show(max_move.ToString() + " " + max_scale.ToString());	
+
 	Mat rgb_mat2 = LAB2RGB(max_align_mat).clone();
 
 	move_vector.clear();
@@ -630,14 +597,12 @@ Mat Preprocessing_Data::compute_centroid(Mat input_mat)
 
 bool Preprocessing_Data::lab_boundary_test(float p1,float p2,float p3)
 {
-	//cout << p1 << " " << p2 << " " << p3 << endl;
 	bool test = true;
 	Mat lab_color(1, 1, CV_32FC3);
 	Mat rgb_color(1, 1, CV_32FC3);
 	lab_color.at<Vec3f>(0, 0) = Vec3f(p1, p2, p3);
 	cvtColor(lab_color, rgb_color, CV_Lab2BGR);
 	cvtColor(rgb_color, lab_color, CV_BGR2Lab);
-	//cout << lab_color.at<Vec3f>(0,0).val[0] << " " << lab_color.at<Vec3f>(0,0).val[1] << " " << lab_color.at<Vec3f>(0,0).val[2] << endl << endl;
 	if(abs(lab_color.at<Vec3f>(0,0).val[0] - p1) > 1.0 || abs(lab_color.at<Vec3f>(0,0).val[1] - p2) > 1.0 || abs(lab_color.at<Vec3f>(0,0).val[2] - p3) > 1.0)
 		test = false;
 	return test;
@@ -695,4 +660,312 @@ void Preprocessing_Data::read_lab_csv()
 	//cout << lab_vertices[3][1] << " " << lab_vertices[3][2] << lab_vertices[3][3] << endl;
 
 	fclose(csv_file);
+}
+
+Mat Preprocessing_Data::lab_alignment_dim1(Mat cluster_center)
+{
+	//read_lab_csv();
+	int vTotal = lab_vertices.size();
+	//Turn LAB vector into LAB mat
+	Mat lab_mat = Mat::zeros(vTotal,3,CV_32F);
+	for(int i=0;i<vTotal;i++)
+	{
+		for(int j=0;j<3;j++)
+		{
+			lab_mat.at<float>(i,j) = lab_vertices[i][j+1];
+		}
+	}
+	//Compute centroid of cluster center
+	Mat cluster_center_centroid = compute_centroid(cluster_center);
+
+	//Align the centroid to the origin by subtract all points to centroid
+	Mat cluster_center_alignment_mat = Mat::zeros(cluster_center.rows,cluster_center.cols,CV_32F);
+	for(int i=0;i<cluster_center.rows;i++)
+	{
+		for(int j=0;j<cluster_center.cols;j++)
+		{
+			cluster_center_alignment_mat.at<float>(i,j) = cluster_center.at<float>(i,j) - cluster_center_centroid.at<float>(0,j);
+		}
+	}
+	Mat cluster_center_component,cluster_center_PCA;
+	int rDim = 1;
+	reduceDimPCA(cluster_center_alignment_mat, rDim, cluster_center_component, cluster_center_PCA);
+	//cluster center 3 axis of PCA
+	Mat cluster_center_axis = Mat::zeros(1,1,CV_32F);
+	cluster_center_axis.at<float>(0,0) = cluster_center_component.at<float>(0,0);
+
+	//compute centroid of LAB
+	Mat lab_centroid = compute_centroid(lab_mat);
+	
+	//lab vertices 3 axis of PCA
+	Mat lab_components,lab_PCA;
+	rDim = 1;
+	reduceDimPCA(lab_mat, rDim, lab_components, lab_PCA);
+	Mat lab_axis = Mat::zeros(1,3,CV_32F);
+	cout << lab_components << endl;
+	for(int j=0;j<3;j++)
+	{
+		lab_axis.at<float>(0,j) = lab_components.at<float>(0,j);
+	}
+	
+	//////////////////////////////////////////////////////////////////
+	Mat cluster_center_PCA_const = cluster_center_PCA;
+	vector<float> move_vector;
+	for(float k=-0.5;k<=0.5;k+=0.1)
+		move_vector.push_back(k);
+
+	float max_move = 0.0;
+	float max_scale = 0.0;
+	Mat align_mat;
+	Mat max_align_mat = cluster_center_PCA;
+	int start = 1;
+	int luminance_threshold = 30;
+	vector<int> scale_vector;
+	//binary search the best scale & convell hull for speed up
+	for(int t=0;t<move_vector.size();t++)
+	{	
+		for(int i=start;i<=150;i++)
+			scale_vector.push_back(i);
+		
+		int low = start;
+		int high = scale_vector.size();
+		while(low <= high)
+		{
+			int mid = (low + high)/2; 
+			Mat cluster_center_PCA_temp,cluster_center_PCA_weight,cluster_center_axis_invert;
+			add(cluster_center_PCA_const,move_vector[t],cluster_center_PCA_temp); //move
+			cluster_center_PCA_temp = cluster_center_PCA_temp.mul(mid); //scale
+			cluster_center_axis_invert = cluster_center_axis.inv();
+			cluster_center_PCA_weight = cluster_center_PCA_temp * cluster_center_axis_invert;
+			align_mat = cluster_center_PCA_weight*lab_axis;
+
+			//рみキ簿
+			for(int i=0;i<align_mat.rows;i++)
+			{
+				for(int j=0;j<3;j++)
+				{
+					align_mat.at<float>(i,j) += lab_centroid.at<float>(0,j);
+				}
+			}
+
+			//cout << "align_mat " << align_mat << endl;
+	
+			bool flag = true;
+			for(int i=0;i<align_mat.rows;i++)
+			{
+				if(align_mat.at<float>(i,0)<luminance_threshold)
+				{
+					flag = false;
+					break;
+				}
+			}
+
+			if(flag)
+			{
+				for(int i=0;i<align_mat.rows;i++)
+				{
+					if(lab_boundary_test(align_mat.at<float>(i,0),align_mat.at<float>(i,1),align_mat.at<float>(i,2))==false)
+					{
+						flag = false;
+						break;
+					}
+				}
+			}
+
+			if(high<=low)
+				break;
+			else if(flag)
+				low = mid + 1;
+			else 
+				high = mid - 1;
+
+		}
+
+		if(low>max_scale)
+		{
+			max_scale = low;
+			max_move = move_vector[t];
+			max_align_mat = align_mat;
+			start = max_scale;
+		}
+
+		scale_vector.clear();
+	}
+
+	if(max_scale==0)
+	{
+		for(int i=0;i<max_align_mat.rows;i++)
+		{
+			for(int j=0;j<max_align_mat.cols;j++)
+			{
+				max_align_mat.at<float>(i,j) += lab_centroid.at<float>(0,j);
+			}
+		}
+	}
+
+	//printf("max_move : %f max_scale : %f\n",max_move,max_scale);
+	Mat rgb_mat2 = LAB2RGB(max_align_mat).clone();
+
+	move_vector.clear();
+	scale_vector.clear();
+
+	return rgb_mat2;
+}
+
+Mat Preprocessing_Data::lab_alignment_dim2(Mat cluster_center)
+{
+	//read_lab_csv();
+	int vTotal = lab_vertices.size();
+	//Turn LAB vector into LAB mat
+	Mat lab_mat = Mat::zeros(vTotal,3,CV_32F);
+	for(int i=0;i<vTotal;i++)
+	{
+		for(int j=0;j<3;j++)
+		{
+			lab_mat.at<float>(i,j) = lab_vertices[i][j+1];
+		}
+	}
+	//Compute centroid of cluster center
+	Mat cluster_center_centroid = compute_centroid(cluster_center);
+
+	//Align the centroid to the origin by subtract all points to centroid
+	Mat cluster_center_alignment_mat = Mat::zeros(cluster_center.rows,cluster_center.cols,CV_32F);
+	for(int i=0;i<cluster_center.rows;i++)
+	{
+		for(int j=0;j<cluster_center.cols;j++)
+		{
+			cluster_center_alignment_mat.at<float>(i,j) = cluster_center.at<float>(i,j) - cluster_center_centroid.at<float>(0,j);
+		}
+	}
+	Mat cluster_center_component,cluster_center_PCA;
+	int rDim = 2;
+	reduceDimPCA(cluster_center_alignment_mat, rDim, cluster_center_component, cluster_center_PCA);
+	//cluster center 3 axis of PCA
+	Mat cluster_center_axis = Mat::zeros(2,2,CV_32F);
+	for(int i=0;i<2;i++)
+	{
+		for(int j=0;j<2;j++)
+		{
+			cluster_center_axis.at<float>(i,j) = cluster_center_component.at<float>(i,j);
+		}
+	}
+
+	//compute centroid of LAB
+	Mat lab_centroid = compute_centroid(lab_mat);
+	
+	//lab vertices 3 axis of PCA
+	Mat lab_components,lab_PCA;
+	rDim = 2;
+	reduceDimPCA(lab_mat, rDim, lab_components, lab_PCA);
+	Mat lab_axis = Mat::zeros(2,3,CV_32F);
+	for(int i=0;i<2;i++)
+	{
+		for(int j=0;j<3;j++)
+		{
+			lab_axis.at<float>(i,j) = lab_components.at<float>(i,j);
+		}
+	}
+	
+	//////////////////////////////////////////////////////////////////
+	Mat cluster_center_PCA_const = cluster_center_PCA;
+	vector<float> move_vector;
+	for(float k=-0.5;k<=0.5;k+=0.1)
+		move_vector.push_back(k);
+
+	float max_move = 0.0;
+	float max_scale = 0.0;
+	Mat align_mat;
+	Mat max_align_mat = cluster_center_PCA;
+	int start = 1;
+	int luminance_threshold = 30;
+	vector<int> scale_vector;
+	//binary search the best scale & convell hull for speed up
+	for(int t=0;t<move_vector.size();t++)
+	{	
+		for(int i=start;i<=150;i++)
+			scale_vector.push_back(i);
+		
+		int low = start;
+		int high = scale_vector.size();
+		while(low <= high)
+		{
+			int mid = (low + high)/2; 
+			Mat cluster_center_PCA_temp,cluster_center_PCA_weight,cluster_center_axis_invert;
+			add(cluster_center_PCA_const,move_vector[t],cluster_center_PCA_temp); //move
+			cluster_center_PCA_temp = cluster_center_PCA_temp.mul(mid); //scale
+			cluster_center_axis_invert = cluster_center_axis.inv();
+			cluster_center_PCA_weight = cluster_center_PCA_temp * cluster_center_axis_invert;
+
+			align_mat = cluster_center_PCA_weight*lab_axis;
+
+			//рみキ簿
+			for(int i=0;i<align_mat.rows;i++)
+			{
+				for(int j=0;j<3;j++)
+				{
+					align_mat.at<float>(i,j) += lab_centroid.at<float>(0,j);
+				}
+			}
+
+	
+			bool flag = true;
+			for(int i=0;i<align_mat.rows;i++)
+			{
+				if(align_mat.at<float>(i,0)<luminance_threshold)
+				{
+					flag = false;
+					break;
+				}
+			}
+
+			if(flag)
+			{
+				for(int i=0;i<align_mat.rows;i++)
+				{
+					if(lab_boundary_test(align_mat.at<float>(i,0),align_mat.at<float>(i,1),align_mat.at<float>(i,2))==false)
+					{
+						flag = false;
+						break;
+					}
+				}
+			}
+
+			if(high<=low)
+				break;
+			else if(flag)
+				low = mid + 1;
+			else 
+				high = mid - 1;
+
+		}
+
+		if(low>max_scale)
+		{
+			max_scale = low;
+			max_move = move_vector[t];
+			max_align_mat = align_mat;
+			start = max_scale;
+		}
+
+		scale_vector.clear();
+	}
+
+	if(max_scale==0)
+	{
+		for(int i=0;i<max_align_mat.rows;i++)
+		{
+			for(int j=0;j<max_align_mat.cols;j++)
+			{
+				max_align_mat.at<float>(i,j) += lab_centroid.at<float>(0,j);
+			}
+		}
+	}
+
+	//printf("max_move : %f max_scale : %f\n",max_move,max_scale);
+	Mat rgb_mat2 = LAB2RGB(max_align_mat).clone();
+
+	move_vector.clear();
+	scale_vector.clear();
+
+	return rgb_mat2;
 }

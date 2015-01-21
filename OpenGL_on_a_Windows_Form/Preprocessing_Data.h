@@ -44,6 +44,7 @@ private:
 	bool lab_boundary_test(float,float,float);
 	Mat LAB2RGB(Mat);
 	Mat compute_centroid(Mat);
+	void gray2rgb(float,float& ,float& ,float&);
 public:
 	Preprocessing_Data();
 	void start(vector < vector<float> >,int);

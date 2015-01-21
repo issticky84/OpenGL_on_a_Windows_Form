@@ -72,12 +72,26 @@ void Preprocessing_Data::start(vector < vector<float> > raw_data,int k)
 	//else if(model.cols==1) raw_data_3D = lab_alignment_dim1(model,5);
 	
 	Mat components, result;
+	int rDim = 1;
+	reduceDimPCA(model, rDim, components, result);
+	normalize(result.col(0),result.col(0),0,1,NORM_MINMAX); //normalize to 0-1
+	raw_data_3D = Mat::zeros(result.rows,3,CV_32F);
+	for(int i=0;i<result.rows;i++)
+	{
+		float r,g,b;
+		gray2rgb(result.at<float>(i,0),r,g,b);
+		raw_data_3D.at<float>(i,0) = r;
+		raw_data_3D.at<float>(i,1) = g;
+		raw_data_3D.at<float>(i,2) = b;
+	}
+	/*
 	int rDim = 3;
 	reduceDimPCA(model, rDim, components, result);
 	raw_data_3D = result.clone();
 	for(int i=0;i<result.cols;i++)
 		normalize(result.col(i),raw_data_3D.col(i),0,1,NORM_MINMAX); //normalize to 0-1
-	
+	*/
+
 	model.release();	
 }
           
@@ -968,4 +982,37 @@ Mat Preprocessing_Data::lab_alignment_dim2(Mat cluster_center,int luminance_thre
 	scale_vector.clear();
 
 	return rgb_mat2;
+}
+
+void Preprocessing_Data::gray2rgb(float gray,float& r,float& g,float& b)
+{
+	r = g = b = 0.0;
+	if(gray>1.0)
+	{
+		r = 1.0;
+		g = 0.0;
+		b = 0.0;
+	}
+	if(gray<0.0)
+	{
+		r = 0.0;
+		g = 0.0;
+		b = 1.0;
+	}
+
+	if(gray<0.33333)
+	{
+		b = 1.0 - gray*3.0;
+		g = gray*3.0;
+	}
+	else if(gray<0.66666)
+	{
+		r = (gray-0.33333)*3.0;
+		g = 1.0;
+	}
+	else
+	{
+		r = 1.0;
+		g = 1.0 - (gray-0.66666)*3.0;
+	}
 }

@@ -59,25 +59,25 @@ void Preprocessing_Data::start(vector < vector<float> > raw_data,int k)
 		normalize(result.col(i),rgb_mat.col(i),0,1,NORM_MINMAX); //normalize to 0-1
 	*/
 	//===============LAB alignment======================//
-	if(model.cols>=3) rgb_mat3 = lab_alignment(cluster_centers);
-	else if(model.cols==2) rgb_mat3 = lab_alignment_dim2(cluster_centers);
-	else if(model.cols==1) rgb_mat3 = lab_alignment_dim1(cluster_centers);
+	if(model.cols>=3) rgb_mat3 = lab_alignment(cluster_centers,30);
+	else if(model.cols==2) rgb_mat3 = lab_alignment_dim2(cluster_centers,30);
+	else if(model.cols==1) rgb_mat3 = lab_alignment_dim1(cluster_centers,30);
 	//===============Position (MDS)=====================//
 	position = Position_by_MDS(cluster_centers,k,20).clone(); //Type:double
 
 	cluster_centers.release();
 	//===================PCA raw data 3 dim=======================//
-	if(model.cols>=3) raw_data_3D = lab_alignment(model);
-	else if(model.cols==2) raw_data_3D = lab_alignment_dim2(model);
-	else if(model.cols==1) raw_data_3D = lab_alignment_dim1(model);
-	/*
+	//if(model.cols>=3) raw_data_3D = lab_alignment(model,5);
+	//else if(model.cols==2) raw_data_3D = lab_alignment_dim2(model,5);
+	//else if(model.cols==1) raw_data_3D = lab_alignment_dim1(model,5);
+	
 	Mat components, result;
 	int rDim = 3;
 	reduceDimPCA(model, rDim, components, result);
 	raw_data_3D = result.clone();
 	for(int i=0;i<result.cols;i++)
 		normalize(result.col(i),raw_data_3D.col(i),0,1,NORM_MINMAX); //normalize to 0-1
-	*/
+	
 	model.release();	
 }
           
@@ -217,7 +217,7 @@ void Preprocessing_Data::set_hour_data(vector < vector<float> > raw_data,int tim
 {
 	int hour_id = time_title[1];
 	int time_step_amount = floor(raw_data.size()/600.0);
-	num_of_five_minutes = time_step_amount;
+	num_of_five_minutes = time_step_amount-1;
 	hour_data.resize(time_step_amount);
 	int t = 0;
 	for(int i=0;i<time_step_amount;i++)
@@ -430,7 +430,7 @@ Mat Preprocessing_Data::Position_by_MDS(Mat cluster_centers,int k,float larger_w
 	return MDS_mat; 
 }
 
-Mat Preprocessing_Data::lab_alignment(Mat cluster_center)
+Mat Preprocessing_Data::lab_alignment(Mat cluster_center,int luminance_threshold)
 {   
 	//read_lab_csv();
 	int vTotal = lab_vertices.size();
@@ -486,7 +486,7 @@ Mat Preprocessing_Data::lab_alignment(Mat cluster_center)
 	Mat align_mat;
 	Mat max_align_mat = cluster_center_PCA;
 	int start = 1;
-	int luminance_threshold = 30;
+	//int luminance_threshold = 30;
 	vector<int> scale_vector;
 	//binary search the best scale & convell hull for speed up
 	for(int t=0;t<move_vector.size();t++)
@@ -662,7 +662,7 @@ void Preprocessing_Data::read_lab_csv()
 	fclose(csv_file);
 }
 
-Mat Preprocessing_Data::lab_alignment_dim1(Mat cluster_center)
+Mat Preprocessing_Data::lab_alignment_dim1(Mat cluster_center,int luminance_threshold)
 {
 	//read_lab_csv();
 	int vTotal = lab_vertices.size();
@@ -719,7 +719,7 @@ Mat Preprocessing_Data::lab_alignment_dim1(Mat cluster_center)
 	Mat align_mat;
 	Mat max_align_mat = cluster_center_PCA;
 	int start = 1;
-	int luminance_threshold = 30;
+	//int luminance_threshold = 30;
 	vector<int> scale_vector;
 	//binary search the best scale & convell hull for speed up
 	for(int t=0;t<move_vector.size();t++)
@@ -812,7 +812,7 @@ Mat Preprocessing_Data::lab_alignment_dim1(Mat cluster_center)
 	return rgb_mat2;
 }
 
-Mat Preprocessing_Data::lab_alignment_dim2(Mat cluster_center)
+Mat Preprocessing_Data::lab_alignment_dim2(Mat cluster_center,int luminance_threshold)
 {
 	//read_lab_csv();
 	int vTotal = lab_vertices.size();
@@ -877,7 +877,7 @@ Mat Preprocessing_Data::lab_alignment_dim2(Mat cluster_center)
 	Mat align_mat;
 	Mat max_align_mat = cluster_center_PCA;
 	int start = 1;
-	int luminance_threshold = 30;
+	//int luminance_threshold = 30;
 	vector<int> scale_vector;
 	//binary search the best scale & convell hull for speed up
 	for(int t=0;t<move_vector.size();t++)

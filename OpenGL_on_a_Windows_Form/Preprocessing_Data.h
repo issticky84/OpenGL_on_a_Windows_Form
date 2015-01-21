@@ -37,9 +37,9 @@ private:
 	Mat set_matrix(vector < vector<float> >,int attribute_title[],int);
 	void voting(int,Mat,int);
 	Mat Position_by_MDS(Mat,int ,float);
-	Mat lab_alignment(Mat);
-	Mat lab_alignment_dim1(Mat);
-	Mat lab_alignment_dim2(Mat);
+	Mat lab_alignment(Mat,int);
+	Mat lab_alignment_dim1(Mat,int);
+	Mat lab_alignment_dim2(Mat,int);
 	void read_lab_csv();
 	bool lab_boundary_test(float,float,float);
 	Mat LAB2RGB(Mat);

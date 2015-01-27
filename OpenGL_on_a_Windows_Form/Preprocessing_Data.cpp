@@ -71,27 +71,30 @@ void Preprocessing_Data::start(vector < vector<float> > raw_data,int k)
 	//else if(model.cols==2) raw_data_3D = lab_alignment_dim2(model,5);
 	//else if(model.cols==1) raw_data_3D = lab_alignment_dim1(model,5);
 	
-	Mat components, result;
-	int rDim = 1;
-	reduceDimPCA(model, rDim, components, result);
-	normalize(result.col(0),result.col(0),0,1,NORM_MINMAX); //normalize to 0-1
-	raw_data_3D = Mat::zeros(result.rows,3,CV_32F);
-	for(int i=0;i<result.rows;i++)
-	{
-		float r,g,b;
-		gray2rgb(result.at<float>(i,0),r,g,b);
-		raw_data_3D.at<float>(i,0) = r;
-		raw_data_3D.at<float>(i,1) = g;
-		raw_data_3D.at<float>(i,2) = b;
-	}
-	/*
+	Mat components, result; 
 	int rDim = 3;
-	reduceDimPCA(model, rDim, components, result);
-	raw_data_3D = result.clone();
-	for(int i=0;i<result.cols;i++)
-		normalize(result.col(i),raw_data_3D.col(i),0,1,NORM_MINMAX); //normalize to 0-1
-	*/
-
+	if(model.cols>=3)
+	{
+		reduceDimPCA(model, rDim, components, result);
+		raw_data_3D = result.clone();
+		for(int i=0;i<result.cols;i++)
+			normalize(result.col(i),raw_data_3D.col(i),0,1,NORM_MINMAX); //normalize to 0-1
+	}	
+	else
+	{
+		rDim = 1;
+		reduceDimPCA(model, rDim, components, result);
+		normalize(result.col(0),result.col(0),0,1,NORM_MINMAX); //normalize to 0-1
+		raw_data_3D = Mat::zeros(result.rows,3,CV_32F);
+		for(int i=0;i<result.rows;i++)
+		{
+			float r,g,b;
+			gray2rgb(result.at<float>(i,0),r,g,b);
+			raw_data_3D.at<float>(i,0) = r;
+			raw_data_3D.at<float>(i,1) = g;
+			raw_data_3D.at<float>(i,2) = b;
+		}
+	}
 	model.release();	
 }
           
@@ -221,10 +224,21 @@ float Preprocessing_Data::DistanceOfLontitudeAndLatitude(float lat1,float lat2,f
 	float c = 2 * atan2((double)sqrt(a),(double)sqrt(1.0-a));
 	float d = R * c;
 
-	if(d>20.0) 
+	/*
+	if(d>1.0) 
 		return 0.0;
 	else 
 		return d;
+	*/
+	//if(d>20.0) 
+	//	return 0.0;
+	//else if(d==0.0)
+	//	return 0.0;
+	//else if(d<1e-5)
+	//	return 0.01;
+	//else if(d>=1e-5 && d<=20.0)
+	//	return 0.1;
+	return d;
 }
 
 void Preprocessing_Data::set_hour_data(vector < vector<float> > raw_data,int time_title[])
@@ -277,7 +291,7 @@ void Preprocessing_Data::set_hour_data(vector < vector<float> > raw_data,int tim
 	}
 }
 
-Mat Preprocessing_Data::Gaussian_filter(vector < vector<float> > raw_data,int attribute_title[],int MAX_KERNEL_LENGTH)
+Mat Preprocessing_Data::Gaussian_filter(vector < vector<float> > raw_data,int attribute_title[],int KERNEL_LENGTH)
 {
 	Mat Gaussian_filter_mat(raw_data.size(),9, CV_32F);
 
@@ -291,19 +305,39 @@ Mat Preprocessing_Data::Gaussian_filter(vector < vector<float> > raw_data,int at
 	}
 
 	//int MAX_KERNEL_LENGTH = 20;
-    for(int i=1;i<MAX_KERNEL_LENGTH;i=i+2)
-    { 
-		GaussianBlur( Gaussian_filter_mat, Gaussian_filter_mat, Size( i, i ), 0.5, 0.5 );
+    
+	//for(int i=1;i<MAX_KERNEL_LENGTH;i=i+2)
+    //{ 
+	//	GaussianBlur( Gaussian_filter_mat, Gaussian_filter_mat, Size( i, i ), 0.5, 0.5 );
+	//}
+	
+
+	int MAX_KERNEL_LENGTH = 5;
+	for(int j=0;j<Gaussian_filter_mat.cols;j++)
+	{
+		GaussianBlur( Gaussian_filter_mat.col(j), Gaussian_filter_mat.col(j), Size(MAX_KERNEL_LENGTH, 1), 0.1, 0.1);
 	}
 
+	//GaussianBlur( Gaussian_filter_mat, Gaussian_filter_mat, Size( MAX_KERNEL_LENGTH, MAX_KERNEL_LENGTH ), 0, 0 );
+	
+	/*
+	for(int j=0;j<Gaussian_filter_mat.cols;j++)
+	{
+		for(int i=1;i<MAX_KERNEL_LENGTH;i=i+2)
+		{ 
+			GaussianBlur( Gaussian_filter_mat.col(j), Gaussian_filter_mat.col(j), Size( i, i ), 0, 0);
+		}
+	}
+	*/
 	return Gaussian_filter_mat;
 }
 
 Mat Preprocessing_Data::set_matrix(vector < vector<float> > raw_data,int attribute_title[],int attribute_title_size)
 {
 	Mat handle_mat;
+	Mat handle_mat_raw;
 
-	Mat Gaussian_filter_mat = Gaussian_filter(raw_data,attribute_title,20).clone();
+	Mat Gaussian_filter_mat = Gaussian_filter(raw_data,attribute_title,3).clone();
 
 	Mat norm_gravity(1, raw_data.size(), CV_32F);
 	Mat norm_linear_acc(1, raw_data.size(), CV_32F);
@@ -311,27 +345,32 @@ Mat Preprocessing_Data::set_matrix(vector < vector<float> > raw_data,int attribu
 	//Compute norm
 	for(int i=0;i<raw_data.size();i++)
 	{
-		norm_gravity.at<float>(0,i) = norm_value(Gaussian_filter_mat.at<float>(i,attribute_title[0]),Gaussian_filter_mat.at<float>(i,attribute_title[1]),Gaussian_filter_mat.at<float>(i,attribute_title[2]));
-		norm_linear_acc.at<float>(0,i) = norm_value(Gaussian_filter_mat.at<float>(i,attribute_title[3]),Gaussian_filter_mat.at<float>(i,attribute_title[4]),Gaussian_filter_mat.at<float>(i,attribute_title[5]));
-		norm_gyro.at<float>(0,i) = norm_value(Gaussian_filter_mat.at<float>(i,attribute_title[6]),Gaussian_filter_mat.at<float>(i,attribute_title[7]),Gaussian_filter_mat.at<float>(i,attribute_title[8]));
+		norm_gravity.at<float>(0,i) = norm_value(Gaussian_filter_mat.at<float>(i,0),Gaussian_filter_mat.at<float>(i,1),Gaussian_filter_mat.at<float>(i,2));
+		norm_linear_acc.at<float>(0,i) = norm_value(Gaussian_filter_mat.at<float>(i,3),Gaussian_filter_mat.at<float>(i,4),Gaussian_filter_mat.at<float>(i,5));
+		norm_gyro.at<float>(0,i) = norm_value(Gaussian_filter_mat.at<float>(i,6),Gaussian_filter_mat.at<float>(i,7),Gaussian_filter_mat.at<float>(i,8));
 	}
-
-	if(select_gravity) handle_mat.push_back(norm_gravity);
-	if(select_linear_acc) handle_mat.push_back(norm_linear_acc);
-	if(select_gyro) handle_mat.push_back(norm_gyro);
 	//for(int i=0;i<raw_data.size();i++)
 	//{
-	//	handle_mat.at<float>(i,0) = norm_value(Gaussian_filter_mat.at<float>(i,attribute_title[0]),Gaussian_filter_mat.at<float>(i,attribute_title[1]),Gaussian_filter_mat.at<float>(i,attribute_title[2]));
-	//	handle_mat.at<float>(i,1) = norm_value(Gaussian_filter_mat.at<float>(i,attribute_title[3]),Gaussian_filter_mat.at<float>(i,attribute_title[4]),Gaussian_filter_mat.at<float>(i,attribute_title[5]));
-	//	handle_mat.at<float>(i,2) = norm_value(Gaussian_filter_mat.at<float>(i,attribute_title[6]),Gaussian_filter_mat.at<float>(i,attribute_title[7]),Gaussian_filter_mat.at<float>(i,attribute_title[8]));
+	//	norm_gravity.at<float>(0,i) = norm_value(raw_data[i][attribute_title[0]],raw_data[i][attribute_title[1]],raw_data[i][attribute_title[2]]);
+	//	norm_linear_acc.at<float>(0,i) = norm_value(raw_data[i][attribute_title[3]],raw_data[i][attribute_title[4]],raw_data[i][attribute_title[5]]);
+	//	norm_gyro.at<float>(0,i) = norm_value(raw_data[i][attribute_title[6]],raw_data[i][attribute_title[7]],raw_data[i][attribute_title[8]]);
 	//}
-
-	//for(int i=0;i<raw_data.size();i++)
-	//{
-	//	handle_mat.at<float>(i,0) = norm_value(raw_data[i][attribute_title[0]],raw_data[i][attribute_title[1]],raw_data[i][attribute_title[2]]);
-	//	handle_mat.at<float>(i,1) = norm_value(raw_data[i][attribute_title[3]],raw_data[i][attribute_title[4]],raw_data[i][attribute_title[5]]);
-	//	handle_mat.at<float>(i,2) = norm_value(raw_data[i][attribute_title[6]],raw_data[i][attribute_title[7]],raw_data[i][attribute_title[8]]);
-	//}
+	
+	handle_mat_raw.push_back(norm_gravity);
+	if(select_gravity)
+	{
+		handle_mat.push_back(norm_gravity);	
+	}
+	handle_mat_raw.push_back(norm_linear_acc);
+	if(select_linear_acc)
+	{
+		handle_mat.push_back(norm_linear_acc);
+	}
+	handle_mat_raw.push_back(norm_gyro);
+	if(select_gyro)
+	{
+		handle_mat.push_back(norm_gyro);	
+	}
 
 	//Compute latitude & longitude
 	int lat_index = attribute_title[9];
@@ -347,16 +386,40 @@ Mat Preprocessing_Data::set_matrix(vector < vector<float> > raw_data,int attribu
 		}
 	}
 
-	if(select_distance) handle_mat.push_back(first_order_distance_mat);
-	Mat handle_mat2 = handle_mat.t();
+	Mat first_order_distance_adjust_mat(1, raw_data.size(), CV_32F);
+	for(int i=0;i<raw_data.size();i++)
+	{
+		float d = first_order_distance_mat.at<float>(0,i);
+		float d1;
+		if(d>20.0) 
+			d1 = 0.0;
+		else if(d==0.0)
+			d1 = 0.0;
+		else if(d<1e-5)
+			d1 = 0.01;
+		else if(d>=1e-5 && d<=20.0)
+			d1 = 0.1;
 
-	raw_data_mat = handle_mat2;
+		first_order_distance_adjust_mat.at<float>(0,i) = d1;
+	}
+	
+	handle_mat_raw.push_back(first_order_distance_mat);
+	if(select_distance)
+	{
+		handle_mat.push_back(first_order_distance_adjust_mat);	
+	}
+	
 
-	//cout << handle_mat << endl;
-	Mat normalize_mat = handle_mat2;
-	for(int i=0;i<handle_mat2.cols;i++)
-		normalize(handle_mat2.col(i),normalize_mat.col(i),0,1,NORM_MINMAX);
-	//cout << normalize_mat << endl;
+	Mat handle_mat_transpose = handle_mat.t();
+	Mat handle_mat_raw_transpose = handle_mat_raw.t();
+
+	raw_data_mat = handle_mat_raw_transpose;//////////////////////////
+
+
+	Mat normalize_mat = handle_mat_transpose;
+	for(int i=0;i<handle_mat_transpose.cols;i++)
+		normalize_mat.col(i) = normalize_column(handle_mat_transpose.col(i)).clone();
+		//normalize(handle_mat_transpose.col(i),normalize_mat.col(i),0,1,NORM_MINMAX);
 
 	//output_mat_as_csv_file("normalize_mat.csv",normalize_mat);
 
@@ -1015,4 +1078,18 @@ void Preprocessing_Data::gray2rgb(float gray,float& r,float& g,float& b)
 		r = 1.0;
 		g = 1.0 - (gray-0.66666)*3.0;
 	}
+}
+
+Mat Preprocessing_Data::normalize_column(Mat col_mat)
+{
+	Mat output_mat = col_mat;
+	double min,max;
+	minMaxLoc(output_mat, &min, &max);
+	for(int i=0;i<col_mat.rows;i++)
+	{
+		//output_mat.at<float>(i,0) = ( col_mat.at<float>(i,0) - min ) / (max - min);
+		output_mat.at<float>(i,0) = col_mat.at<float>(i,0) / max;
+	}
+
+	return output_mat;
 }

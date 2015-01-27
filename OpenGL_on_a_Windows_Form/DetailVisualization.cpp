@@ -40,18 +40,18 @@ namespace OpenGLForm{
 			if(!raw_data_index.empty())
 			{
 					int index = raw_data_index[0];
-					float factor = 50.0;
+					float factor_g = 10.0;
 					int x_position,y_position;
 					//==========Gravity X Y Z==========//
-					DrawTitle_FTGL(2,70,100);
+					DrawTitle_FTGL(2,70,50);
 					x_position = 70;
-					y_position = 250;
+					y_position = 450;
 					for(int j=0;j<raw_data_index.size();j++)
 					{
 						RECTANGLE *rect;
 						index = raw_data_index[j];
 						rect = new RECTANGLE();
-						rect->h = factor*abs(preprocessing_data.raw_data_mat.at<float>(index,0));
+						rect->h = factor_g*abs(preprocessing_data.raw_data_mat.at<float>(index,0));
 						rect->w = 50.0;
 						rect->x = x_position;
 						rect->y = y_position;
@@ -60,7 +60,7 @@ namespace OpenGLForm{
 						color[2] = preprocessing_data.raw_data_3D.at<float>(index,2);
 						if(preprocessing_data.raw_data_mat.at<float>(index,0)>0)
 						{
-							rect->y -= factor*abs(preprocessing_data.raw_data_mat.at<float>(index,0));
+							rect->y -= factor_g*abs(preprocessing_data.raw_data_mat.at<float>(index,0));
 							float current_position_y = rect->y;
 							double nearest = round(preprocessing_data.raw_data_mat.at<float>(index,0));
 							DrawText_FTGL(nearest,x_position,current_position_y-20);
@@ -79,15 +79,16 @@ namespace OpenGLForm{
 					}
 					x_position+=70;
 					//==========Linear Acceleration X Y Z==========//
-					DrawTitle_FTGL(1,750,100);
+					DrawTitle_FTGL(1,750,50);
 					x_position = 750;
-					y_position = 250;
+					y_position = 450;
+					int factor_la = 10;
 					for(int j=0;j<raw_data_index.size();j++)
 					{
 						index = raw_data_index[j];
 						RECTANGLE *rect;
 						rect = new RECTANGLE();
-						rect->h = factor*abs(preprocessing_data.raw_data_mat.at<float>(index,1));
+						rect->h = factor_la*abs(preprocessing_data.raw_data_mat.at<float>(index,1));
 						rect->w = 50.0;
 						rect->x = x_position;
 						rect->y = y_position;
@@ -96,7 +97,7 @@ namespace OpenGLForm{
 						color[2] = preprocessing_data.raw_data_3D.at<float>(index,2);
 						if(preprocessing_data.raw_data_mat.at<float>(index,1)>0)
 						{
-							rect->y -= factor*abs(preprocessing_data.raw_data_mat.at<float>(index,1));
+							rect->y -= factor_la*abs(preprocessing_data.raw_data_mat.at<float>(index,1));
 							float current_position_y = rect->y;
 							double nearest = round(preprocessing_data.raw_data_mat.at<float>(index,1));
 							DrawText_FTGL(nearest,x_position-10,current_position_y-20);
@@ -117,8 +118,8 @@ namespace OpenGLForm{
 					//==========Gyroscope X Y Z==========//
 					DrawTitle_FTGL(3,70, 500);
 					x_position = 70;
-					y_position = 750;
-					int factor2 = 100;
+					y_position = 850;
+					int factor2 = 10;
 					for(int j=0;j<raw_data_index.size();j++)
 					{
 						index = raw_data_index[j];
@@ -154,33 +155,38 @@ namespace OpenGLForm{
 					//==========first order of Longitude & Latitude==========//
 					DrawTitle_FTGL(0,750,500);
 					x_position = 750;
-					y_position = 750;	
+					y_position = 850;	
 						
+					int factor3 = 500.0;
 					for(int j=0;j<raw_data_index.size();j++)
-					{
+					{							
 						RECTANGLE *rect;
 						index = raw_data_index[j];
+						float value = abs(preprocessing_data.raw_data_mat.at<float>(index,3));
+						float adj_value = value;
+						if(value>1.0)
+							adj_value = 1.0;
 						rect = new RECTANGLE();
-						rect->h = factor*abs(preprocessing_data.raw_data_mat.at<float>(index,3)*1000.0);
+						rect->h = factor3*adj_value;
 						rect->w = 50.0;
 						rect->x = x_position;
 						rect->y = y_position;
 						color[0] = preprocessing_data.raw_data_3D.at<float>(index,0);
 						color[1] = preprocessing_data.raw_data_3D.at<float>(index,1);
 						color[2] = preprocessing_data.raw_data_3D.at<float>(index,2);
-						if(preprocessing_data.raw_data_mat.at<float>(index,3)*1000.0>0)
+						if(adj_value>0.0)
 						{
-							rect->y -= factor*abs(preprocessing_data.raw_data_mat.at<float>(index,3)*1000.0);
+							rect->y -= factor3*adj_value;
 							float current_position_y = rect->y;
-							double nearest = round(preprocessing_data.raw_data_mat.at<float>(index,3)*1000.0);
+							double nearest = round(adj_value);
 							DrawText_FTGL(nearest,x_position,current_position_y-20);
 						}
-						else if(preprocessing_data.raw_data_mat.at<float>(index,3)==0.0)
+						else if(adj_value==0.0)
 						{
 							float current_position_y = rect->y;
 							DrawText_FTGL(0,x_position,current_position_y-20);
 						}
-						else
+						else //not enter
 						{
 							float current_position_y = rect->y + rect->h;
 							//double nearest = round(preprocessing_data.raw_data_mat.at<float>(index,3));

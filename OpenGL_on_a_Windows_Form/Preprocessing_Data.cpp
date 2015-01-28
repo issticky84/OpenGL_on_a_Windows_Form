@@ -247,6 +247,9 @@ void Preprocessing_Data::set_hour_data(vector < vector<float> > raw_data,int tim
 	int time_step_amount = floor(raw_data.size()/600.0);
 	num_of_five_minutes = time_step_amount-1;
 	hour_data.resize(time_step_amount);
+	hour_index.clear();
+	hour_range.clear();
+	hour_map.clear();
 	int t = 0;
 	for(int i=0;i<time_step_amount;i++)
 	{

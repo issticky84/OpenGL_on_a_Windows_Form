@@ -45,6 +45,7 @@ private:
 	Mat LAB2RGB(Mat);
 	Mat compute_centroid(Mat);
 	void gray2rgb(float,float& ,float& ,float&);
+	Mat normalize_column(Mat);
 public:
 	Preprocessing_Data();
 	void start(vector < vector<float> >,int);

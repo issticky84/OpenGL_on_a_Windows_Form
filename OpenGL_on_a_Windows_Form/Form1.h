@@ -454,7 +454,7 @@ namespace OpenGL_on_a_Windows_Form
 				 histogram_position_table.clear();
 				 preprocessing_data.Initial_selection_flag(this->Gravity_Norm->Checked,this->Linear_Acceleration_Norm->Checked,
 															this->Gyroscope_Norm->Checked,this->First_Order_of_Distance->Checked);
-				 Gravity_Norm->Checked = true;
+				 Gravity_Norm->Checked = false;
 				 Linear_Acceleration_Norm->Checked = true;
 				 Gyroscope_Norm->Checked = true;
 				 First_Order_of_Distance->Checked = true;

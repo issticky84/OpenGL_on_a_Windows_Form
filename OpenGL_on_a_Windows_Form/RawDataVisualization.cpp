@@ -153,7 +153,7 @@ namespace OpenGLForm{
 			{
 				hour = preprocessing_data.hour_index[i];
 				if(hour == preprocessing_data.begin_hour && preprocessing_data.num_of_begin_hour<12)
-					five_minute_index = index - preprocessing_data.hour_range[i].x + (11-preprocessing_data.num_of_begin_hour);
+					five_minute_index = index - preprocessing_data.hour_range[i].x + (12-preprocessing_data.num_of_begin_hour);
 				else
 					five_minute_index = index - preprocessing_data.hour_range[i].x;
 				

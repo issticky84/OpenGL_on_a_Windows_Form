@@ -64,7 +64,7 @@ void Preprocessing_Data::start(vector < vector<float> > raw_data,int k)
 	else if(model.cols==1) rgb_mat3 = lab_alignment_dim1(cluster_centers,30);
 	//===============Position (MDS)=====================//
 	position = Position_by_MDS(cluster_centers,k,20).clone(); //Type:double
-
+	
 	cluster_centers.release();
 	//===================PCA raw data 3 dim=======================//
 	//if(model.cols>=3) raw_data_3D = lab_alignment(model,5);
@@ -361,19 +361,13 @@ Mat Preprocessing_Data::set_matrix(vector < vector<float> > raw_data,int attribu
 	
 	handle_mat_raw.push_back(norm_gravity);
 	if(select_gravity)
-	{
 		handle_mat.push_back(norm_gravity);	
-	}
 	handle_mat_raw.push_back(norm_linear_acc);
 	if(select_linear_acc)
-	{
 		handle_mat.push_back(norm_linear_acc);
-	}
 	handle_mat_raw.push_back(norm_gyro);
 	if(select_gyro)
-	{
 		handle_mat.push_back(norm_gyro);	
-	}
 
 	//Compute latitude & longitude
 	int lat_index = attribute_title[9];
@@ -385,7 +379,9 @@ Mat Preprocessing_Data::set_matrix(vector < vector<float> > raw_data,int attribu
 			first_order_distance_mat.at<float>(0,i) = 0.0;
 		else
 		{
-			first_order_distance_mat.at<float>(0,i) = DistanceOfLontitudeAndLatitude(raw_data[i-1][lat_index],raw_data[i][lat_index],raw_data[i-1][lon_index],raw_data[i][lon_index]);
+			float dist = DistanceOfLontitudeAndLatitude(raw_data[i-1][lat_index],raw_data[i][lat_index],raw_data[i-1][lon_index],raw_data[i][lon_index]);
+			if(dist>1.0) dist = 1.0;
+			first_order_distance_mat.at<float>(0,i) = dist;
 		}
 	}
 
@@ -408,13 +404,13 @@ Mat Preprocessing_Data::set_matrix(vector < vector<float> > raw_data,int attribu
 	
 	handle_mat_raw.push_back(first_order_distance_mat);
 	if(select_distance)
-	{
 		handle_mat.push_back(first_order_distance_adjust_mat);	
-	}
 	
 
 	Mat handle_mat_transpose = handle_mat.t();
 	Mat handle_mat_raw_transpose = handle_mat_raw.t();
+	handle_mat.release();
+	handle_mat_raw.release();
 
 	raw_data_mat = handle_mat_raw_transpose;//////////////////////////
 
@@ -494,7 +490,7 @@ Mat Preprocessing_Data::Position_by_MDS(Mat cluster_centers,int k,float larger_w
 			{
 				histo_coeff.at<double>(i,j) += abs(Ev.at<float>(i,t)-Ev.at<float>(j,t));
 			}
-	histo_coeff.mul(1000);
+	//histo_coeff.mul(1000);
 	Matrix<double,Dynamic,Dynamic> histo_coeff_EigenType;//The type pass to Tapkee must be "double" not "float"
 	cv2eigen(histo_coeff,histo_coeff_EigenType);
 	TapkeeOutput output = tapkee::initialize() 
@@ -568,6 +564,8 @@ Mat Preprocessing_Data::lab_alignment(Mat cluster_center,int luminance_threshold
 	int start = 1;
 	//int luminance_threshold = 30;
 	vector<int> scale_vector;
+
+	//output_mat_as_csv_file_float("cluster_center.csv",cluster_center_PCA);
 	//binary search the best scale & convell hull for speed up
 	for(int t=0;t<move_vector.size();t++)
 	{	
@@ -631,7 +629,7 @@ Mat Preprocessing_Data::lab_alignment(Mat cluster_center,int luminance_threshold
 		{
 			max_scale = low;
 			max_move = move_vector[t];
-			max_align_mat = align_mat;
+			max_align_mat = align_mat.clone();
 			start = max_scale;
 		}
 
@@ -649,7 +647,8 @@ Mat Preprocessing_Data::lab_alignment(Mat cluster_center,int luminance_threshold
 		}
 	}
 
-	printf("max_move : %f max_scale : %f\n",max_move,max_scale);
+	//printf("max_move : %f max_scale : %f\n",max_move,max_scale);
+	//System::Windows::Forms::MessageBox::Show(max_move + " " + max_scale);
 
 	Mat rgb_mat2 = LAB2RGB(max_align_mat).clone();
 
@@ -683,7 +682,7 @@ bool Preprocessing_Data::lab_boundary_test(float p1,float p2,float p3)
 	lab_color.at<Vec3f>(0, 0) = Vec3f(p1, p2, p3);
 	cvtColor(lab_color, rgb_color, CV_Lab2BGR);
 	cvtColor(rgb_color, lab_color, CV_BGR2Lab);
-	if(abs(lab_color.at<Vec3f>(0,0).val[0] - p1) > 1.0 || abs(lab_color.at<Vec3f>(0,0).val[1] - p2) > 1.0 || abs(lab_color.at<Vec3f>(0,0).val[2] - p3) > 1.0)
+	if(abs(lab_color.at<Vec3f>(0,0).val[0] - p1) > 0.1 || abs(lab_color.at<Vec3f>(0,0).val[1] - p2) > 0.1 || abs(lab_color.at<Vec3f>(0,0).val[2] - p3) > 0.1)
 		test = false;
 	return test;
 }
@@ -865,7 +864,7 @@ Mat Preprocessing_Data::lab_alignment_dim1(Mat cluster_center,int luminance_thre
 		{
 			max_scale = low;
 			max_move = move_vector[t];
-			max_align_mat = align_mat;
+			max_align_mat = align_mat.clone();
 			start = max_scale;
 		}
 
@@ -1023,7 +1022,7 @@ Mat Preprocessing_Data::lab_alignment_dim2(Mat cluster_center,int luminance_thre
 		{
 			max_scale = low;
 			max_move = move_vector[t];
-			max_align_mat = align_mat;
+			max_align_mat = align_mat.clone();
 			start = max_scale;
 		}
 
@@ -1096,3 +1095,19 @@ Mat Preprocessing_Data::normalize_column(Mat col_mat)
 
 	return output_mat;
 }
+
+void Preprocessing_Data::output_mat_as_csv_file_float(char file_name[],Mat mat)
+{
+	ofstream fout(file_name); 
+	for(int i=0;i<mat.rows;i++)
+	{
+		for(int j=0;j<mat.cols;j++)
+		{
+			if(j!=0) fout << ",";
+			fout << mat.at<float>(i,j) ;
+		}
+		fout << endl;
+	}
+
+	fout.close();
+}   

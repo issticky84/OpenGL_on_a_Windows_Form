@@ -45,7 +45,7 @@ namespace OpenGLForm{
 					//==========Gravity X Y Z==========//
 					DrawTitle_FTGL(2,70,50);
 					x_position = 70;
-					y_position = 450;
+					y_position = 350;
 					for(int j=0;j<raw_data_index.size();j++)
 					{
 						RECTANGLE *rect;
@@ -81,7 +81,7 @@ namespace OpenGLForm{
 					//==========Linear Acceleration X Y Z==========//
 					DrawTitle_FTGL(1,750,50);
 					x_position = 750;
-					y_position = 450;
+					y_position = 350;
 					int factor_la = 10;
 					for(int j=0;j<raw_data_index.size();j++)
 					{
@@ -116,7 +116,7 @@ namespace OpenGLForm{
 					}
 					x_position+=100;
 					//==========Gyroscope X Y Z==========//
-					DrawTitle_FTGL(3,70, 500);
+					DrawTitle_FTGL(3,70, 450);
 					x_position = 70;
 					y_position = 850;
 					int factor2 = 10;
@@ -153,11 +153,11 @@ namespace OpenGLForm{
 					}
 					x_position+=100;
 					//==========first order of Longitude & Latitude==========//
-					DrawTitle_FTGL(0,750,500);
+					DrawTitle_FTGL(0,750,450);
 					x_position = 750;
 					y_position = 850;	
 						
-					int factor3 = 500.0;
+					int factor3 = 350.0;
 					for(int j=0;j<raw_data_index.size();j++)
 					{							
 						RECTANGLE *rect;

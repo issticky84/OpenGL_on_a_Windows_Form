@@ -37,7 +37,7 @@ namespace OpenGL_on_a_Windows_Form
 			preprocessing_data.start(read_csv.raw_data,trackBar1->Value);
 
 			//waiting_flag = true;
-			start_flag = false;
+			//start_flag = false;
 
 			histogram = gcnew HistogramVisualization(this,this->panel3,panel3->Width,panel3->Height,read_csv,preprocessing_data);
 			rawData = gcnew RawDataVisualization(this,this->panel1,panel1->Width,panel1->Height,read_csv,preprocessing_data);
@@ -222,8 +222,8 @@ namespace OpenGL_on_a_Windows_Form
 			// Gravity_Norm
 			// 
 			this->Gravity_Norm->AutoSize = true;
-			this->Gravity_Norm->Checked = true;
-			this->Gravity_Norm->CheckState = System::Windows::Forms::CheckState::Checked;
+			this->Gravity_Norm->Checked = false;
+			this->Gravity_Norm->CheckState = System::Windows::Forms::CheckState::Unchecked;
 			this->Gravity_Norm->Location = System::Drawing::Point(1691, 61);
 			this->Gravity_Norm->Name = L"Gravity_Norm";
 			this->Gravity_Norm->Size = System::Drawing::Size(89, 16);
@@ -393,6 +393,8 @@ namespace OpenGL_on_a_Windows_Form
 				 detail->clear();
 				 //progressBar1->Style = ProgressBarStyle::Continuous;
 				 //progressBar1->MarqueeAnimationSpeed = 30;
+				 preprocessing_data.Initial_selection_flag(this->Gravity_Norm->Checked,this->Linear_Acceleration_Norm->Checked,
+															this->Gyroscope_Norm->Checked,this->First_Order_of_Distance->Checked);
 				 preprocessing_data.start(read_csv.raw_data,trackBar1->Value);
 				 //System::Windows::Forms::MessageBox::Show(trackBar1->Value.ToString());
 				 //progressBar1->Style = ProgressBarStyle::Marquee;
@@ -454,10 +456,10 @@ namespace OpenGL_on_a_Windows_Form
 				 histogram_position_table.clear();
 				 preprocessing_data.Initial_selection_flag(this->Gravity_Norm->Checked,this->Linear_Acceleration_Norm->Checked,
 															this->Gyroscope_Norm->Checked,this->First_Order_of_Distance->Checked);
-				 Gravity_Norm->Checked = false;
-				 Linear_Acceleration_Norm->Checked = true;
-				 Gyroscope_Norm->Checked = true;
-				 First_Order_of_Distance->Checked = true;
+				 //Gravity_Norm->Checked = this->Gravity_Norm->Checked;
+				 //Linear_Acceleration_Norm->Checked = this->Linear_Acceleration_Norm->Checked;
+				 //Gyroscope_Norm->Checked = this->Gyroscope_Norm->Checked;
+				 //First_Order_of_Distance->Checked = this->First_Order_of_Distance->Checked;
 				 
 				 preprocessing_data.start(read_csv.raw_data,trackBar1->Value);
 				 //System::Windows::Forms::MessageBox::Show(preprocessing_data.num_of_five_minutes.ToString() + " " + histogram_position_table.size());

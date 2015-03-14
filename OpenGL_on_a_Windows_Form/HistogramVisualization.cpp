@@ -118,7 +118,7 @@ namespace OpenGLForm{
 
 			if(!preprocessing_data.histogram.empty())
 			{
-				int y_coord = 1400;
+				int y_coord = 1000;
 				int pixels;
 				int current_hour;
 				int last_hour = -1;

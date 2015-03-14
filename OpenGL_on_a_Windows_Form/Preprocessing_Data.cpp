@@ -47,6 +47,9 @@ void Preprocessing_Data::start(vector < vector<float> > raw_data,int k)
 	kmeans(model, k, cluster_tag,TermCriteria(CV_TERMCRIT_ITER|CV_TERMCRIT_EPS, 10, 0.0001), attempts,KMEANS_PP_CENTERS,cluster_centers);
     //TermCriteria(CV_TERMCRIT_ITER|CV_TERMCRIT_EPS, 10, 1),  這裡有三個參數，決定k-means何時結束，第二個參數是指迭代最大次數，第三個參數是精確度多少，第一個參數是指依照前兩個參數的哪一個為準，以範例中就是兩者都參照，以 or 的方式決定
 	//==================================================//
+	output_mat_as_csv_file_float("cluster_center.csv",cluster_centers);
+	output_mat_as_csv_file_float("model.csv",model);
+	output_mat_as_csv_file_int("cluster_tag.csv",cluster_tag);
 	voting(k,cluster_tag,model.rows); // Type: int
 	cluster_tag.release();
 	//===================PCA RGB=======================//
@@ -59,18 +62,19 @@ void Preprocessing_Data::start(vector < vector<float> > raw_data,int k)
 		normalize(result.col(i),rgb_mat.col(i),0,1,NORM_MINMAX); //normalize to 0-1
 	*/
 	//===============LAB alignment======================//
-	if(model.cols>=3) rgb_mat3 = lab_alignment(cluster_centers,30);
-	else if(model.cols==2) rgb_mat3 = lab_alignment_dim2(cluster_centers,30);
-	else if(model.cols==1) rgb_mat3 = lab_alignment_dim1(cluster_centers,30);
+	if(model.cols>=3) rgb_mat3 = lab_alignment(cluster_centers,30).clone();
+	else if(model.cols==2) rgb_mat3 = lab_alignment_dim2(cluster_centers,30).clone();
+	else if(model.cols==1) rgb_mat3 = lab_alignment_dim1(cluster_centers,30).clone();
+	output_mat_as_csv_file_float("rgb_mat.csv",rgb_mat3);
 	//===============Position (MDS)=====================//
 	position = Position_by_MDS(cluster_centers,k,20).clone(); //Type:double
 	
 	cluster_centers.release();
 	//===================PCA raw data 3 dim=======================//
-	//if(model.cols>=3) raw_data_3D = lab_alignment(model,5);
-	//else if(model.cols==2) raw_data_3D = lab_alignment_dim2(model,5);
-	//else if(model.cols==1) raw_data_3D = lab_alignment_dim1(model,5);
-	
+	if(model.cols>=3) raw_data_3D = lab_alignment(model,30).clone();
+	else if(model.cols==2) raw_data_3D = lab_alignment_dim2(model,30).clone();
+	else if(model.cols==1) raw_data_3D = lab_alignment_dim1(model,30).clone();
+	/*
 	Mat components, result; 
 	int rDim = 3;
 	if(model.cols>=3)
@@ -94,7 +98,7 @@ void Preprocessing_Data::start(vector < vector<float> > raw_data,int k)
 			raw_data_3D.at<float>(i,1) = g;
 			raw_data_3D.at<float>(i,2) = b;
 		}
-	}
+	}*/
 	model.release();	
 }
           
@@ -364,11 +368,16 @@ Mat Preprocessing_Data::set_matrix(vector < vector<float> > raw_data,int attribu
 		handle_mat.push_back(norm_gravity);	
 	handle_mat_raw.push_back(norm_linear_acc);
 	if(select_linear_acc)
+	{
+		norm_linear_acc = norm_linear_acc.mul(0.1);
 		handle_mat.push_back(norm_linear_acc);
+	}
 	handle_mat_raw.push_back(norm_gyro);
 	if(select_gyro)
+	{
+		norm_gyro = norm_gyro.mul(0.1);
 		handle_mat.push_back(norm_gyro);	
-
+	}
 	//Compute latitude & longitude
 	int lat_index = attribute_title[9];
 	int lon_index = attribute_title[10];
@@ -380,7 +389,7 @@ Mat Preprocessing_Data::set_matrix(vector < vector<float> > raw_data,int attribu
 		else
 		{
 			float dist = DistanceOfLontitudeAndLatitude(raw_data[i-1][lat_index],raw_data[i][lat_index],raw_data[i-1][lon_index],raw_data[i][lon_index]);
-			if(dist>1.0) dist = 1.0;
+			//if(dist>1.0) dist = 1.0;
 			first_order_distance_mat.at<float>(0,i) = dist;
 		}
 	}
@@ -390,23 +399,35 @@ Mat Preprocessing_Data::set_matrix(vector < vector<float> > raw_data,int attribu
 	{
 		float d = first_order_distance_mat.at<float>(0,i);
 		float d1;
-		if(d>20.0) 
+		if(d==0.0) 
+			d1 = 0.0;
+		else if(d!=0.0)	
+		{
+			d1 = log10(d*10000.0);
+		}
+		/*
+		if(d>10.0) 
 			d1 = 0.0;
 		else if(d==0.0)
 			d1 = 0.0;
 		else if(d<1e-5)
 			d1 = 0.01;
-		else if(d>=1e-5 && d<=20.0)
+		else if(d>1e-2 && d<10.0)
+			d1 = 0.7;
+		else if(d>1e-3 && d<1e-2)
+			d1 = 0.5;
+		else if(d>1e-5 && d<1e-3)
 			d1 = 0.1;
-
+		*/
 		first_order_distance_adjust_mat.at<float>(0,i) = d1;
 	}
 	
+	//normalize(first_order_distance_mat.row(0),first_order_distance_mat.row(0),0,1,NORM_MINMAX);
+	//first_order_distance_mat = first_order_distance_mat.mul(5.0);
 	handle_mat_raw.push_back(first_order_distance_mat);
 	if(select_distance)
-		handle_mat.push_back(first_order_distance_adjust_mat);	
+		handle_mat.push_back(first_order_distance_adjust_mat);	/////////////////////////////
 	
-
 	Mat handle_mat_transpose = handle_mat.t();
 	Mat handle_mat_raw_transpose = handle_mat_raw.t();
 	handle_mat.release();
@@ -1090,6 +1111,9 @@ Mat Preprocessing_Data::normalize_column(Mat col_mat)
 	for(int i=0;i<col_mat.rows;i++)
 	{
 		//output_mat.at<float>(i,0) = ( col_mat.at<float>(i,0) - min ) / (max - min);
+		//OpenCV的這個normalize(handle_mat_transpose.col(i),normalize_mat.col(i),0,1,NORM_MINMAX);
+		//底層的運作跟這個一樣
+		//但會造成gravity normalize晃動太大(因為gravity彼此之間的值都太接近)
 		output_mat.at<float>(i,0) = col_mat.at<float>(i,0) / max;
 	}
 
@@ -1109,5 +1133,21 @@ void Preprocessing_Data::output_mat_as_csv_file_float(char file_name[],Mat mat)
 		fout << endl;
 	}
 
-	fout.close();
+	fout.close();//沒關檔會當掉
+}   
+
+void Preprocessing_Data::output_mat_as_csv_file_int(char file_name[],Mat mat)
+{
+	ofstream fout(file_name); 
+	for(int i=0;i<mat.rows;i++)
+	{
+		for(int j=0;j<mat.cols;j++)
+		{
+			if(j!=0) fout << ",";
+			fout << mat.at<int>(i,j) ;
+		}
+		fout << endl;
+	}
+
+	fout.close();//沒關檔會當掉
 }   

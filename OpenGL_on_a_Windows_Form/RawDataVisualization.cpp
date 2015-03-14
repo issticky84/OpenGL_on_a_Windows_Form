@@ -11,7 +11,7 @@ namespace OpenGLForm{
 			parentPanel->MouseDoubleClick += gcnew System::Windows::Forms::MouseEventHandler( this, &RawDataVisualization::RawDataMouseDoubleClick );	 
 			time_string();
 			//Initialize mouse handler variable
-			scale_x[1] = 0.5; scale_y[1] = 0.0; scale_z[1] = 0.0;
+			scale_x[1] = 1.7; scale_y[1] = 0.2; scale_z[1] = 0.0;
 			scale_size[1] = 0.05;
 			move_x[1] = 0.0; move_y[1] = 0.0; move_z[1] = 0.0;
 			scale_factor[1] = 0.6;
@@ -51,7 +51,7 @@ namespace OpenGLForm{
 			{
 				for(int i=0;i<histogram_index.size();i++)
 				{
-					int p = 100;
+					int p = 60;
 					int index = 0;
 					DrawTime_FTGL(histogram_index[i]/600,10,y_position+5);
 					for(int j=histogram_index[i];j<histogram_index[i]+600;j++)
@@ -110,7 +110,7 @@ namespace OpenGLForm{
 				if(histogram_index[i]+j > read_csv.raw_data_size-1) break;
 				if(pos_3D.x >= raw_data_position_table[i][j].x && pos_3D.x <= raw_data_position_table[i][j].z && pos_3D.y >= raw_data_position_table[i][j].y && pos_3D.y <= raw_data_position_table[i][j].w)
 				{
-					//System::Windows::Forms::MessageBox::Show( (i+1).ToString() + " " + (j+1).ToString());			
+					System::Windows::Forms::MessageBox::Show( (i+1).ToString() + " " + (j+1).ToString());			
 					//System::Windows::Forms::MessageBox::Show(histogram_index[i] + " " + j + " " + 
 					//read_csv.raw_data[ histogram_index[i]+j][1].ToString() + " " + read_csv.raw_data[ histogram_index[i]+j][2].ToString() + " " + read_csv.raw_data[ histogram_index[i]+j][3].ToString());
 					raw_data_index.push_back(histogram_index[i]+j);
@@ -169,7 +169,7 @@ namespace OpenGLForm{
 
 		glPushMatrix();
 
-		float font_size = 15*(scale_factor[1]+0.3+scale_x[1]);
+		float font_size = 10*(scale_factor[1]+0.3+scale_x[1]);
 		font.FaceSize(font_size);
 		glColor3f(1.0, 1.0, 1.0);
 		glRasterPos2f(x , y-20.0 + font.LineHeight());

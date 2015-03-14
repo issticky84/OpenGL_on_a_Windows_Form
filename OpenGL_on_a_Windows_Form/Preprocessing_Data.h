@@ -47,6 +47,7 @@ private:
 	void gray2rgb(float,float& ,float& ,float&);
 	Mat normalize_column(Mat);
 	void output_mat_as_csv_file_float(char file_name[],Mat);
+	void output_mat_as_csv_file_int(char file_name[],Mat);
 public:
 	Preprocessing_Data();
 	void start(vector < vector<float> >,int);

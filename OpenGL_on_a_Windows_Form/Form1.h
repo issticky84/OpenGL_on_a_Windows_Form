@@ -142,9 +142,9 @@ namespace OpenGL_on_a_Windows_Form
 			// 
 			// panel1
 			// 
-			this->panel1->Location = System::Drawing::Point(671, 12);
+			this->panel1->Location = System::Drawing::Point(12, 12);
 			this->panel1->Name = L"panel1";
-			this->panel1->Size = System::Drawing::Size(813, 447);
+			this->panel1->Size = System::Drawing::Size(1547, 294);
 			this->panel1->TabIndex = 0;
 			this->panel1->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &Form1::panel1_Paint);
 			this->panel1->MouseEnter += gcnew System::EventHandler(this, &Form1::panel1_MouseEnter);
@@ -152,18 +152,18 @@ namespace OpenGL_on_a_Windows_Form
 			// 
 			// panel2
 			// 
-			this->panel2->Location = System::Drawing::Point(671, 465);
+			this->panel2->Location = System::Drawing::Point(671, 312);
 			this->panel2->Name = L"panel2";
-			this->panel2->Size = System::Drawing::Size(813, 577);
+			this->panel2->Size = System::Drawing::Size(888, 730);
 			this->panel2->TabIndex = 1;
 			this->panel2->MouseEnter += gcnew System::EventHandler(this, &Form1::panel2_MouseEnter);
 			this->panel2->MouseMove += gcnew System::Windows::Forms::MouseEventHandler(this, &Form1::panel2_MouseMove);
 			// 
 			// panel3
 			// 
-			this->panel3->Location = System::Drawing::Point(12, 12);
+			this->panel3->Location = System::Drawing::Point(12, 309);
 			this->panel3->Name = L"panel3";
-			this->panel3->Size = System::Drawing::Size(653, 1030);
+			this->panel3->Size = System::Drawing::Size(653, 733);
 			this->panel3->TabIndex = 2;
 			this->panel3->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &Form1::panel3_Paint);
 			this->panel3->MouseEnter += gcnew System::EventHandler(this, &Form1::panel3_MouseEnter);
@@ -181,9 +181,9 @@ namespace OpenGL_on_a_Windows_Form
 			// 
 			// button2
 			// 
-			this->button2->Location = System::Drawing::Point(1502, 409);
+			this->button2->Location = System::Drawing::Point(1565, 17);
 			this->button2->Name = L"button2";
-			this->button2->Size = System::Drawing::Size(83, 50);
+			this->button2->Size = System::Drawing::Size(63, 32);
 			this->button2->TabIndex = 5;
 			this->button2->Text = L"Clear";
 			this->button2->UseVisualStyleBackColor = true;
@@ -203,9 +203,9 @@ namespace OpenGL_on_a_Windows_Form
 			// 
 			// Detail_Clear
 			// 
-			this->Detail_Clear->Location = System::Drawing::Point(1502, 922);
+			this->Detail_Clear->Location = System::Drawing::Point(1565, 317);
 			this->Detail_Clear->Name = L"Detail_Clear";
-			this->Detail_Clear->Size = System::Drawing::Size(83, 50);
+			this->Detail_Clear->Size = System::Drawing::Size(63, 36);
 			this->Detail_Clear->TabIndex = 7;
 			this->Detail_Clear->Text = L"Clear";
 			this->Detail_Clear->UseVisualStyleBackColor = true;
@@ -222,8 +222,6 @@ namespace OpenGL_on_a_Windows_Form
 			// Gravity_Norm
 			// 
 			this->Gravity_Norm->AutoSize = true;
-			this->Gravity_Norm->Checked = false;
-			this->Gravity_Norm->CheckState = System::Windows::Forms::CheckState::Unchecked;
 			this->Gravity_Norm->Location = System::Drawing::Point(1691, 61);
 			this->Gravity_Norm->Name = L"Gravity_Norm";
 			this->Gravity_Norm->Size = System::Drawing::Size(89, 16);

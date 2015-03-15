@@ -46,10 +46,24 @@ void Preprocessing_Data::start(vector < vector<float> > raw_data,int k)
 	//ㄏノk meansだ竤
 	kmeans(model, k, cluster_tag,TermCriteria(CV_TERMCRIT_ITER|CV_TERMCRIT_EPS, 10, 0.0001), attempts,KMEANS_PP_CENTERS,cluster_centers);
     //TermCriteria(CV_TERMCRIT_ITER|CV_TERMCRIT_EPS, 10, 1),  硂柑Τ把计∕﹚k-means挡材把计琌程Ω计材把计琌弘絋ぶ材把计琌ㄌ酚玡ㄢ把计非絛ㄒい碞琌ㄢ常把酚 or よΑ∕﹚
-	//==================================================//
-	output_mat_as_csv_file_float("cluster_center.csv",cluster_centers);
+	//===============LAB alignment======================//
+	if(model.cols>=3) rgb_mat3 = lab_alignment(cluster_centers,30).clone();
+	else if(model.cols==2) rgb_mat3 = lab_alignment_dim2(cluster_centers,30).clone();
+	else if(model.cols==1) rgb_mat3 = lab_alignment_dim1(cluster_centers,30).clone();
+	//output_mat_as_csv_file_float("rgb_mat_old.csv",rgb_mat3);
+	//output_mat_as_csv_file_float("cluster_center_old.csv",cluster_centers);
+	//output_mat_as_csv_file_int("cluster_tag_old.csv",cluster_tag);
 	output_mat_as_csv_file_float("model.csv",model);
-	output_mat_as_csv_file_int("cluster_tag.csv",cluster_tag);
+	//==================================================//
+	//sort the cluster by color and generate new cluster tag and cluster center
+	clock_t begin4 = clock();
+	//sort_by_color(k,rgb_mat3,cluster_centers,cluster_tag);
+	clock_t end4 = clock();
+	printf("Sort by Color elapsed time: %f\n",double(end4 - begin4) / CLOCKS_PER_SEC);
+	//output_mat_as_csv_file_float("rgb_mat.csv",rgb_mat3);
+	//output_mat_as_csv_file_float("cluster_center.csv",cluster_centers);
+	//output_mat_as_csv_file_int("cluster_tag.csv",cluster_tag);
+	//===============Voting (Generate Histogram)========//
 	voting(k,cluster_tag,model.rows); // Type: int
 	cluster_tag.release();
 	//===================PCA RGB=======================//
@@ -61,11 +75,6 @@ void Preprocessing_Data::start(vector < vector<float> > raw_data,int k)
 	for(int i=0;i<result.cols;i++)
 		normalize(result.col(i),rgb_mat.col(i),0,1,NORM_MINMAX); //normalize to 0-1
 	*/
-	//===============LAB alignment======================//
-	if(model.cols>=3) rgb_mat3 = lab_alignment(cluster_centers,30).clone();
-	else if(model.cols==2) rgb_mat3 = lab_alignment_dim2(cluster_centers,30).clone();
-	else if(model.cols==1) rgb_mat3 = lab_alignment_dim1(cluster_centers,30).clone();
-	output_mat_as_csv_file_float("rgb_mat.csv",rgb_mat3);
 	//===============Position (MDS)=====================//
 	position = Position_by_MDS(cluster_centers,k,20).clone(); //Type:double
 	
@@ -102,6 +111,87 @@ void Preprocessing_Data::start(vector < vector<float> > raw_data,int k)
 	model.release();	
 }
           
+void Preprocessing_Data::sort_by_color(int k,Mat& rgb_mat2,Mat& cluster_centers, Mat& cluster_tag)
+{
+	vector< vector<float> > rgb_vector;
+	for(int i=0;i<k;i++)
+	{
+		vector<float> rgb;
+		for(int j=0;j<3;j++)
+		{
+			rgb.push_back(rgb_mat2.at<float>(i,j));
+		}
+		rgb_vector.push_back(rgb);
+	}
+
+	class cluster_info{
+	public:
+		int key;
+		vector<float> rgb_vec;
+		
+		cluster_info(int k,vector<float> rgb){
+			key = k;
+			rgb_vec = rgb;
+		} 
+	};
+	class sort_by_rgb{
+	public:
+		inline bool operator() (cluster_info& c1, cluster_info& c2)
+		{
+			float R1 = c1.rgb_vec[0];
+			float G1 = c1.rgb_vec[1];
+			float B1 = c1.rgb_vec[2];
+			float R2 = c2.rgb_vec[0];
+			float G2 = c2.rgb_vec[1];
+			float B2 = c2.rgb_vec[2];
+			//float intensity1 = 0.2126*R1 + 0.7152*G1 + 0.0722*B1;
+			//float intensity2 = 0.2126*R2 + 0.7152*G2 + 0.0722*B2;
+			//return (intensity1 < intensity2);
+			
+			//return ( R1*256*256 + G1*256 + B1 < R2*256*256 + G2*256 + B2 );
+
+			return ( R1 > R2 || (R1 == R2 && G1 > G2) || (R1 == R2 && G1 == G2 && B1 > B2) );
+		}
+	};
+
+	vector< cluster_info > cluster_vec;
+	for(int i=0;i<k;i++)
+	{
+		cluster_vec.push_back( cluster_info(i,rgb_vector[i]) );
+	}
+
+	sort(cluster_vec.begin(), cluster_vec.end(), sort_by_rgb());
+
+	//for(int i=0;i<cluster_vec.size();i++)
+	//{
+	//	cout << cluster_vec[i].key << " ";
+	//}
+	
+	Mat cluster_centers_old = cluster_centers.clone();
+	Mat rgb_mat2_old = rgb_mat2.clone();
+	Mat cluster_tag_old = cluster_tag.clone();
+	for(int i=0;i<k;i++)
+	{
+		int new_tag = cluster_vec[i].key;
+		cluster_centers_old.row(new_tag).copyTo(cluster_centers.row(i));
+		rgb_mat2_old.row(new_tag).copyTo(rgb_mat2.row(i));
+		//猔種:row狡籹ぃノrgb_mat2.row(i) = rgb_mat2_old.row(new_tag).clone();!!!!!!!
+	}
+	for(int i=0;i<cluster_tag_old.rows;i++)
+	{
+		int find;
+		for(int j=0;j<k;j++)
+		{
+			if(cluster_vec[j].key == cluster_tag_old.at<int>(i,0))
+			{
+				find = j;
+				break;
+			}
+		}
+		cluster_tag.at<int>(i,0) = find;	
+	}
+}
+
 
 /**
  * 眖data璸衡キА籔covariance matrix

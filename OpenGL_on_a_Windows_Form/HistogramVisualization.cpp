@@ -34,7 +34,7 @@ namespace OpenGLForm{
 		{
 			if(pos_3D.x >= histogram_position_table[i].x && pos_3D.x <= histogram_position_table[i].z && pos_3D.y >= histogram_position_table[i].y && pos_3D.y <= histogram_position_table[i].w)
 			{
-				//System::Windows::Forms::MessageBox::Show( (i+1).ToString());
+				System::Windows::Forms::MessageBox::Show( (i+1).ToString());
 				//System::Windows::Forms::MessageBox::Show( move_x[0].ToString() + " " + move_x[1].ToString());
 				histogram_index.push_back(i*600);
 			}

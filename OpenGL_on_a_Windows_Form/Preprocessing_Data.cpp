@@ -56,10 +56,8 @@ void Preprocessing_Data::start(vector < vector<float> > raw_data,int k)
 	output_mat_as_csv_file_float("model.csv",model);
 	//==================================================//
 	//sort the cluster by color and generate new cluster tag and cluster center
-	clock_t begin4 = clock();
-	//sort_by_color(k,rgb_mat3,cluster_centers,cluster_tag);
-	clock_t end4 = clock();
-	printf("Sort by Color elapsed time: %f\n",double(end4 - begin4) / CLOCKS_PER_SEC);
+	sort_by_color(k,rgb_mat3,cluster_centers,cluster_tag);
+
 	//output_mat_as_csv_file_float("rgb_mat.csv",rgb_mat3);
 	//output_mat_as_csv_file_float("cluster_center.csv",cluster_centers);
 	//output_mat_as_csv_file_int("cluster_tag.csv",cluster_tag);
@@ -144,13 +142,28 @@ void Preprocessing_Data::sort_by_color(int k,Mat& rgb_mat2,Mat& cluster_centers,
 			float R2 = c2.rgb_vec[0];
 			float G2 = c2.rgb_vec[1];
 			float B2 = c2.rgb_vec[2];
+			Mat rgb_color1(1, 1, CV_32FC3);
+			Mat rgb_color2(1, 1, CV_32FC3);
+			Mat hsv_color1(1, 1, CV_32FC3);
+			Mat hsv_color2(1, 1, CV_32FC3);
+			rgb_color1.at<Vec3f>(0,0) = Vec3f(R1,G1,B1);
+			rgb_color2.at<Vec3f>(0,0) = Vec3f(R2,G2,B2);
+			cvtColor(rgb_color1,hsv_color1,CV_RGB2HLS);
+			cvtColor(rgb_color2,hsv_color2,CV_RGB2HLS);
 			//float intensity1 = 0.2126*R1 + 0.7152*G1 + 0.0722*B1;
 			//float intensity2 = 0.2126*R2 + 0.7152*G2 + 0.0722*B2;
 			//return (intensity1 < intensity2);
 			
 			//return ( R1*256*256 + G1*256 + B1 < R2*256*256 + G2*256 + B2 );
+			float H1 = hsv_color1.at<Vec3f>(0,0).val[0];
+			float H2 = hsv_color2.at<Vec3f>(0,0).val[0];
+			float L1 = hsv_color1.at<Vec3f>(0,0).val[1];
+			float L2 = hsv_color2.at<Vec3f>(0,0).val[1];
+			float S1 = hsv_color1.at<Vec3f>(0,0).val[2];
+			float S2 = hsv_color2.at<Vec3f>(0,0).val[2];
+			return (H1<H2 || (H1==H2 && L1>L2) || (H1==H2 && L1==L2 && S1>S2) );
 
-			return ( R1 > R2 || (R1 == R2 && G1 > G2) || (R1 == R2 && G1 == G2 && B1 > B2) );
+			//return ( R1 > R2 || (R1 == R2 && G1 > G2) || (R1 == R2 && G1 == G2 && B1 > B2) );
 		}
 	};
 

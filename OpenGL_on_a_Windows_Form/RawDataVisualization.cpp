@@ -110,7 +110,7 @@ namespace OpenGLForm{
 				if(histogram_index[i]+j > read_csv.raw_data_size-1) break;
 				if(pos_3D.x >= raw_data_position_table[i][j].x && pos_3D.x <= raw_data_position_table[i][j].z && pos_3D.y >= raw_data_position_table[i][j].y && pos_3D.y <= raw_data_position_table[i][j].w)
 				{
-					//System::Windows::Forms::MessageBox::Show( (i+1).ToString() + " " + (j+1).ToString());			
+					System::Windows::Forms::MessageBox::Show( (i+1).ToString() + " " + (j+1).ToString());			
 					//System::Windows::Forms::MessageBox::Show(histogram_index[i] + " " + j + " " + 
 					//read_csv.raw_data[ histogram_index[i]+j][1].ToString() + " " + read_csv.raw_data[ histogram_index[i]+j][2].ToString() + " " + read_csv.raw_data[ histogram_index[i]+j][3].ToString());
 					raw_data_index.push_back(histogram_index[i]+j);

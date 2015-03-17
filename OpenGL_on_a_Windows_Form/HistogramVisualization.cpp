@@ -14,7 +14,7 @@ namespace OpenGLForm{
 			scale_x[0] = 0.0; scale_y[0] = 0.0; scale_z[0] = 0.0;
 			scale_size[0] = 0.05;
 			move_x[0] = 0.0; move_y[0] = 80.0; move_z[0] = 0.0;
-			scale_factor[0] = 0.6;
+			scale_factor[0] = 0.7;
 			//Initialize window size
 			windowWidth[0] = iWidth; 
 			windowHeight[0] = iHeight;
@@ -257,11 +257,11 @@ namespace OpenGLForm{
 			if (e->Button == System::Windows::Forms::MouseButtons::Left)
 			{
 				 vector2 Move(e->X - last_X[0] , e->Y - last_Y[0]);
-				 if (Move.length() < 500.0f)
-				 {
-					move_x[0] = Move.x;
-					move_y[0] = Move.y;
-				 }
+				 //if (Move.length() < 500.0f)
+				 //{
+					move_x[0] = Move.x * (1 + scale_x[0]);
+					move_y[0] = Move.y * (1 + scale_y[0]);
+				 //}
 			}
 			
 	}

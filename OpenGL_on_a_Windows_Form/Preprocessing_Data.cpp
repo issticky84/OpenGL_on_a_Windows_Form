@@ -44,7 +44,7 @@ void Preprocessing_Data::start(vector < vector<float> > raw_data,int k)
 	Mat cluster_centers;
 	//==============K means clustering==================//
 	//ㄏノk meansだ竤
-	kmeans(model, k, cluster_tag,TermCriteria(CV_TERMCRIT_ITER|CV_TERMCRIT_EPS, 10, 0.0001), attempts,KMEANS_PP_CENTERS,cluster_centers);
+	kmeans(model, k, cluster_tag,TermCriteria(CV_TERMCRIT_ITER|CV_TERMCRIT_EPS, 100, 0.0001), attempts,KMEANS_PP_CENTERS,cluster_centers);
     //TermCriteria(CV_TERMCRIT_ITER|CV_TERMCRIT_EPS, 10, 1),  硂柑Τ把计∕﹚k-means挡材把计琌程Ω计材把计琌弘絋ぶ材把计琌ㄌ酚玡ㄢ把计非絛ㄒい碞琌ㄢ常把酚 or よΑ∕﹚
 	//===============LAB alignment======================//
 	if(model.cols>=3) rgb_mat3 = lab_alignment(cluster_centers,30).clone();
@@ -205,6 +205,40 @@ void Preprocessing_Data::sort_by_color(int k,Mat& rgb_mat2,Mat& cluster_centers,
 	}
 }
 
+void Preprocessing_Data::interpolate_distance(Mat& first_order_distance_mat)
+{
+	int interval = 10;
+	for(int i=0;i<first_order_distance_mat.cols-1;i++)
+	{
+		int start = i;
+		int cur_index = i;
+		int count = 0;
+		if(first_order_distance_mat.at<float>(0,cur_index) != 0.0)
+		{
+			//cout << "i " << i << endl;
+			cur_index++;
+			while( first_order_distance_mat.at<float>(0,cur_index) == 0.0)
+			{
+				count++;
+				cur_index++;
+				//cout << "count " << count << " " << "current index " << cur_index << endl;
+				if(count>interval) break;
+			}
+			if(count>0 && count<=interval)
+			{
+				//cout << "start " << first_order_distance_mat.at<float>(0,start) << " end " << first_order_distance_mat.at<float>(0,cur_index) << endl;
+				float interpolation = ( first_order_distance_mat.at<float>(0,start) + first_order_distance_mat.at<float>(0,cur_index) ) / (count+2);
+				//cout << "interpolation " << interpolation << endl;
+				for(int j=0;j<count+2;j++)
+				{
+					first_order_distance_mat.at<float>(0,start+j) = interpolation;
+				}
+				//system("pause");
+			}
+		}
+		//i = cur_index;
+	}
+}
 
 /**
  * 眖data璸衡キА籔covariance matrix
@@ -468,17 +502,17 @@ Mat Preprocessing_Data::set_matrix(vector < vector<float> > raw_data,int attribu
 	
 	handle_mat_raw.push_back(norm_gravity);
 	if(select_gravity)
+	{
 		handle_mat.push_back(norm_gravity);	
+	}
 	handle_mat_raw.push_back(norm_linear_acc);
 	if(select_linear_acc)
 	{
-		norm_linear_acc = norm_linear_acc.mul(0.1);
 		handle_mat.push_back(norm_linear_acc);
 	}
 	handle_mat_raw.push_back(norm_gyro);
 	if(select_gyro)
 	{
-		norm_gyro = norm_gyro.mul(0.1);
 		handle_mat.push_back(norm_gyro);	
 	}
 	//Compute latitude & longitude
@@ -497,16 +531,20 @@ Mat Preprocessing_Data::set_matrix(vector < vector<float> > raw_data,int attribu
 		}
 	}
 
+	output_mat_as_csv_file_float("first_order_distance_mat.csv",first_order_distance_mat.t());
+	interpolate_distance(first_order_distance_mat);
+	output_mat_as_csv_file_float("first_order_distance_mat_new.csv",first_order_distance_mat.t());
+
 	Mat first_order_distance_adjust_mat(1, raw_data.size(), CV_32F);
 	for(int i=0;i<raw_data.size();i++)
 	{
 		float d = first_order_distance_mat.at<float>(0,i);
 		float d1;
-		if(d==0.0) 
+		if(d==0.0 || d>0.045) 
 			d1 = 0.0;
 		else if(d!=0.0)	
 		{
-			d1 = log10(d*10000.0);
+			d1 = log(d*10000.0);
 		}
 		/*
 		if(d>10.0) 
@@ -526,17 +564,17 @@ Mat Preprocessing_Data::set_matrix(vector < vector<float> > raw_data,int attribu
 	}
 	
 	//normalize(first_order_distance_mat.row(0),first_order_distance_mat.row(0),0,1,NORM_MINMAX);
-	//first_order_distance_mat = first_order_distance_mat.mul(5.0);
-	handle_mat_raw.push_back(first_order_distance_mat);
+
+	handle_mat_raw.push_back(first_order_distance_adjust_mat);/////////////////////////////
 	if(select_distance)
-		handle_mat.push_back(first_order_distance_adjust_mat);	/////////////////////////////
+		handle_mat.push_back(first_order_distance_adjust_mat);	
 	
 	Mat handle_mat_transpose = handle_mat.t();
 	Mat handle_mat_raw_transpose = handle_mat_raw.t();
 	handle_mat.release();
 	handle_mat_raw.release();
 
-	raw_data_mat = handle_mat_raw_transpose;//////////////////////////
+	raw_data_mat = handle_mat_raw_transpose.clone();//////////////////////////
 
 
 	Mat normalize_mat = handle_mat_transpose;
@@ -545,6 +583,8 @@ Mat Preprocessing_Data::set_matrix(vector < vector<float> > raw_data,int attribu
 		//normalize(handle_mat_transpose.col(i),normalize_mat.col(i),0,1,NORM_MINMAX);
 
 	//output_mat_as_csv_file("normalize_mat.csv",normalize_mat);
+
+	//raw_data_mat = normalize_mat.clone();
 
 	return normalize_mat;
 

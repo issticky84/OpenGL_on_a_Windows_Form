@@ -157,15 +157,15 @@ namespace OpenGLForm{
 					x_position = 750;
 					y_position = 850;	
 						
-					int factor3 = 350.0;
+					int factor3 = 100.0;
 					for(int j=0;j<raw_data_index.size();j++)
 					{							
 						RECTANGLE *rect;
 						index = raw_data_index[j];
 						float value = abs(preprocessing_data.raw_data_mat.at<float>(index,3));
-						float adj_value = value;
-						if(value>1.0)
-							adj_value = 1.0;
+						float adj_value = value/10.0;
+						//if(value>1.0)
+						//	adj_value = 1.0;
 						rect = new RECTANGLE();
 						rect->h = factor3*adj_value;
 						rect->w = 50.0;
@@ -190,7 +190,7 @@ namespace OpenGLForm{
 						{
 							float current_position_y = rect->y + rect->h;
 							//double nearest = round(preprocessing_data.raw_data_mat.at<float>(index,3));
-							DrawText_FTGL(preprocessing_data.raw_data_mat.at<float>(index,3)*1000.0,x_position,current_position_y+5);
+							DrawText_FTGL(preprocessing_data.raw_data_mat.at<float>(index,3),x_position,current_position_y+5);
 						}
 
 						DrawRectWithOpenGL(rect,color);

@@ -11,9 +11,13 @@ using namespace std;
 class ReadCSV
 {
 public:
-	vector < vector<float> > raw_data;
 	void read_raw_data(char file_name[]);
+	void clear();
+
+	vector < vector<float> > raw_data;
 	int raw_data_size;
+	vector<int> attribute_index;
+	int time_index;
 	//vector < vector<float> > position_data;
 	//vector < vector<float> > histogram_data;
 	//vector < vector<float> > color_data;

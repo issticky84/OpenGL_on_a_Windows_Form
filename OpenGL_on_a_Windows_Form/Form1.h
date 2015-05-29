@@ -34,7 +34,7 @@ namespace OpenGL_on_a_Windows_Form
 			Preprocessing_Data preprocessing_data;
 			preprocessing_data.Initial_selection_flag(this->Gravity_Norm->Checked,this->Linear_Acceleration_Norm->Checked,
 													  this->Gyroscope_Norm->Checked,this->First_Order_of_Distance->Checked);
-			preprocessing_data.start(read_csv.raw_data,trackBar1->Value);
+			preprocessing_data.start(read_csv.raw_data,read_csv.attribute_index,read_csv.time_index,trackBar1->Value);
 
 			//waiting_flag = true;
 			//start_flag = false;
@@ -195,10 +195,10 @@ namespace OpenGL_on_a_Windows_Form
 			this->trackBar1->Maximum = 100;
 			this->trackBar1->Name = L"trackBar1";
 			this->trackBar1->Size = System::Drawing::Size(196, 45);
-			this->trackBar1->SmallChange = 5;
+			this->trackBar1->SmallChange = 4;
 			this->trackBar1->TabIndex = 6;
 			this->trackBar1->TickFrequency = 5;
-			this->trackBar1->Value = 25;
+			this->trackBar1->Value = 20;
 			this->trackBar1->Scroll += gcnew System::EventHandler(this, &Form1::trackBar1_Scroll);
 			// 
 			// Detail_Clear
@@ -217,7 +217,7 @@ namespace OpenGL_on_a_Windows_Form
 			this->textBox1->Name = L"textBox1";
 			this->textBox1->Size = System::Drawing::Size(24, 22);
 			this->textBox1->TabIndex = 8;
-			this->textBox1->Text = L"25";
+			this->textBox1->Text = L"20";
 			// 
 			// Gravity_Norm
 			// 
@@ -393,7 +393,7 @@ namespace OpenGL_on_a_Windows_Form
 				 //progressBar1->MarqueeAnimationSpeed = 30;
 				 preprocessing_data.Initial_selection_flag(this->Gravity_Norm->Checked,this->Linear_Acceleration_Norm->Checked,
 															this->Gyroscope_Norm->Checked,this->First_Order_of_Distance->Checked);
-				 preprocessing_data.start(read_csv.raw_data,trackBar1->Value);
+				 preprocessing_data.start(read_csv.raw_data,read_csv.attribute_index,read_csv.time_index,trackBar1->Value);
 				 //System::Windows::Forms::MessageBox::Show(trackBar1->Value.ToString());
 				 //progressBar1->Style = ProgressBarStyle::Marquee;
 				 //progressBar1->MarqueeAnimationSpeed = 0;
@@ -439,7 +439,7 @@ namespace OpenGL_on_a_Windows_Form
 				 file_directory->Text = "" + Filename;
 				 //System::Windows::Forms::MessageBox::Show(Filename);
 
-				 read_csv.raw_data.clear();
+				 read_csv.clear();
 				 //System::String to string, string to char*
 				 string file;
 				 MarshalString(Filename, file);
@@ -459,7 +459,7 @@ namespace OpenGL_on_a_Windows_Form
 				 //Gyroscope_Norm->Checked = this->Gyroscope_Norm->Checked;
 				 //First_Order_of_Distance->Checked = this->First_Order_of_Distance->Checked;
 				 
-				 preprocessing_data.start(read_csv.raw_data,trackBar1->Value);
+				 preprocessing_data.start(read_csv.raw_data,read_csv.attribute_index,read_csv.time_index,trackBar1->Value);
 				 //System::Windows::Forms::MessageBox::Show(preprocessing_data.num_of_five_minutes.ToString() + " " + histogram_position_table.size());
 				 histogram->resize();
 				 //System::Windows::Forms::MessageBox::Show(preprocessing_data.num_of_five_minutes.ToString() + " " + histogram_position_table.size());
